@@ -1,0 +1,3 @@
+/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles/mvim.dir
+/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles/edit_cache.dir
+/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles/rebuild_cache.dir
