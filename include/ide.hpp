@@ -4,7 +4,7 @@
 #include "buffer.hpp"
 #include <ncurses.h>
 #include <iostream>
-#include <cmath>
+#include <fstream>
 
 class Ide{
   private:
@@ -17,7 +17,6 @@ class Ide{
     int max_row, max_col;
     const int span = 4;// distance of the text from the left side of the screen
                        //
-    void init_screen();
     void update_ide_info();
     void handle_input(int input);
     void restore_cursor();
@@ -34,5 +33,8 @@ class Ide{
     void init_index_numbers_column();
   public:
     Ide();
-    void open();
+    void open(); 
+    void init_screen();
+    void write_buffer_into_file(const char* file_name);
+    void read_file(const char* file_name);
    };

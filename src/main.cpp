@@ -17,6 +17,7 @@
 */
 int main(void) {
   Ide ide;
+  ide.init_screen();
   ide.open();
   endwin();
 }

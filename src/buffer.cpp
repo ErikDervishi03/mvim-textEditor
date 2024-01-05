@@ -12,7 +12,7 @@ void Buffer::new_row(std::string row, int pos) {
 }
 
 void Buffer::merge_rows(int row1, int row2) {
-  buffer[row1] += buffer[row2];
+  buffer[row1] += std::move(buffer[row2]);
   del_row(row2);
 }
 
@@ -31,6 +31,16 @@ void Buffer::delete_letter(int row, int pos) {
 
 void Buffer::row_append(int row, std::string str) {
   buffer[row] += std::move(str);
+}
+
+void Buffer::push_back(std::string str){
+  buffer.emplace_back(std::move(str));
+  size++;
+}
+
+void Buffer::clear(){
+  buffer.clear();
+  size = 0;
 }
 
 bool Buffer::is_void_row(int row){

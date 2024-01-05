@@ -5,5 +5,6 @@ TO DO:
 4) read only mode ?
 5) read article and see open source project
 
-
+Relevant resource : 
+  - https://www.geeksforgeeks.org/socket-programming-cc/
 

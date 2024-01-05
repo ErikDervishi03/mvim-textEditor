@@ -46,7 +46,7 @@
    5) create ACTIONS like : {delete, go_up, go_down, enter ...}
       and create a tree of MOTIONS modellable like : {
 
-                     :
+                    :
                    / \
                   d   c
                  / \   \
@@ -95,15 +95,16 @@ void Ide::init_screen(){
 }
 
 void Ide::open(){
-  init_screen();
   getmaxyx(stdscr, max_row, max_col);
   cursor.set(0,0);
+  read_file("hello.txt");
   while(true){
     int input = getch();
     handle_input(input);
     show_info();
     restore_cursor();
   }
+  write_buffer_into_file("hello.txt");
   endwin();
 }
 
@@ -198,6 +199,7 @@ void Ide::handle_input(int input){
         scroll_up();
       }
       break;  
+   
     case KEY_RIGHT:
       if((cursor.getX() <= buffer.get_string_row(pointed_row).length() - 1) && !buffer.get_string_row(pointed_row).empty()){  
         cursor.move_right();
@@ -272,4 +274,30 @@ void Ide::print_buffer() {
 
 void Ide::print_row(int row){
   mvprintw(row - starting_row, span + 1, buffer.get_string_row(row).c_str());
+}
+
+void Ide::write_buffer_into_file(const char* file_name) {
+  std::ofstream myfile(file_name);
+  for (int i = 0; i < buffer.get_number_rows(); i++) { 
+    myfile << buffer.get_buffer()[i] << "\n";
+  }
+  myfile.close();
+}
+
+void Ide::read_file(const char* file_name){
+  std::ifstream myfile(file_name);
+  if (!myfile.is_open()) {
+    std::cout << "error";
+    return;
+  }
+  buffer.clear();
+  std::string line;
+  while (std::getline(myfile, line)) {
+    buffer.push_back(line);
+  }
+
+  myfile.close();
+  restore_cursor();
+  print_buffer();
+  update_screen();
 }
