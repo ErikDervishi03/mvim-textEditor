@@ -429,31 +429,11 @@ CMakeFiles/mvim.dir/src/ide.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_
   /usr/include/c++/12/bits/stl_vector.h \
   /usr/include/c++/12/bits/stl_bvector.h \
   /usr/include/c++/12/bits/vector.tcc \
-  /usr/include/c++/12/cmath \
-  /usr/include/math.h \
-  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
-  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
-  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
-  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
-  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
-  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
-  /usr/include/c++/12/bits/specfun.h \
-  /usr/include/c++/12/limits \
-  /usr/include/c++/12/tr1/gamma.tcc \
-  /usr/include/c++/12/tr1/special_function_util.h \
-  /usr/include/c++/12/tr1/bessel_function.tcc \
-  /usr/include/c++/12/tr1/beta_function.tcc \
-  /usr/include/c++/12/tr1/ell_integral.tcc \
-  /usr/include/c++/12/tr1/exp_integral.tcc \
-  /usr/include/c++/12/tr1/hypergeometric.tcc \
-  /usr/include/c++/12/tr1/legendre_function.tcc \
-  /usr/include/c++/12/tr1/modified_bessel_func.tcc \
-  /usr/include/c++/12/tr1/poly_hermite.tcc \
-  /usr/include/c++/12/tr1/poly_laguerre.tcc \
-  /usr/include/c++/12/tr1/riemann_zeta.tcc
+  /usr/include/c++/12/fstream \
+  /usr/include/c++/12/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h \
+  /usr/include/c++/12/bits/fstream.tcc
 
 CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp \
   /usr/include/stdc-predef.h \
@@ -650,58 +630,22 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
   /usr/include/c++/12/bits/stl_vector.h \
   /usr/include/c++/12/bits/stl_bvector.h \
   /usr/include/c++/12/bits/vector.tcc \
-  /usr/include/c++/12/cmath \
-  /usr/include/math.h \
-  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
-  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
-  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
-  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
-  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
-  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
-  /usr/include/c++/12/bits/specfun.h \
-  /usr/include/c++/12/limits \
-  /usr/include/c++/12/tr1/gamma.tcc \
-  /usr/include/c++/12/tr1/special_function_util.h \
-  /usr/include/c++/12/tr1/bessel_function.tcc \
-  /usr/include/c++/12/tr1/beta_function.tcc \
-  /usr/include/c++/12/tr1/ell_integral.tcc \
-  /usr/include/c++/12/tr1/exp_integral.tcc \
-  /usr/include/c++/12/tr1/hypergeometric.tcc \
-  /usr/include/c++/12/tr1/legendre_function.tcc \
-  /usr/include/c++/12/tr1/modified_bessel_func.tcc \
-  /usr/include/c++/12/tr1/poly_hermite.tcc \
-  /usr/include/c++/12/tr1/poly_laguerre.tcc \
-  /usr/include/c++/12/tr1/riemann_zeta.tcc
+  /usr/include/c++/12/fstream \
+  /usr/include/c++/12/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h \
+  /usr/include/c++/12/bits/fstream.tcc
 
 
-/usr/include/c++/12/tr1/riemann_zeta.tcc:
+/usr/include/c++/12/bits/fstream.tcc:
 
-/usr/include/c++/12/tr1/poly_laguerre.tcc:
+/usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h:
 
-/usr/include/c++/12/tr1/modified_bessel_func.tcc:
+/usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h:
 
-/usr/include/c++/12/tr1/legendre_function.tcc:
+/usr/include/c++/12/bits/codecvt.h:
 
-/usr/include/c++/12/tr1/hypergeometric.tcc:
-
-/usr/include/c++/12/tr1/ell_integral.tcc:
-
-/usr/include/c++/12/tr1/bessel_function.tcc:
-
-/usr/include/c++/12/tr1/gamma.tcc:
-
-/usr/include/c++/12/limits:
-
-/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
-
-/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
-
-/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
-
-/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
+/usr/include/c++/12/fstream:
 
 /home/erik/Desktop/Personal_projects/Mine/my_vim/include/ide.hpp:
 
@@ -710,8 +654,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/unctrl.h:
 
 /home/erik/Desktop/Personal_projects/Mine/my_vim/include/cursor.hpp:
-
-/usr/include/c++/12/bits/specfun.h:
 
 /home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp:
 
@@ -744,8 +686,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/c++/12/bits/basic_string.tcc:
 
 /usr/include/c++/12/bits/charconv.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
@@ -805,8 +745,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
 
-/usr/include/c++/12/tr1/exp_integral.tcc:
-
 /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h:
 
 /usr/include/c++/12/bits/char_traits.h:
@@ -832,8 +770,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/c++/12/bits/exception_defines.h:
 
 /usr/include/c++/12/bits/locale_classes.h:
-
-/usr/include/c++/12/tr1/poly_hermite.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
@@ -881,8 +817,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 
 /usr/include/c++/12/new:
 
-/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
-
 /usr/include/c++/12/exception:
 
 /usr/include/c++/12/bits/std_abs.h:
@@ -896,8 +830,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/include/c++/12/type_traits:
-
-/usr/include/c++/12/tr1/beta_function.tcc:
 
 /usr/include/x86_64-linux-gnu/c++/12/bits/gthr.h:
 
@@ -913,11 +845,7 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
-/usr/include/x86_64-linux-gnu/bits/math-vector.h:
-
 /usr/include/c++/12/bits/stl_pair.h:
-
-/usr/include/c++/12/cmath:
 
 /usr/include/features.h:
 
@@ -928,8 +856,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/c++/12/bits/move.h:
 
 /usr/include/stdc-predef.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/c++/12/cstdint:
 
@@ -942,8 +868,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /home/erik/Desktop/Personal_projects/Mine/my_vim/include/buffer.hpp:
 
 /usr/include/pthread.h:
-
-/usr/include/c++/12/tr1/special_function_util.h:
 
 /usr/include/c++/12/ostream:
 
@@ -964,8 +888,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
 /usr/include/c++/12/iosfwd:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
 /usr/include/c++/12/bits/memoryfwd.h:
 
@@ -1092,8 +1014,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
 /usr/include/c++/12/debug/debug.h:
 
 /usr/include/c++/12/bits/stl_function.h:
-
-/usr/include/math.h:
 
 /usr/include/c++/12/pstl/pstl_config.h:
 
