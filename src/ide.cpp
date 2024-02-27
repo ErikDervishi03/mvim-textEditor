@@ -129,17 +129,18 @@ void Ide::handle_input(int input){
         break;
     case KEY_ENTER_:
         buffer.new_row("", pointed_row + 1);
-        
-        if (cursor.getX() != buffer.get_string_row(pointed_row).length()) {
-          std::string line_break = buffer.slice_row(pointed_row, cursor.getX(), buffer.get_string_row(pointed_row).length());
-          buffer.row_append(pointed_row + 1, line_break);
+        {
+          const int curr_row_length = buffer.get_string_row(pointed_row).length();
+          if (cursor.getX() != curr_row_length) {
+            std::string line_break = buffer.slice_row(pointed_row, cursor.getX(), curr_row_length);
+            buffer.row_append(pointed_row + 1, line_break);
+          }
         }
-
         if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 && 
             !buffer.is_void_row(max_row) && 
             pointed_row < buffer.get_number_rows()) {
 
-          scroll_down();
+            scroll_down();
         }else if(cursor.getY() < max_row - 1){
           cursor.move_down();
         }
@@ -147,7 +148,6 @@ void Ide::handle_input(int input){
         cursor.setX(0);
         update_screen();
         pointed_row++;
-
         break;
 
     case KEY_UP:
@@ -222,6 +222,21 @@ void Ide::handle_input(int input){
     */
     default:
       if(input != -1){
+        if(cursor.getX()==max_col-7){
+          buffer.new_row("", pointed_row + 1);
+          if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 && 
+              !buffer.is_void_row(max_row) && 
+              pointed_row < buffer.get_number_rows()) {
+
+              scroll_down();
+          }else if(cursor.getY() < max_row - 1){
+            cursor.move_down();
+          }
+
+          cursor.setX(0);
+          update_screen();
+          pointed_row++;
+        }
         buffer.insert_letter(pointed_row, cursor.getX(), input);
         cursor.move_right();
         refresh_row(pointed_row);
@@ -263,7 +278,6 @@ void Ide::show_info(){
           pointed_row, buffer.get_number_rows(), starting_row, cursor.getX(), cursor.getY());
 }
 
-
 void Ide::print_buffer() {
   std::vector<std::string> buffer = this->buffer.get_buffer();
   for (int i = 0 ; (i + starting_row) < buffer.size() && i < max_row; i++) { 
@@ -301,3 +315,4 @@ void Ide::read_file(const char* file_name){
   print_buffer();
   update_screen();
 }
+ 
