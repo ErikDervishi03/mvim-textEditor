@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim
+CMAKE_SOURCE_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim/build
+CMAKE_BINARY_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim2/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/mvim.dir/depend.make
@@ -70,80 +70,112 @@ include CMakeFiles/mvim.dir/progress.make
 include CMakeFiles/mvim.dir/flags.make
 
 CMakeFiles/mvim.dir/src/buffer.cpp.o: CMakeFiles/mvim.dir/flags.make
-CMakeFiles/mvim.dir/src/buffer.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/buffer.cpp
+CMakeFiles/mvim.dir/src/buffer.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/buffer.cpp
 CMakeFiles/mvim.dir/src/buffer.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/mvim.dir/src/buffer.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/buffer.cpp.o -MF CMakeFiles/mvim.dir/src/buffer.cpp.o.d -o CMakeFiles/mvim.dir/src/buffer.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim/src/buffer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/mvim.dir/src/buffer.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/buffer.cpp.o -MF CMakeFiles/mvim.dir/src/buffer.cpp.o.d -o CMakeFiles/mvim.dir/src/buffer.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/buffer.cpp
 
 CMakeFiles/mvim.dir/src/buffer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/buffer.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim/src/buffer.cpp > CMakeFiles/mvim.dir/src/buffer.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/buffer.cpp > CMakeFiles/mvim.dir/src/buffer.cpp.i
 
 CMakeFiles/mvim.dir/src/buffer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/buffer.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim/src/buffer.cpp -o CMakeFiles/mvim.dir/src/buffer.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/buffer.cpp -o CMakeFiles/mvim.dir/src/buffer.cpp.s
+
+CMakeFiles/mvim.dir/src/command.cpp.o: CMakeFiles/mvim.dir/flags.make
+CMakeFiles/mvim.dir/src/command.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/command.cpp
+CMakeFiles/mvim.dir/src/command.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/mvim.dir/src/command.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/command.cpp.o -MF CMakeFiles/mvim.dir/src/command.cpp.o.d -o CMakeFiles/mvim.dir/src/command.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/command.cpp
+
+CMakeFiles/mvim.dir/src/command.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/command.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/command.cpp > CMakeFiles/mvim.dir/src/command.cpp.i
+
+CMakeFiles/mvim.dir/src/command.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/command.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/command.cpp -o CMakeFiles/mvim.dir/src/command.cpp.s
 
 CMakeFiles/mvim.dir/src/cursor.cpp.o: CMakeFiles/mvim.dir/flags.make
-CMakeFiles/mvim.dir/src/cursor.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp
+CMakeFiles/mvim.dir/src/cursor.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/cursor.cpp
 CMakeFiles/mvim.dir/src/cursor.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/mvim.dir/src/cursor.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/cursor.cpp.o -MF CMakeFiles/mvim.dir/src/cursor.cpp.o.d -o CMakeFiles/mvim.dir/src/cursor.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/mvim.dir/src/cursor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/cursor.cpp.o -MF CMakeFiles/mvim.dir/src/cursor.cpp.o.d -o CMakeFiles/mvim.dir/src/cursor.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/cursor.cpp
 
 CMakeFiles/mvim.dir/src/cursor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/cursor.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp > CMakeFiles/mvim.dir/src/cursor.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/cursor.cpp > CMakeFiles/mvim.dir/src/cursor.cpp.i
 
 CMakeFiles/mvim.dir/src/cursor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/cursor.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp -o CMakeFiles/mvim.dir/src/cursor.cpp.s
-
-CMakeFiles/mvim.dir/src/ide.cpp.o: CMakeFiles/mvim.dir/flags.make
-CMakeFiles/mvim.dir/src/ide.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/ide.cpp
-CMakeFiles/mvim.dir/src/ide.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/mvim.dir/src/ide.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/ide.cpp.o -MF CMakeFiles/mvim.dir/src/ide.cpp.o.d -o CMakeFiles/mvim.dir/src/ide.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim/src/ide.cpp
-
-CMakeFiles/mvim.dir/src/ide.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/ide.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim/src/ide.cpp > CMakeFiles/mvim.dir/src/ide.cpp.i
-
-CMakeFiles/mvim.dir/src/ide.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/ide.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim/src/ide.cpp -o CMakeFiles/mvim.dir/src/ide.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/cursor.cpp -o CMakeFiles/mvim.dir/src/cursor.cpp.s
 
 CMakeFiles/mvim.dir/src/main.cpp.o: CMakeFiles/mvim.dir/flags.make
-CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp
+CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/main.cpp
 CMakeFiles/mvim.dir/src/main.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/mvim.dir/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/main.cpp.o -MF CMakeFiles/mvim.dir/src/main.cpp.o.d -o CMakeFiles/mvim.dir/src/main.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/mvim.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/main.cpp.o -MF CMakeFiles/mvim.dir/src/main.cpp.o.d -o CMakeFiles/mvim.dir/src/main.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/main.cpp
 
 CMakeFiles/mvim.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp > CMakeFiles/mvim.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/main.cpp > CMakeFiles/mvim.dir/src/main.cpp.i
 
 CMakeFiles/mvim.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp -o CMakeFiles/mvim.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/main.cpp -o CMakeFiles/mvim.dir/src/main.cpp.s
+
+CMakeFiles/mvim.dir/src/mem.cpp.o: CMakeFiles/mvim.dir/flags.make
+CMakeFiles/mvim.dir/src/mem.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/mem.cpp
+CMakeFiles/mvim.dir/src/mem.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/mvim.dir/src/mem.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/mem.cpp.o -MF CMakeFiles/mvim.dir/src/mem.cpp.o.d -o CMakeFiles/mvim.dir/src/mem.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/mem.cpp
+
+CMakeFiles/mvim.dir/src/mem.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/mem.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/mem.cpp > CMakeFiles/mvim.dir/src/mem.cpp.i
+
+CMakeFiles/mvim.dir/src/mem.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/mem.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/mem.cpp -o CMakeFiles/mvim.dir/src/mem.cpp.s
+
+CMakeFiles/mvim.dir/src/screen.cpp.o: CMakeFiles/mvim.dir/flags.make
+CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/screen.cpp
+CMakeFiles/mvim.dir/src/screen.cpp.o: CMakeFiles/mvim.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/mvim.dir/src/screen.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mvim.dir/src/screen.cpp.o -MF CMakeFiles/mvim.dir/src/screen.cpp.o.d -o CMakeFiles/mvim.dir/src/screen.cpp.o -c /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/screen.cpp
+
+CMakeFiles/mvim.dir/src/screen.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mvim.dir/src/screen.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/screen.cpp > CMakeFiles/mvim.dir/src/screen.cpp.i
+
+CMakeFiles/mvim.dir/src/screen.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mvim.dir/src/screen.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/screen.cpp -o CMakeFiles/mvim.dir/src/screen.cpp.s
 
 # Object files for target mvim
 mvim_OBJECTS = \
 "CMakeFiles/mvim.dir/src/buffer.cpp.o" \
+"CMakeFiles/mvim.dir/src/command.cpp.o" \
 "CMakeFiles/mvim.dir/src/cursor.cpp.o" \
-"CMakeFiles/mvim.dir/src/ide.cpp.o" \
-"CMakeFiles/mvim.dir/src/main.cpp.o"
+"CMakeFiles/mvim.dir/src/main.cpp.o" \
+"CMakeFiles/mvim.dir/src/mem.cpp.o" \
+"CMakeFiles/mvim.dir/src/screen.cpp.o"
 
 # External object files for target mvim
 mvim_EXTERNAL_OBJECTS =
 
 mvim: CMakeFiles/mvim.dir/src/buffer.cpp.o
+mvim: CMakeFiles/mvim.dir/src/command.cpp.o
 mvim: CMakeFiles/mvim.dir/src/cursor.cpp.o
-mvim: CMakeFiles/mvim.dir/src/ide.cpp.o
 mvim: CMakeFiles/mvim.dir/src/main.cpp.o
+mvim: CMakeFiles/mvim.dir/src/mem.cpp.o
+mvim: CMakeFiles/mvim.dir/src/screen.cpp.o
 mvim: CMakeFiles/mvim.dir/build.make
 mvim: /usr/lib/x86_64-linux-gnu/libcurses.so
 mvim: /usr/lib/x86_64-linux-gnu/libform.so
 mvim: CMakeFiles/mvim.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable mvim"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable mvim"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mvim.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -155,6 +187,6 @@ CMakeFiles/mvim.dir/clean:
 .PHONY : CMakeFiles/mvim.dir/clean
 
 CMakeFiles/mvim.dir/depend:
-	cd /home/erik/Desktop/Personal_projects/Mine/my_vim/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/erik/Desktop/Personal_projects/Mine/my_vim /home/erik/Desktop/Personal_projects/Mine/my_vim /home/erik/Desktop/Personal_projects/Mine/my_vim/build /home/erik/Desktop/Personal_projects/Mine/my_vim/build /home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles/mvim.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/erik/Desktop/Personal_projects/Mine/my_vim2/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/erik/Desktop/Personal_projects/Mine/my_vim2 /home/erik/Desktop/Personal_projects/Mine/my_vim2 /home/erik/Desktop/Personal_projects/Mine/my_vim2/build /home/erik/Desktop/Personal_projects/Mine/my_vim2/build /home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles/mvim.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/mvim.dir/depend
 

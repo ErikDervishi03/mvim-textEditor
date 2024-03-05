@@ -17,6 +17,7 @@ class Cursor{
     void set(int x, int y);
     void setX(int x);
     void setY(int y);
+    void restore(int span);
 };
 
 

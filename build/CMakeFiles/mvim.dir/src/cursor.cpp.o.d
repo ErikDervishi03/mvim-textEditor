@@ -1,7 +1,7 @@
 CMakeFiles/mvim.dir/src/cursor.cpp.o: \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/cursor.cpp \
  /usr/include/stdc-predef.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/cursor.hpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/cursor.hpp \
  /usr/include/curses.h /usr/include/ncurses_dll.h \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \

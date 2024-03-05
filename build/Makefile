@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim
+CMAKE_SOURCE_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim/build
+CMAKE_BINARY_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim2/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles /home/erik/Desktop/Personal_projects/Mine/my_vim/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles /home/erik/Desktop/Personal_projects/Mine/my_vim2/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -153,6 +153,30 @@ src/buffer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/buffer.cpp.s
 .PHONY : src/buffer.cpp.s
 
+src/command.o: src/command.cpp.o
+.PHONY : src/command.o
+
+# target to build an object file
+src/command.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/command.cpp.o
+.PHONY : src/command.cpp.o
+
+src/command.i: src/command.cpp.i
+.PHONY : src/command.i
+
+# target to preprocess a source file
+src/command.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/command.cpp.i
+.PHONY : src/command.cpp.i
+
+src/command.s: src/command.cpp.s
+.PHONY : src/command.s
+
+# target to generate assembly for a file
+src/command.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/command.cpp.s
+.PHONY : src/command.cpp.s
+
 src/cursor.o: src/cursor.cpp.o
 .PHONY : src/cursor.o
 
@@ -176,30 +200,6 @@ src/cursor.s: src/cursor.cpp.s
 src/cursor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/cursor.cpp.s
 .PHONY : src/cursor.cpp.s
-
-src/ide.o: src/ide.cpp.o
-.PHONY : src/ide.o
-
-# target to build an object file
-src/ide.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/ide.cpp.o
-.PHONY : src/ide.cpp.o
-
-src/ide.i: src/ide.cpp.i
-.PHONY : src/ide.i
-
-# target to preprocess a source file
-src/ide.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/ide.cpp.i
-.PHONY : src/ide.cpp.i
-
-src/ide.s: src/ide.cpp.s
-.PHONY : src/ide.s
-
-# target to generate assembly for a file
-src/ide.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/ide.cpp.s
-.PHONY : src/ide.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -225,6 +225,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/mem.o: src/mem.cpp.o
+.PHONY : src/mem.o
+
+# target to build an object file
+src/mem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/mem.cpp.o
+.PHONY : src/mem.cpp.o
+
+src/mem.i: src/mem.cpp.i
+.PHONY : src/mem.i
+
+# target to preprocess a source file
+src/mem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/mem.cpp.i
+.PHONY : src/mem.cpp.i
+
+src/mem.s: src/mem.cpp.s
+.PHONY : src/mem.s
+
+# target to generate assembly for a file
+src/mem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/mem.cpp.s
+.PHONY : src/mem.cpp.s
+
+src/screen.o: src/screen.cpp.o
+.PHONY : src/screen.o
+
+# target to build an object file
+src/screen.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/screen.cpp.o
+.PHONY : src/screen.cpp.o
+
+src/screen.i: src/screen.cpp.i
+.PHONY : src/screen.i
+
+# target to preprocess a source file
+src/screen.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/screen.cpp.i
+.PHONY : src/screen.cpp.i
+
+src/screen.s: src/screen.cpp.s
+.PHONY : src/screen.s
+
+# target to generate assembly for a file
+src/screen.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/src/screen.cpp.s
+.PHONY : src/screen.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -237,15 +285,21 @@ help:
 	@echo "... src/buffer.o"
 	@echo "... src/buffer.i"
 	@echo "... src/buffer.s"
+	@echo "... src/command.o"
+	@echo "... src/command.i"
+	@echo "... src/command.s"
 	@echo "... src/cursor.o"
 	@echo "... src/cursor.i"
 	@echo "... src/cursor.s"
-	@echo "... src/ide.o"
-	@echo "... src/ide.i"
-	@echo "... src/ide.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/mem.o"
+	@echo "... src/mem.i"
+	@echo "... src/mem.s"
+	@echo "... src/screen.o"
+	@echo "... src/screen.i"
+	@echo "... src/screen.s"
 .PHONY : help
 
 

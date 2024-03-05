@@ -1,4 +1,4 @@
-# Install script for directory: /home/erik/Desktop/Personal_projects/Mine/my_vim
+# Install script for directory: /home/erik/Desktop/Personal_projects/Mine/my_vim2
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/erik/Desktop/Personal_projects/Mine/my_vim/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

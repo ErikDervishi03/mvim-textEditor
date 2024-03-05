@@ -51,3 +51,7 @@ void Cursor::setY(int y){
 void Cursor::update_cursor(){
   move(y, x);
 }
+
+void Cursor::restore(int span = 0){
+  move(y, x + span + 1);
+}

@@ -1,8 +1,8 @@
-#include <ncurses.h>
 #include "ide.hpp"
 
-
 /*
+  if make give problem with dependencies, try to use the following command:
+    make clean
   how to prove correctness of the text editor:
     a) write normal text
     b) check the right behaviour of the cursor
@@ -17,7 +17,6 @@
 */
 int main(void) {
   Ide ide;
-  ide.init_screen();
-  ide.open();
-  endwin();
+  ide.run();
+  return 0;
 }

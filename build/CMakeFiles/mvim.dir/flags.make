@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/erik/Desktop/Personal_projects/Mine/my_vim/include
+CXX_INCLUDES = -I/home/erik/Desktop/Personal_projects/Mine/my_vim2/include
 
 CXX_FLAGS = 
 
