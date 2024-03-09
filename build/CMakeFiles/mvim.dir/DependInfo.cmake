@@ -8,12 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/erik/Desktop/Personal_projects/Mine/my_vim2/src/buffer.cpp" "CMakeFiles/mvim.dir/src/buffer.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/buffer.cpp.o.d"
-  "/home/erik/Desktop/Personal_projects/Mine/my_vim2/src/command.cpp" "CMakeFiles/mvim.dir/src/command.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/command.cpp.o.d"
-  "/home/erik/Desktop/Personal_projects/Mine/my_vim2/src/cursor.cpp" "CMakeFiles/mvim.dir/src/cursor.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/cursor.cpp.o.d"
-  "/home/erik/Desktop/Personal_projects/Mine/my_vim2/src/main.cpp" "CMakeFiles/mvim.dir/src/main.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/main.cpp.o.d"
-  "/home/erik/Desktop/Personal_projects/Mine/my_vim2/src/mem.cpp" "CMakeFiles/mvim.dir/src/mem.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/mem.cpp.o.d"
-  "/home/erik/Desktop/Personal_projects/Mine/my_vim2/src/screen.cpp" "CMakeFiles/mvim.dir/src/screen.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/screen.cpp.o.d"
+  "/home/erik/Desktop/Personal_projects/Mine/my_vim/src/buffer.cpp" "CMakeFiles/mvim.dir/src/buffer.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/buffer.cpp.o.d"
+  "/home/erik/Desktop/Personal_projects/Mine/my_vim/src/command.cpp" "CMakeFiles/mvim.dir/src/command.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/command.cpp.o.d"
+  "/home/erik/Desktop/Personal_projects/Mine/my_vim/src/cursor.cpp" "CMakeFiles/mvim.dir/src/cursor.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/cursor.cpp.o.d"
+  "/home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp" "CMakeFiles/mvim.dir/src/main.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/main.cpp.o.d"
+  "/home/erik/Desktop/Personal_projects/Mine/my_vim/src/mem.cpp" "CMakeFiles/mvim.dir/src/mem.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/mem.cpp.o.d"
+  "/home/erik/Desktop/Personal_projects/Mine/my_vim/src/screen.cpp" "CMakeFiles/mvim.dir/src/screen.cpp.o" "gcc" "CMakeFiles/mvim.dir/src/screen.cpp.o.d"
   )
 
 # Targets to which this target links.

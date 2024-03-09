@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim2
+CMAKE_SOURCE_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim2/build
+CMAKE_BINARY_DIR = /home/erik/Desktop/Personal_projects/Mine/my_vim/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -81,14 +81,14 @@ clean: CMakeFiles/mvim.dir/clean
 CMakeFiles/mvim.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvim.dir/build.make CMakeFiles/mvim.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target mvim"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target mvim"
 .PHONY : CMakeFiles/mvim.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/mvim.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/mvim.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim2/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/erik/Desktop/Personal_projects/Mine/my_vim/build/CMakeFiles 0
 .PHONY : CMakeFiles/mvim.dir/rule
 
 # Convenience name for target.

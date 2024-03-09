@@ -1,7 +1,7 @@
 CMakeFiles/mvim.dir/src/buffer.cpp.o: \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/buffer.cpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/buffer.cpp \
  /usr/include/stdc-predef.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/buffer.hpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/buffer.hpp \
  /usr/include/c++/12/iostream \
  /usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/os_defines.h \

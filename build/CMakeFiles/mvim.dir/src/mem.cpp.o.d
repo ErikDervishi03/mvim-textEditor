@@ -1,10 +1,8 @@
 CMakeFiles/mvim.dir/src/mem.cpp.o: \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/src/mem.cpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/mem.cpp \
  /usr/include/stdc-predef.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/utils.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/globals/mem.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/cursor.hpp \
- /usr/include/curses.h /usr/include/ncurses_dll.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/utils.h \
+ /usr/include/menu.h /usr/include/curses.h /usr/include/ncurses_dll.h \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -36,8 +34,11 @@ CMakeFiles/mvim.dir/src/mem.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
- /usr/include/unctrl.h /usr/include/curses.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/buffer.hpp \
+ /usr/include/unctrl.h /usr/include/eti.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mem.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/cursor.hpp \
+ /usr/include/curses.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/buffer.hpp \
  /usr/include/c++/12/iostream \
  /usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/os_defines.h \
@@ -159,8 +160,8 @@ CMakeFiles/mvim.dir/src/mem.cpp.o: \
  /usr/include/c++/12/bits/stl_vector.h \
  /usr/include/c++/12/bits/stl_bvector.h \
  /usr/include/c++/12/bits/vector.tcc \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/globals/mode.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim2/include/globals/consts.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mode.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/consts.h \
  /usr/include/c++/12/memory /usr/include/c++/12/bits/stl_tempbuf.h \
  /usr/include/c++/12/bits/stl_raw_storage_iter.h \
  /usr/include/c++/12/bits/align.h /usr/include/c++/12/bit \
@@ -194,4 +195,16 @@ CMakeFiles/mvim.dir/src/mem.cpp.o: \
  /usr/include/c++/12/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h \
- /usr/include/c++/12/bits/fstream.tcc
+ /usr/include/c++/12/bits/fstream.tcc /usr/include/c++/12/filesystem \
+ /usr/include/c++/12/bits/fs_fwd.h /usr/include/c++/12/bits/chrono.h \
+ /usr/include/c++/12/ratio /usr/include/c++/12/limits \
+ /usr/include/c++/12/ctime /usr/include/c++/12/bits/parse_numbers.h \
+ /usr/include/c++/12/bits/fs_path.h /usr/include/c++/12/locale \
+ /usr/include/c++/12/bits/locale_facets_nonio.h \
+ /usr/include/x86_64-linux-gnu/c++/12/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/12/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/12/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/12/bits/locale_conv.h /usr/include/c++/12/iomanip \
+ /usr/include/c++/12/bits/quoted_string.h /usr/include/c++/12/sstream \
+ /usr/include/c++/12/bits/sstream.tcc /usr/include/c++/12/codecvt \
+ /usr/include/c++/12/bits/fs_dir.h /usr/include/c++/12/bits/fs_ops.h
