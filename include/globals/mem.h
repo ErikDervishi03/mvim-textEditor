@@ -1,7 +1,7 @@
 #pragma once
 
-#include "cursor.hpp"
-#include "buffer.hpp"
+#include "../cursor.hpp"
+#include "../buffer.hpp"
 #include "mode.h"
 
 /*
@@ -14,32 +14,11 @@
 
 extern Cursor cursor;
 extern Buffer buffer;
+extern std::string command_buffer;
 extern size_t max_row;
 extern size_t max_col;
 extern size_t pointed_row;
 extern size_t starting_row;
-
-/*class Mem {
-private:
-  Mem() {}
-  ~Mem() {}
-
-  static Mem* instance;
-
-public:
-  static Mem* getInstance() {
-      if (!instance) {
-          instance = new Mem();
-      }
-      return instance;
-  }
-
-  Cursor cursor;
-  Buffer buffer;
-  size_t max_row;
-  size_t max_col;
-};
-
-Mem* Mem::instance = nullptr;
-*/
+extern Mode mode;
+extern const char* pointed_file;
 

@@ -23,4 +23,5 @@ class Buffer{
     std::string get_string_row(int pointed_row) const;
     int get_number_rows() const;  
     std::vector<std::string> get_buffer() const;
+    void restore();
 };

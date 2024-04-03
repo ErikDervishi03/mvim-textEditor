@@ -5,6 +5,8 @@ constexpr int KEY_ENTER_ = 10;
 
 constexpr int KEY_TAB = 9;
 
+constexpr int ESC = 27;
+
 constexpr int SCROLL_START_THRESHOLD = 5;
 
 constexpr int span = 4;

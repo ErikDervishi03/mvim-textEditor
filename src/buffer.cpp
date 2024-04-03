@@ -17,6 +17,10 @@ void Buffer::merge_rows(int row1, int row2) {
 }
 
 void Buffer::del_row(int pos) {
+  if(size == 1){
+    buffer[0]=std::move(std::string(""));
+    return;
+  }
   buffer.erase(buffer.begin() + pos);
   size--;
 }
@@ -26,7 +30,8 @@ void Buffer::insert_letter(int row, int pos, char letter) {
 }
 
 void Buffer::delete_letter(int row, int pos) {
-  buffer[row].erase(buffer[row].begin() + pos);
+  if(buffer[row].length() > 0)
+    buffer[row].erase(buffer[row].begin() + pos);
 }
 
 void Buffer::row_append(int row, std::string str) {
@@ -36,6 +41,13 @@ void Buffer::row_append(int row, std::string str) {
 void Buffer::push_back(std::string str){
   buffer.emplace_back(std::move(str));
   size++;
+}
+
+void Buffer::restore(){
+  clear();
+  buffer.reserve(10000);
+  buffer.emplace_back("");
+  size = 1;
 }
 
 void Buffer::clear(){

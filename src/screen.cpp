@@ -15,29 +15,46 @@ void Screen::start(){
   starting_row = 0;
   pointed_row = 0;
   cursor.set(0,0);
+
   update();
 }
 
 void Screen::update(){
+  /*
+  if(mode == command){
+    erase();
+    print_command();
+    print_buffer();
+  }*/
+
   erase();
   print_buffer();
+  
 }
 
-void Screen::refresh_row(int row){
-  clear_line(row);
-  print_row(row);
+void  Screen::print_command(){
+  mvprintw(get_height() - 2 , 2 , command_buffer.c_str());
 }
 
-void Screen::clear_line(int row){
-  move(row - starting_row, span + 1);
-  clrtoeol();
+int Screen::get_width(){
+  return getmaxx(stdscr);
 }
 
-void Screen::show_info(){
-  mvprintw(0, max_col - 100, "                                                                      ");
-  mvprintw(0, max_col - 100,"pointed row : %d, size: %d, starting_row : %d, xcur : %d, ycur: %d", 
-          pointed_row, buffer.get_number_rows(), starting_row, cursor.getX(), cursor.getY());
+int Screen::get_height(){
+  return getmaxy(stdscr);
 }
+
+void Screen::draw_rectangle(int y1, int x1, int y2, int x2){
+    mvhline(y1, x1, 0, x2-x1);
+    mvhline(y2, x1, 0, x2-x1);
+    mvvline(y1, x1, 0, y2-y1);
+    mvvline(y1, x2, 0, y2-y1);
+    mvaddch(y1, x1, ACS_ULCORNER);
+    mvaddch(y2, x1, ACS_LLCORNER);
+    mvaddch(y1, x2, ACS_URCORNER);
+    mvaddch(y2, x2, ACS_LRCORNER);
+}
+
 
 void Screen::print_buffer() {
   std::vector<std::string> buffer_ = buffer.get_buffer();
@@ -45,8 +62,4 @@ void Screen::print_buffer() {
     mvprintw(i, 0, "%d",i + starting_row + 1);
     mvprintw(i, span + 1, buffer_[i + starting_row].c_str());
   }
-}
-
-void Screen::print_row(int row){
-  mvprintw(row - starting_row, span + 1, buffer.get_string_row(row).c_str());
 }

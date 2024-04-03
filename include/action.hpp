@@ -110,6 +110,18 @@ namespace action{
       // refresh_row(pointed_row); --> remember to do this in IDE
     }
 
+    void command_insert_letter(int letter){
+      command_buffer.push_back(letter);
+      cursor.move_right();
+    }
+
+    void command_delete_letter(){
+      if(command_buffer.length() > 0){
+        command_buffer.pop_back();
+        cursor.move_left();
+      }
+    }
+
     void delete_letter(){
       if (cursor.getX() == 0 && (cursor.getY() > 0 || starting_row > 0)) {
         if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
@@ -119,12 +131,18 @@ namespace action{
         }
         cursor.setX(buffer.get_string_row(pointed_row - 1).length());
         buffer.merge_rows(pointed_row - 1, pointed_row);
-        // update_screen();
         pointed_row--;
       } else if (cursor.getX() > 0) {
         cursor.move_left();
         buffer.delete_letter(pointed_row, cursor.getX());
-        // refresh_row(pointed_row);
+      }
+    }
+
+    void normal_delete_letter(){
+      if (cursor.getX() >= 0) {
+        if(buffer.get_string_row(pointed_row).length() == cursor.getX() && cursor.getX() > 0)
+          cursor.move_left();
+        buffer.delete_letter(pointed_row, cursor.getX());
       }
     }
 
@@ -135,30 +153,69 @@ namespace action{
       }
       // refresh_row(pointed_row);
     }
+
+    void delete_row(){
+      buffer.del_row(pointed_row);
+      cursor.setX(0);
+      if(cursor.getY() > 0){
+        cursor.move_up();
+        pointed_row--;
+      }
+    }
   };
 
   namespace file{
-    void upload(const char* file_name) {
-      std::ofstream myfile(file_name);
+    void upload() {
+      if(pointed_file == ""){
+        // throw an error
+        return;
+      }
+      std::ofstream myfile(pointed_file);
       for (int i = 0; i < buffer.get_number_rows(); i++) { 
         myfile << buffer.get_buffer()[i] << "\n";
       }
       myfile.close();
     }
 
-    void read_file(const char* file_name){
-      std::ifstream myfile(file_name);
-      if (!myfile.is_open()) {
-        std::cout << "can't open : " << file_name << "\n";
-        return;
-      }
-      buffer.clear();
-      std::string line;
-      while (std::getline(myfile, line)) {
-        buffer.push_back(line);
+    void read(const char* file_name){
+      if(std::filesystem::exists(file_name) && 
+        std::filesystem::is_regular_file(file_name) &&
+        std::filesystem::file_size(file_name) < 1000000 &&
+        std::filesystem::file_size(file_name) > 0){
+
+        std::ifstream myfile(file_name);
+        if (!myfile.is_open()) {
+          std::cout << "can't open : " << file_name << "\n";
+          return;
+        }
+        buffer.clear();
+        std::string line;
+        while (std::getline(myfile, line)) {
+          buffer.push_back(line);
+        }
+
+        myfile.close();
+      }else{
+
+        buffer.restore();
+
       }
 
-      myfile.close();
     }
   };
+
+  namespace system{
+    void change2command(){
+      mode = command;
+      cursor.set(1, getmaxy(stdscr) - 2);
+      cursor.restore(0);
+    }
+    void change2normal(){
+      mode = normal;
+    }
+    void change2insert(){
+      mode = insert;
+    }
+  };
+
 };

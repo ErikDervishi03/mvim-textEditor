@@ -18,15 +18,16 @@ public:
     
     void start();
 
+    int get_width();
+
+    int get_height();
+
+    void draw_rectangle(int y1, int x1, int y2, int x2);
+
     void update();
 
-    void clear_line(int row);
-
-    void refresh_row(int row);
-
-    void print_row(int row);
+    void print_command();
 
     void print_buffer();
 
-    void show_info();
 };

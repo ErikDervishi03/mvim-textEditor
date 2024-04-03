@@ -15,8 +15,15 @@
     e) check the right behaviour of the tab
     f) check the right behaviour of the arrow keys
 */
-int main(void) {
-  Ide ide;
-  ide.run();
-  return 0;
+
+int main(int argc, char* argv[]) {
+    if (argc > 1) {
+      Ide ide(argv[1]);
+      ide.run();
+    }else {
+      Ide ide; 
+      ide.run();
+    }
+
+    return 0;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-enum mode {
+enum Mode {
 
   insert,
 
