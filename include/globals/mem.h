@@ -3,6 +3,7 @@
 #include "../cursor.hpp"
 #include "../buffer.hpp"
 #include "mode.h"
+#include "status.h"
 
 /*
 
@@ -20,5 +21,6 @@ extern size_t max_col;
 extern size_t pointed_row;
 extern size_t starting_row;
 extern Mode mode;
-extern const char* pointed_file;
+extern char* pointed_file;
+extern Status status;
 

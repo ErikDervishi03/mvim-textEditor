@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "../include/utils.h"
 
 Cursor cursor;
 Buffer buffer;
@@ -8,4 +8,5 @@ size_t max_col;
 size_t pointed_row;
 size_t starting_row;
 Mode mode;
-const char* pointed_file;
+char* pointed_file;
+Status status;

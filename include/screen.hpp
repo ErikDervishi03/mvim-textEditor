@@ -30,4 +30,6 @@ public:
 
     void print_buffer();
 
+    void print_multiline_string(int start_y, int start_x, const char *str);
+
 };

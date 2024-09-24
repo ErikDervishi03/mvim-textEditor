@@ -1,9 +1,10 @@
 CMakeFiles/mvim.dir/src/main.cpp.o: \
  /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp \
  /usr/include/stdc-predef.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/ide.hpp \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/utils.h \
- /usr/include/menu.h /usr/include/curses.h /usr/include/ncurses_dll.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/ide.hpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/globals/mem.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/globals/../cursor.hpp \
+ /usr/include/curses.h /usr/include/ncurses_dll.h \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -35,11 +36,8 @@ CMakeFiles/mvim.dir/src/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
- /usr/include/unctrl.h /usr/include/eti.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mem.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/cursor.hpp \
- /usr/include/curses.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/buffer.hpp \
+ /usr/include/unctrl.h /usr/include/curses.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/globals/../buffer.hpp \
  /usr/include/c++/12/iostream \
  /usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/os_defines.h \
@@ -161,8 +159,11 @@ CMakeFiles/mvim.dir/src/main.cpp.o: \
  /usr/include/c++/12/bits/stl_vector.h \
  /usr/include/c++/12/bits/stl_bvector.h \
  /usr/include/c++/12/bits/vector.tcc \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mode.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/consts.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/globals/mode.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/globals/status.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/utils.h \
+ /usr/include/menu.h /usr/include/eti.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/globals/consts.h \
  /usr/include/c++/12/memory /usr/include/c++/12/bits/stl_tempbuf.h \
  /usr/include/c++/12/bits/stl_raw_storage_iter.h \
  /usr/include/c++/12/bits/align.h /usr/include/c++/12/bit \
@@ -178,7 +179,8 @@ CMakeFiles/mvim.dir/src/main.cpp.o: \
  /usr/include/c++/12/bits/atomic_lockfree_defines.h \
  /usr/include/c++/12/backward/auto_ptr.h \
  /usr/include/c++/12/pstl/glue_memory_defs.h \
- /usr/include/c++/12/pstl/execution_defs.h /usr/include/c++/12/map \
+ /usr/include/c++/12/pstl/execution_defs.h /usr/include/string.h \
+ /usr/include/strings.h /usr/include/c++/12/map \
  /usr/include/c++/12/bits/stl_tree.h \
  /usr/include/c++/12/bits/node_handle.h \
  /usr/include/c++/12/bits/stl_map.h \
@@ -209,6 +211,8 @@ CMakeFiles/mvim.dir/src/main.cpp.o: \
  /usr/include/c++/12/bits/quoted_string.h /usr/include/c++/12/sstream \
  /usr/include/c++/12/bits/sstream.tcc /usr/include/c++/12/codecvt \
  /usr/include/c++/12/bits/fs_dir.h /usr/include/c++/12/bits/fs_ops.h \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/screen.hpp \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/command.hpp \
- /home/erik/Desktop/Personal_projects/Mine/my_vim/include/action.hpp
+ /usr/include/form.h \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/screen.hpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/command.hpp \
+ /home/erik/Desktop/Personal_projects/Mine/my_vim/src/../include/action.hpp \
+ /usr/include/c++/12/cstring

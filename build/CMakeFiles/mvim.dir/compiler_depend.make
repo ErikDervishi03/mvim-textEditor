@@ -240,8 +240,8 @@ CMakeFiles/mvim.dir/src/cursor.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/main.cpp \
   /usr/include/stdc-predef.h \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/ide.hpp \
-  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/utils.h \
-  /usr/include/menu.h \
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mem.h \
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/cursor.hpp \
   /usr/include/curses.h \
   /usr/include/ncurses_dll.h \
   /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h \
@@ -280,9 +280,6 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
   /usr/include/unctrl.h \
-  /usr/include/eti.h \
-  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mem.h \
-  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/cursor.hpp \
   /usr/include/curses.h \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/buffer.hpp \
   /usr/include/c++/12/iostream \
@@ -437,6 +434,10 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
   /usr/include/c++/12/bits/stl_bvector.h \
   /usr/include/c++/12/bits/vector.tcc \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mode.h \
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/status.h \
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/utils.h \
+  /usr/include/menu.h \
+  /usr/include/eti.h \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/consts.h \
   /usr/include/c++/12/memory \
   /usr/include/c++/12/bits/stl_tempbuf.h \
@@ -457,6 +458,8 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
   /usr/include/c++/12/backward/auto_ptr.h \
   /usr/include/c++/12/pstl/glue_memory_defs.h \
   /usr/include/c++/12/pstl/execution_defs.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/c++/12/map \
   /usr/include/c++/12/bits/stl_tree.h \
   /usr/include/c++/12/bits/node_handle.h \
@@ -503,9 +506,11 @@ CMakeFiles/mvim.dir/src/main.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my
   /usr/include/c++/12/codecvt \
   /usr/include/c++/12/bits/fs_dir.h \
   /usr/include/c++/12/bits/fs_ops.h \
+  /usr/include/form.h \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/screen.hpp \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/command.hpp \
-  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/action.hpp
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/action.hpp \
+  /usr/include/c++/12/cstring
 
 CMakeFiles/mvim.dir/src/mem.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/mem.cpp \
   /usr/include/stdc-predef.h \
@@ -706,6 +711,7 @@ CMakeFiles/mvim.dir/src/mem.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_
   /usr/include/c++/12/bits/stl_bvector.h \
   /usr/include/c++/12/bits/vector.tcc \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mode.h \
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/status.h \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/consts.h \
   /usr/include/c++/12/memory \
   /usr/include/c++/12/bits/stl_tempbuf.h \
@@ -726,6 +732,8 @@ CMakeFiles/mvim.dir/src/mem.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_
   /usr/include/c++/12/backward/auto_ptr.h \
   /usr/include/c++/12/pstl/glue_memory_defs.h \
   /usr/include/c++/12/pstl/execution_defs.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/c++/12/map \
   /usr/include/c++/12/bits/stl_tree.h \
   /usr/include/c++/12/bits/node_handle.h \
@@ -771,7 +779,8 @@ CMakeFiles/mvim.dir/src/mem.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_
   /usr/include/c++/12/bits/sstream.tcc \
   /usr/include/c++/12/codecvt \
   /usr/include/c++/12/bits/fs_dir.h \
-  /usr/include/c++/12/bits/fs_ops.h
+  /usr/include/c++/12/bits/fs_ops.h \
+  /usr/include/form.h
 
 CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/my_vim/src/screen.cpp \
   /usr/include/stdc-predef.h \
@@ -973,6 +982,7 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
   /usr/include/c++/12/bits/stl_bvector.h \
   /usr/include/c++/12/bits/vector.tcc \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/mode.h \
+  /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/status.h \
   /home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/consts.h \
   /usr/include/c++/12/memory \
   /usr/include/c++/12/bits/stl_tempbuf.h \
@@ -993,6 +1003,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
   /usr/include/c++/12/backward/auto_ptr.h \
   /usr/include/c++/12/pstl/glue_memory_defs.h \
   /usr/include/c++/12/pstl/execution_defs.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/c++/12/map \
   /usr/include/c++/12/bits/stl_tree.h \
   /usr/include/c++/12/bits/node_handle.h \
@@ -1038,7 +1050,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
   /usr/include/c++/12/bits/sstream.tcc \
   /usr/include/c++/12/codecvt \
   /usr/include/c++/12/bits/fs_dir.h \
-  /usr/include/c++/12/bits/fs_ops.h
+  /usr/include/c++/12/bits/fs_ops.h \
+  /usr/include/form.h
 
 
 /home/erik/Desktop/Personal_projects/Mine/my_vim/src/screen.cpp:
@@ -1048,6 +1061,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 /home/erik/Desktop/Personal_projects/Mine/my_vim/include/command.hpp:
 
 /home/erik/Desktop/Personal_projects/Mine/my_vim/include/screen.hpp:
+
+/usr/include/form.h:
 
 /usr/include/c++/12/bits/fs_dir.h:
 
@@ -1060,6 +1075,10 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 /usr/include/c++/12/bits/sstream.tcc:
 
 /usr/include/libintl.h:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/time_members.h:
+
+/usr/include/c++/12/locale:
 
 /usr/include/c++/12/bits/basic_string.h:
 
@@ -1115,6 +1134,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 
 /usr/include/c++/12/string:
 
+/usr/include/strings.h:
+
 /usr/include/c++/12/initializer_list:
 
 /usr/include/c++/12/bits/shared_ptr.h:
@@ -1126,6 +1147,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
+
+/home/erik/Desktop/Personal_projects/Mine/my_vim/include/globals/status.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
 
@@ -1160,6 +1183,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 /usr/include/x86_64-linux-gnu/c++/12/bits/c++allocator.h:
 
 /usr/include/c++/12/bits/stl_algobase.h:
+
+/usr/include/c++/12/cstring:
 
 /usr/include/ctype.h:
 
@@ -1275,6 +1300,10 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
+/usr/include/c++/12/bits/locale_facets_nonio.h:
+
+/usr/include/c++/12/bits/exception.h:
+
 /usr/include/c++/12/bits/locale_classes.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
@@ -1387,8 +1416,6 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
-/usr/include/c++/12/locale:
-
 /usr/include/c++/12/ext/type_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
@@ -1474,6 +1501,8 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 /usr/include/c++/12/bits/locale_conv.h:
 
 /usr/include/c++/12/bits/stl_uninitialized.h:
+
+/usr/include/string.h:
 
 /usr/include/c++/12/bits/stl_vector.h:
 
@@ -1580,9 +1609,3 @@ CMakeFiles/mvim.dir/src/screen.cpp.o: /home/erik/Desktop/Personal_projects/Mine/
 /usr/include/c++/12/bits/chrono.h:
 
 /usr/include/c++/12/limits:
-
-/usr/include/c++/12/bits/exception.h:
-
-/usr/include/c++/12/bits/locale_facets_nonio.h:
-
-/usr/include/x86_64-linux-gnu/c++/12/bits/time_members.h:

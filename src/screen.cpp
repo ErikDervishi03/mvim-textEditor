@@ -1,11 +1,8 @@
-#include "screen.hpp"
+#include "../include/screen.hpp"
 
-Screen::~Screen()
-{
-}
-Screen::Screen()
-{
-}
+Screen::~Screen(){}
+
+Screen::Screen(){}
 
 void Screen::start(){
   initscr();
@@ -62,4 +59,22 @@ void Screen::print_buffer() {
     mvprintw(i, 0, "%d",i + starting_row + 1);
     mvprintw(i, span + 1, buffer_[i + starting_row].c_str());
   }
+}
+
+
+void Screen::print_multiline_string(int start_y, int start_x, const char *str) {
+    int current_y = start_y;  // Coordinata Y attuale per la stampa
+    int current_x = start_x;  // Coordinata X attuale per la stampa
+
+    // Itera la stringa carattere per carattere
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == '\n') {
+            current_y++;       // Se è un newline, spostati alla riga successiva
+            current_x = start_x; // Torna alla colonna iniziale
+        } else {
+            mvaddch(current_y, current_x++, str[i]); // Stampa il carattere e incrementa X
+        }
+    }
+
+    refresh();  // Aggiorna lo schermo per visualizzare la stringa stampata
 }

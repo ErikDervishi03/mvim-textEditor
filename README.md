@@ -7,4 +7,5 @@ TO DO:
 
 Relevant resource : 
   - https://www.geeksforgeeks.org/socket-programming-cc/
+  - https://github.com/mcdaniel/curses_tutorial
 
