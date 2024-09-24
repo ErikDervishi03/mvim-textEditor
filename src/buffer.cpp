@@ -1,4 +1,4 @@
-#include "buffer.hpp"
+#include "../include/buffer.hpp"
 
 Buffer::Buffer() {
   buffer.reserve(10000);
@@ -78,3 +78,17 @@ std::vector<std::string> Buffer::get_buffer() const {
 }
 
   
+bool Buffer::is_void() const {
+    // If the buffer size is 0, it's considered void
+    if (size == 0) {
+        return true;
+    }
+    
+    // Check if every row in the buffer is empty
+    for (const std::string& row : buffer) {
+        if (!row.empty()) {
+            return false;
+        }
+    }
+    return true;  // Return true if all rows are empty
+}

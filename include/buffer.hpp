@@ -24,4 +24,5 @@ class Buffer{
     int get_number_rows() const;  
     std::vector<std::string> get_buffer() const;
     void restore();
+    bool is_void() const;
 };

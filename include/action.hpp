@@ -207,17 +207,29 @@ namespace action{
       // refresh_row(pointed_row);
     }
 
-    void delete_row(){
+ void delete_row() {
+    status = Status::unsaved;
 
-      status = Status::unsaved;
-
+    // Delete the current row
+    if(!buffer.is_void()){
       buffer.del_row(pointed_row);
-      cursor.setX(0);
-      if(cursor.getY() > 0){
-        cursor.move_up();
-        pointed_row--;
-      }
     }
+  
+    if (cursor.getY() > 0 || starting_row > 0) {
+        if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
+            starting_row--;
+        }else if(cursor.getY() > 0){
+          cursor.move_up();
+        }
+        cursor.setX(buffer.get_string_row(pointed_row - 1).length());
+        pointed_row--;
+
+        if(buffer.get_number_rows() == 1){
+          cursor.set(0,0);
+        }
+    } 
+  }
+
   };
 
 namespace file {
