@@ -9,22 +9,22 @@ project(
 # Try to find ncurses
 find_package(Curses)
 
-# If ncurses is not found, install it
+# If ncurses is not found, give instructions to install it
 if(NOT CURSES_FOUND)
-  message(STATUS "Ncurses not found, attempting to install...")
-
-  # Run a shell script to install ncurses
-  execute_process(
-    COMMAND bash -c "${CMAKE_CURRENT_SOURCE_DIR}/install_ncurses.sh"
-    RESULT_VARIABLE result
-  )
-
-  if(result)
-    message(FATAL_ERROR "Failed to install ncurses. Please install it manually.")
+  message(STATUS "Ncurses not found.")
+  
+  # Detect OS and provide installation instructions
+  if(UNIX AND NOT APPLE)
+    message(STATUS "To install ncurses on a Linux system, run:")
+    message(STATUS "  sudo apt-get install libncurses5-dev libncursesw5-dev")
+  elseif(APPLE)
+    message(STATUS "To install ncurses on macOS, run:")
+    message(STATUS "  brew install ncurses")
+  else()
+    message(FATAL_ERROR "Ncurses not found. Please install it manually.")
   endif()
 
-  # Try to find ncurses again after installation
-  find_package(Curses REQUIRED)
+  message(FATAL_ERROR "Ncurses is required to build this project. Please install it and retry.")
 else()
   message(STATUS "Ncurses found!")
 endif()
@@ -44,10 +44,3 @@ target_link_libraries(mvim ${CURSES_LIBRARIES})
 
 # Install the executable globally
 install(TARGETS mvim DESTINATION /usr/local/bin)
-
-# Copy to /usr/local/bin after build
-add_custom_command(TARGET mvim POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:mvim> /usr/local/bin/mvim
-    COMMENT "Copying mvim to /usr/local/bin"
-    VERBATIM
-)
