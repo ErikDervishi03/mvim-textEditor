@@ -4,7 +4,7 @@ mvim is a VIM inspired modal-based text editor written in Cpp using the [ncurses
 # Demo
 
 ## Quick Start
-Cano has the following dependencies:
+mvim has the following dependencies:
 - [GCC](https://gcc.gnu.org/)
 - [Make](https://www.gnu.org/software/make/)
 - [ncurses](https://opensource.apple.com/source/old_ncurses/old_ncurses-1/ncurses/test/ncurses.c.auto.html)
