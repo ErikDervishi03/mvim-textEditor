@@ -12,3 +12,5 @@ constexpr int SCROLL_START_THRESHOLD = 5;
 constexpr int span = 4;
 
 constexpr int tab_size = 2;
+
+constexpr int MAX_FILENAME_LENGTH = 30;

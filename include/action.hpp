@@ -234,6 +234,12 @@ namespace action{
 
 namespace file {
 
+    void strcat_c (char *str, char c){
+      for (;*str;str++); // note the terminating semicolon here. 
+      *str++ = c; 
+      *str++ = 0;
+    
+    }
     // Function to center text on the ncurses form
     void centerText(WINDOW* win, int starty, int width, const char* str) {
         int length = strlen(str);
@@ -241,95 +247,64 @@ namespace file {
         mvwprintw(win, starty, x, "%s", str);
     }
 
-      // The form that prompts the user for a filename
     void form_for_filename() {
-        initscr();              // Start ncurses mode
-        cbreak();               // Disable line buffering
-        echo();                 // Enable echoing of input characters
-        keypad(stdscr, TRUE);   // Enable function keys (like ESC)
+        initscr();
+        cbreak();
+        noecho();
+        keypad(stdscr, TRUE);
 
         int height, width;
-        getmaxyx(stdscr, height, width); // Get screen size
+        getmaxyx(stdscr, height, width);
 
-        int formHeight = 5;     // Form height
-        int formWidth = 40;     // Form width
-        int starty = (height - formHeight) / 2;  // Centered vertically
-        int startx = (width - formWidth) / 2;    // Centered horizontally
+        int formHeight = 5;
+        int formWidth = 40;
+        int starty = (height - formHeight) / 2;
+        int startx = (width - formWidth) / 2;
 
-        WINDOW* form_win = newwin(formHeight, formWidth, starty, startx);  // Create form window
-        box(form_win, 0, 0);   // Draw a box around the form
+        WINDOW* form_win = newwin(formHeight, formWidth, starty, startx);
+        box(form_win, 0, 0);
 
-        const char* label = "Insert file name:"; 
-        centerText(form_win, 1, formWidth, label); // Center the label on the form
+        const char* label = "Insert file name:";
+        centerText(form_win, 1, formWidth, label);
 
-        // Move the cursor to the input field position
         mvwprintw(form_win, 3, 2, "> ");
-        wrefresh(form_win); // Refresh the window to display changes
+        wrefresh(form_win);
 
-        // Create buffer to store file name input
-        char filename[50] = {0};  // Initialize the filename buffer
-        int ch, i = 0;            // Variables for character input and index
-        bool exit_form = false;   // Flag to check if Esc is pressed
+        char filename[30] = {0};  // Adjusted buffer for filename input
+        int ch, i = 0;
+        bool exit_form = false;
 
-        // Capture input character by character
-        while (i < 48) {
-            ch = wgetch(form_win);  // Get a single character from the user
+        while (1) {
+            ch = wgetch(form_win);
 
-            // Check if the user pressed ESC
-            if (ch == 27) {  // 27 is the ASCII code for Esc key
+            if (ch == 27) {  // ESC key
                 exit_form = true;
                 break;
-            }
-            // Check if user pressed Enter to finalize input
-            else if (ch == '\n') {
+            } else if (ch == '\n') {
                 break;
-            }
-            // Handle backspace (delete character before the cursor)
-            else if (ch == KEY_BACKSPACE || ch == 127) {
+            } else if (ch == KEY_BACKSPACE || ch == 127) {
                 if (i > 0) {
-                    i--;
-                    mvwaddch(form_win, 3, 4 + i, ' '); // Remove character from window
-                    wmove(form_win, 3, 4 + i);         // Move cursor back
+                    filename[--i] = '\0';  // Remove last character from filename
+                    mvwaddch(form_win, 3, 4 + i, ' ');  // Remove character from window
+                    wmove(form_win, 3, 4 + i);
                     wrefresh(form_win);
                 }
-            }
-            // Handle Delete key (delete character at the cursor position)
-            else if (ch == KEY_DC && i > 0) {
-                if (filename[i] != '\0') {
-                    // Shift remaining characters left
-                    for (int j = i; j < 48 - 1; j++) {
-                        filename[j] = filename[j + 1];
-                    }
-                    filename[48 - 1] = '\0';  // Null-terminate string
-
-                    // Clear line and rewrite the rest of the string
-                    for (int j = 0; j < 48; j++) {
-                        mvwaddch(form_win, 3, 4 + j, ' ');
-                    }
-                    mvwprintw(form_win, 3, 4, "%s", filename); // Reprint modified string
-                    wmove(form_win, 3, 4 + i);  // Move cursor to current position
-                    wrefresh(form_win);
-                }
-            }
-            // Otherwise, store character and display it
-            else {
-                filename[i] = ch;
+            } else if (i < sizeof(filename) - 1) {  // Avoid buffer overflow
+                strcat_c(filename, ch);  // Append character
                 mvwaddch(form_win, 3, 4 + i, ch);  // Display character
                 i++;
                 wrefresh(form_win);
             }
         }
 
-        // Cleanup
-        delwin(form_win);  // Delete form window
-        endwin();          // End ncurses mode
+        delwin(form_win);
+        endwin();
 
-        // Check if Esc was pressed
         if (!exit_form) {
-            strncpy(pointed_file, filename, sizeof(pointed_file) - 1); // Set the pointed_file to the entered filename
-            pointed_file[sizeof(pointed_file) - 1] = '\0';  // Ensure null-terminated string
+            strncpy(pointed_file, filename, sizeof(filename) - 1);
         }
     }
+
 
     // Save function
     void save() {
