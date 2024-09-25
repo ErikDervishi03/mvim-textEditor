@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/mvim.dir/src/buffer.cpp.o CMakeFiles/mvim.dir/src/command.cpp.o CMakeFiles/mvim.dir/src/cursor.cpp.o CMakeFiles/mvim.dir/src/main.cpp.o CMakeFiles/mvim.dir/src/mem.cpp.o CMakeFiles/mvim.dir/src/screen.cpp.o -o mvim  -lcurses /usr/lib/x86_64-linux-gnu/libform.so 
