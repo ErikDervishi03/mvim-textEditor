@@ -61,6 +61,19 @@ Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
 
 }
 
+
+void print_to_terminal(int message) {
+    // Esci dalla modalità ncurses
+    endwin();
+
+    // Usa std::cout o printf per stampare direttamente nel terminale
+    std::cout << message << std::endl;
+
+    // Rientra nella modalità ncurses
+    refresh();
+}
+
+
 void Ide::run(){ 
   show_initial_screen();
 
@@ -80,13 +93,9 @@ void Ide::run(){
         visual_end_col = cursor.getX() + span + 1;
         action::visual::highlight_text();
       }
-
-      //draw_command_box();
-      /*if(mode == command)
-        cursor.restore(0);*/
       
       cursor.restore(span);
-
+      print_to_terminal(starting_row);
     }
   }
   

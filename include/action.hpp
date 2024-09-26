@@ -156,7 +156,7 @@ namespace action{
       // point to the last row
       pointed_row = buffer.get_number_rows() - 1;
 
-      starting_row = buffer.get_number_rows() - max_row;
+      starting_row = std::max((int)(buffer.get_number_rows() - max_row),0);
       cursor.set(buffer.get_string_row(pointed_row).length(), pointed_row - starting_row);
     }
 
@@ -186,12 +186,10 @@ namespace action{
         }
 
         cursor.setX(0);
-        //update_screen(); --> remember to do this in IDE
         pointed_row++;
       }
       buffer.insert_letter(pointed_row, cursor.getX(), letter);
       cursor.move_right();
-      // refresh_row(pointed_row); --> remember to do this in IDE
     }
 
     void command_insert_letter(int letter){
