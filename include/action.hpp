@@ -115,6 +115,42 @@ namespace action{
       cursor.setX(curr_row_length);
     }
 
+    void move_to_next_word() {
+        std::string current_row = buffer.get_string_row(pointed_row);
+        int row_length = current_row.length();
+
+        // if we are in the middle of a word we go at the end of it
+        while(current_row[cursor.getX()] != ' '){
+          action::movement::move_right();
+
+          if(cursor.getX() >= row_length){
+            if(pointed_row < buffer.get_number_rows() - 1){
+              action::movement::move_down();
+              cursor.setX(0);
+            }
+            return;
+          }
+        }
+
+        //lets go ahead until we find the next word
+        while(current_row[cursor.getX()] == ' '){
+          action::movement::move_right();
+          
+          if(cursor.getX() >= row_length){
+            if(pointed_row < buffer.get_number_rows() - 1){
+              action::movement::move_down();
+              cursor.setX(0);
+            }
+            return;
+          }else if(isalnum(current_row[cursor.getX()])){
+            return ;
+          }
+        }
+    }
+
+
+
+
     void move_to_end_of_file() {
     }
 
@@ -598,24 +634,30 @@ namespace file {
             copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(end_col, start_col - end_col);
       }
       // Case 2: Highlight spans multiple rows
-      else {
-          // Copy the first row from start_col to the end of the row
-          if(end_row > start_row)
-            copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(start_col);
-          else
-            copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(0,start_col);
+      else if(end_row > start_row){
+
+          copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(start_col);
 
           // Copy the middle rows entirely
           for (int row = 0; row < abs(start_row - end_row) - 1; ++row) {
-              int curr_row = (start_row < end_row) ? start_row + row + 1 : start_row - row - 1;
+              int curr_row = start_row + row + 1;
               copy_paste_buffer += '\n' + buffer.get_string_row(curr_row);
           }
 
-          // Copy the last row from the beginning to end_col
-          if(end_row > start_row)
-            copy_paste_buffer += '\n' + buffer.get_string_row(end_row + starting_row).substr(0, end_col);
-          else
-            copy_paste_buffer += '\n' + buffer.get_string_row(end_row + starting_row).substr(end_col);
+          copy_paste_buffer += '\n' + buffer.get_string_row(end_row + starting_row).substr(0, end_col);
+
+      }else{
+
+          copy_paste_buffer = buffer.get_string_row(end_row + starting_row).substr(end_col);
+
+          // Copy the middle rows entirely
+          for (int row = 0; row < abs(start_row - end_row) - 1; ++row) {
+              int curr_row = end_row + row + 1;
+              copy_paste_buffer += '\n' + buffer.get_string_row(curr_row);
+          }
+
+          copy_paste_buffer += '\n' + buffer.get_string_row(start_row + starting_row).substr(0,start_col);
+
       }
       
       action::system::change2normal();
