@@ -1,4 +1,5 @@
 #pragma once
+#include "cursor.hpp"
 #include "globals/mem.h"
 #include "utils.h"
 #include <cstring>
@@ -152,10 +153,18 @@ namespace action{
 
 
     void move_to_end_of_file() {
+      // point to the last row
+      pointed_row = buffer.get_number_rows() - 1;
+
+      starting_row = buffer.get_number_rows() - max_row;
+      cursor.set(buffer.get_string_row(pointed_row).length(), pointed_row - starting_row);
     }
 
 
-    void move_to_beginning_of_file() {
+    void move_to_beginning_of_file() {  
+      starting_row = 0;
+      pointed_row = 0;
+      cursor.set(0, 0);
     }
 
   };
@@ -244,41 +253,41 @@ namespace action{
       // refresh_row(pointed_row);
     }
 
-void delete_row() {
-    status = Status::unsaved;
+  void delete_row() {
+      status = Status::unsaved;
 
-    // Verifica se il buffer non è vuoto
-    if (!buffer.is_void()) {
-        // Cancella la riga puntata
-        buffer.del_row(pointed_row);
-    }
+      // Verifica se il buffer non è vuoto
+      if (!buffer.is_void()) {
+          // Cancella la riga puntata
+          buffer.del_row(pointed_row);
+      }
 
-    // Gestisci la posizione del cursore
-    if (buffer.is_void()) {
-        // Se il buffer è vuoto, reinizializzalo con una riga vuota e reimposta il cursore
-        cursor.setX(0);        // Reimposta il cursore all'inizio della riga
-        cursor.setY(0);
-        pointed_row = 0;       // Reimposta la riga puntata a 0
-        starting_row = 0;      // Reimposta lo scrolling
-    } else {
-        // Se il buffer ha ancora altre righe, sposta il cursore e gestisci lo scrolling
-        if (cursor.getY() > 0 || starting_row > 0) {
-            if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
-                starting_row--;
-            } else if (cursor.getY() > 0) {
-                cursor.move_up();
-            }
+      // Gestisci la posizione del cursore
+      if (buffer.is_void()) {
+          // Se il buffer è vuoto, reinizializzalo con una riga vuota e reimposta il cursore
+          cursor.setX(0);        // Reimposta il cursore all'inizio della riga
+          cursor.setY(0);
+          pointed_row = 0;       // Reimposta la riga puntata a 0
+          starting_row = 0;      // Reimposta lo scrolling
+      } else {
+          // Se il buffer ha ancora altre righe, sposta il cursore e gestisci lo scrolling
+          if (cursor.getY() > 0 || starting_row > 0) {
+              if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
+                  starting_row--;
+              } else if (cursor.getY() > 0) {
+                  cursor.move_up();
+              }
 
-            // Assicurati che il cursore sia posizionato correttamente
-            if (pointed_row > 0) {
-                pointed_row--;
-                cursor.setX(buffer.get_string_row(pointed_row).length()); // Posiziona alla fine della riga precedente
-            } else {
-                cursor.setX(0); // Se si è sulla prima riga, posiziona all'inizio
-            }
-        }
-    }
-}
+              // Assicurati che il cursore sia posizionato correttamente
+              if (pointed_row > 0) {
+                  pointed_row--;
+                  cursor.setX(buffer.get_string_row(pointed_row).length()); // Posiziona alla fine della riga precedente
+              } else {
+                  cursor.setX(0); // Se si è sulla prima riga, posiziona all'inizio
+              }
+          }
+      }
+  }
 
 
     void paste(){
