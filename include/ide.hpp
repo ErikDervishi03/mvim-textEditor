@@ -1,4 +1,5 @@
 #pragma once
+#include "action.hpp"
 #include "globals/mem.h"
 #include "utils.h"
 #include "screen.hpp"
@@ -34,19 +35,30 @@ class Ide{
 
 Ide::Ide() : screen(Screen::getScreen()) {
   screen.start();
+  start_color();
+
+  copy_paste_buffer = (char *)malloc(10000);
   pointed_file = (char *)malloc(10000);
   strcpy(pointed_file, "");  
   status = Status::unsaved;
+  visual_start_row = visual_end_row = cursor.getX();
+  visual_start_col = visual_end_col = cursor.getY();
 }
 
 Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
   screen.start();
+  start_color();
   cursor.restore(span);
   action::file::read(filename);
   screen.update();
+
+  copy_paste_buffer = (char *)malloc(10000);
   pointed_file = (char *)malloc(10000);
   strcpy(pointed_file, filename);
   status = Status::saved;
+  visual_start_row = visual_end_row = cursor.getX();
+  visual_start_col = visual_end_col = cursor.getY();
+
 }
 
 void Ide::run(){ 
@@ -59,11 +71,22 @@ void Ide::run(){
     if(input != ERR){
       _command.execute(input);
       screen.update();
+
+      if(mode != visual){
+        visual_start_row = cursor.getY();
+        visual_start_col = cursor.getX() + span + 1;
+      }else{
+        visual_end_row = cursor.getY();
+        visual_end_col = cursor.getX() + span + 1;
+        action::visual::highlight_text();
+      }
+
       //draw_command_box();
       /*if(mode == command)
         cursor.restore(0);*/
       
       cursor.restore(span);
+
     }
   }
   

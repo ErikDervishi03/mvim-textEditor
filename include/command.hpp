@@ -1,5 +1,7 @@
 #pragma once
 #include "action.hpp"
+#include "globals/mode.h"
+#include <ncurses.h>
 
 /*
   need to map keys for the specific mode
@@ -13,6 +15,7 @@ private:
   keymap insertMap;
   keymap commandMap;
   keymap normalMap;
+  keymap visualMap;
 
 public:
   Command() {
@@ -30,9 +33,9 @@ public:
 
     /*normal*/
 
-    normalMap[KEY_UP] = action::movement::move_up;
-    normalMap[KEY_DOWN] = action::movement::move_down;
-    normalMap[KEY_LEFT] = action::movement::move_left;
+    normalMap[KEY_UP]    = action::movement::move_up;
+    normalMap[KEY_DOWN]  = action::movement::move_down;
+    normalMap[KEY_LEFT]  = action::movement::move_left;
     normalMap[KEY_RIGHT] = action::movement::move_right;
     normalMap['h'] = action::movement::move_left;
     normalMap['j'] = action::movement::move_down;
@@ -42,6 +45,7 @@ public:
     normalMap['a'] = action::movement::move_to_end_of_line;
     normalMap['g'] = action::movement::move_to_end_of_file;
     normalMap['G'] = action::movement::move_to_beginning_of_file;
+    normalMap['p'] = action::modify::paste;
 
     normalMap['x'] = action::modify::normal_delete_letter;
     normalMap['d'] = action::modify::delete_row;
@@ -53,10 +57,25 @@ public:
 
     normalMap['i'] = action::system::change2insert;
 
+    normalMap['v'] = action::system::change2visual;
+
     /*command*/
 
     commandMap['w'] = action::file::save;
     // insertMap[ESC] = action::system::change2normal;
+
+    /*visual*/
+    visualMap[KEY_UP] = action::movement::move_up;
+    visualMap[KEY_DOWN] = action::movement::move_down;
+    visualMap[KEY_LEFT] = action::movement::move_left;
+    visualMap[KEY_RIGHT] = action::movement::move_right;
+    visualMap['h'] = action::movement::move_left;
+    visualMap['j'] = action::movement::move_down; 
+    visualMap['k'] = action::movement::move_up;
+    visualMap['l'] = action::movement::move_right;
+    visualMap['y'] = action::visual::copy_highlighted;
+
+    visualMap[ESC] = action::system::change2normal;
   }
 
   void execute(int key) {
@@ -79,6 +98,13 @@ public:
     if (mode == command) {
       if (commandMap.find(key) != commandMap.end()) {
         commandMap[key]();
+      }
+      return;
+    }
+
+    if (mode == visual) {
+      if (visualMap.find(key) != visualMap.end()) {
+        visualMap[key]();
       }
       return;
     }

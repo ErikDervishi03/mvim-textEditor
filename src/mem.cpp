@@ -10,3 +10,8 @@ size_t starting_row;
 Mode mode;
 char* pointed_file;
 Status status;
+int visual_start_row;
+int visual_start_col;
+int visual_end_row;
+int visual_end_col;
+std::string copy_paste_buffer;

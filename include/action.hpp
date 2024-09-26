@@ -2,6 +2,7 @@
 #include "globals/mem.h"
 #include "utils.h"
 #include <cstring>
+#include <iostream>
 #include <ncurses.h>
 
 namespace action{
@@ -207,28 +208,60 @@ namespace action{
       // refresh_row(pointed_row);
     }
 
- void delete_row() {
+void delete_row() {
     status = Status::unsaved;
 
-    // Delete the current row
-    if(!buffer.is_void()){
-      buffer.del_row(pointed_row);
+    // Verifica se il buffer non è vuoto
+    if (!buffer.is_void()) {
+        // Cancella la riga puntata
+        buffer.del_row(pointed_row);
     }
-  
-    if (cursor.getY() > 0 || starting_row > 0) {
-        if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
-            starting_row--;
-        }else if(cursor.getY() > 0){
-          cursor.move_up();
-        }
-        cursor.setX(buffer.get_string_row(pointed_row - 1).length());
-        pointed_row--;
 
-        if(buffer.get_number_rows() == 1){
-          cursor.set(0,0);
+    // Gestisci la posizione del cursore
+    if (buffer.is_void()) {
+        // Se il buffer è vuoto, reinizializzalo con una riga vuota e reimposta il cursore
+        cursor.setX(0);        // Reimposta il cursore all'inizio della riga
+        cursor.setY(0);
+        pointed_row = 0;       // Reimposta la riga puntata a 0
+        starting_row = 0;      // Reimposta lo scrolling
+    } else {
+        // Se il buffer ha ancora altre righe, sposta il cursore e gestisci lo scrolling
+        if (cursor.getY() > 0 || starting_row > 0) {
+            if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
+                starting_row--;
+            } else if (cursor.getY() > 0) {
+                cursor.move_up();
+            }
+
+            // Assicurati che il cursore sia posizionato correttamente
+            if (pointed_row > 0) {
+                pointed_row--;
+                cursor.setX(buffer.get_string_row(pointed_row).length()); // Posiziona alla fine della riga precedente
+            } else {
+                cursor.setX(0); // Se si è sulla prima riga, posiziona all'inizio
+            }
         }
-    } 
-  }
+    }
+}
+
+
+    void paste(){
+      if(copy_paste_buffer.length() > 0){
+        status = Status::unsaved;
+
+        // Itera su ogni carattere della stringa
+        for (char c : copy_paste_buffer) {
+            if (c == '\n') {
+                // Inserisci newline e sposta alla riga successiva
+                action::movement::new_line();
+            } else {
+                // Inserisci il carattere e sposta la posizione
+                action::modify::insert_letter(c);
+            }
+        }
+      }
+
+    }
 
   };
 
@@ -494,8 +527,99 @@ namespace file {
     void change2insert(){
       mode = insert;
     }
+
+    void change2visual(){
+      mode = visual;
+    }
   };
 
-  
+  namespace visual {
 
+      void highlight_text() {
+        int row_end_col;
+        int row_start_col;
+        // Clear the previous selection
+        for (int i = 0; i <= abs(visual_end_row - visual_start_row); i++) {
+            int curr_row = (visual_end_row > visual_start_row) ? visual_start_row + i : visual_start_row - i;
+            // Get the length of the row text
+            int row_length = buffer.get_string_row(curr_row + starting_row).length();
+
+            if (visual_end_row == visual_start_row) {
+              // Get the start and end columns for the current row
+              row_start_col = visual_start_col;
+              row_end_col   = visual_end_col;
+            }else {
+              if (i == 0) {
+                // Get the start and end columns for the first row
+                row_start_col = visual_start_col;
+                row_end_col   = (visual_end_row < visual_start_row) ? span : row_length + span + 1;
+
+              } else if (i == abs(visual_end_row - visual_start_row)) {
+                row_start_col = (visual_end_row < visual_start_row) ? row_length + span + 1 : span + 1;
+                row_end_col   = visual_end_col;
+              } else {
+                // Get the start and end columns for the middle rows
+                row_start_col = span + 1;
+                row_end_col   = row_length + span + 1;
+              }
+            }
+
+            // Highlight the text in the current row
+            for (int j = 0; j < abs(row_end_col - row_start_col); j++) {
+                // Get the current position on the screen
+                int screen_x = (row_end_col > row_start_col) ? row_start_col + j : row_start_col - j;
+                int screen_y = (visual_end_row > visual_start_row) ? visual_start_row + i : visual_start_row - i;
+
+                // Definisci la coppia di colori (colore testo, colore sfondo)
+                init_pair(1, COLOR_WHITE, COLOR_RED); // Testo bianco, sfondo rosso
+
+                // Cambia il carattere a coordinate specificate con sfondo rosso
+                mvchgat(screen_y, screen_x, 1, A_NORMAL, 1, NULL);
+            }
+        }
+      }
+
+      // Function to copy the highlighted text based on visual mode selection
+    void copy_highlighted() {
+
+      copy_paste_buffer = "";
+
+      int start_row = visual_start_row;
+      int end_row = visual_end_row;
+      int start_col = visual_start_col - span - 1;
+      int end_col = visual_end_col - span - 1;
+
+      // Case 1: Highlight is within a single row
+      if (start_row == end_row) {
+          //std::cout << "start row : " << start_row << std::endl;
+          if(end_col > start_col)
+            copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(start_col, end_col - start_col);
+          else
+            copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(end_col, start_col - end_col);
+      }
+      // Case 2: Highlight spans multiple rows
+      else {
+          // Copy the first row from start_col to the end of the row
+          if(end_row > start_row)
+            copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(start_col);
+          else
+            copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(0,start_col);
+
+          // Copy the middle rows entirely
+          for (int row = 0; row < abs(start_row - end_row) - 1; ++row) {
+              int curr_row = (start_row < end_row) ? start_row + row + 1 : start_row - row - 1;
+              copy_paste_buffer += '\n' + buffer.get_string_row(curr_row);
+          }
+
+          // Copy the last row from the beginning to end_col
+          if(end_row > start_row)
+            copy_paste_buffer += '\n' + buffer.get_string_row(end_row + starting_row).substr(0, end_col);
+          else
+            copy_paste_buffer += '\n' + buffer.get_string_row(end_row + starting_row).substr(end_col);
+      }
+      
+      action::system::change2normal();
+    }
+  
+  };
 };

@@ -1,4 +1,4 @@
-#include "cursor.hpp"
+#include "../include/cursor.hpp"
 
 Cursor::Cursor() : x(0),y(0){
 
@@ -14,7 +14,6 @@ int Cursor::getY() const{
 
 void Cursor::move_right(){
   this->x += 1; 
-
 }
 
 void Cursor::move_left(){
@@ -29,13 +28,11 @@ void Cursor::move_up(){
 
 void Cursor::move_down(){
   this->y += 1;
-
 }
 
 void Cursor::set(int x, int y){
   this->x = x;
   this->y = y;
-
 }
 
 void Cursor::setX(int x){
@@ -45,7 +42,6 @@ void Cursor::setX(int x){
 
 void Cursor::setY(int y){
   this->y = y;
-
 }
 
 void Cursor::update_cursor(){
