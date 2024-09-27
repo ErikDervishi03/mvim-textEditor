@@ -109,7 +109,21 @@ void action::movement::move_to_end_of_line() {
   cursor.setX(curr_row_length);
 }
 
-void action::movement::move_to_beginning_of_line() { cursor.setX(0); }
+void action::movement::move_to_beginning_of_line() { 
+  std::string current_row = buffer.get_string_row(pointed_row);
+  int row_length = current_row.length();
+  int count = 0;
+
+
+  while (count < row_length && current_row[count] == ' ') {
+    count++;
+  }  
+
+  if(count != row_length)
+    cursor.setX(count);
+  else
+    cursor.setX(0);
+}
 
 void action::movement::move_to_next_word() {
   std::string current_row = buffer.get_string_row(pointed_row);
