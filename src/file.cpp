@@ -1,19 +1,33 @@
 #include "../include/action.hpp"
 
-  void action::file::strcat_c (char *str, char c){
+  /**
+  * Appends a character to a null-terminated C string.
+  * The character is added at the end of the string, and the null terminator is updated.
+  */
+  static void strcat_c (char *str, char c){
     for (;*str;str++); // note the terminating semicolon here. 
     *str++ = c; 
     *str++ = 0;
   
   }
-  // Function to center text on the ncurses form
-  void action::file::centerText(WINDOW* win, int starty, int width, const char* str) {
+
+  /**
+  * Centers text horizontally within a given window.
+  * The text is placed at the specified row, and the horizontal position 
+  * is calculated based on the width of the window and the length of the string.
+  */
+  static void centerText(WINDOW* win, int starty, int width, const char* str) {
       int length = strlen(str);
       int x = (width - length) / 2;
       mvwprintw(win, starty, x, "%s", str);
   }
 
-  void action::file::form_for_filename() {
+  /**
+  * Displays a form for inputting a filename using ncurses.
+  * The form consists of a simple window where the user can type a filename, with support for backspace and exiting via the ESC key.
+  * Once the filename is entered and confirmed, it is stored in the global variable `pointed_file`.
+  */
+  static void form_for_filename() {
       initscr();
       cbreak();
       noecho();

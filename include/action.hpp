@@ -42,14 +42,29 @@ namespace action{
      * Move the cursor down and create a new line in the buffer, 
      * positioning the cursor at the start of the new line.
      * This is typically used for inserting new content below the current line.
+     * the mode is switched to insert mode after the cursor is moved. 
      */
     void go_down_creating_newline();
+
+    /**
+     * Move the cursor up and create a new line in the buffer, 
+     * positioning the cursor at the start of the new line.
+     * This is typically used for inserting new content above the current line.
+     * the mode is switched to insert mode after the cursor is moved. 
+     */
+    void go_up_creating_newline();
 
     /**
      * Move the cursor to the end of the current line.
      * If the cursor is already at the end of the line, it remains in place.
      */
     void move_to_end_of_line();
+
+    /**
+     * Move the cursor to the void beginning of the current line.
+     * If the cursor is already at the beginning of the line, it remains in place.
+     */
+    void move_to_beginning_of_line();
 
     /**
      * Move the cursor to the start of the next word. 
@@ -113,26 +128,6 @@ namespace action{
   };
 
 namespace file {
-
-      /**
-      * Appends a character to a null-terminated C string.
-      * The character is added at the end of the string, and the null terminator is updated.
-      */
-      void strcat_c(char *str, char c);
-
-      /**
-      * Centers text horizontally within a given window.
-      * The text is placed at the specified row, and the horizontal position is calculated based on the width of the window and the length of the string.
-      */
-      void centerText(WINDOW* win, int starty, int width, const char* str);
-
-      /**
-      * Displays a form for inputting a filename using ncurses.
-      * The form consists of a simple window where the user can type a filename, with support for backspace and exiting via the ESC key.
-      * Once the filename is entered and confirmed, it is stored in the global variable `pointed_file`.
-      */
-      void form_for_filename();
-
       /**
       * Saves the current buffer content to a file.
       * If the file name has not been provided, it prompts the user to input a file name.

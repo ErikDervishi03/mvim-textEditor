@@ -95,5 +95,8 @@ bool Buffer::is_void() const {
     return true;  // Return true if all rows are empty
 }
 
+void Buffer::swap_rows(int row1, int row2) {
+    std::swap(this->buffer[row1], this->buffer[row2]);
+}
 
 

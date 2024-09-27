@@ -42,7 +42,9 @@ public:
     normalMap['k'] = action::movement::move_up;
     normalMap['l'] = action::movement::move_right;
     normalMap['o'] = action::movement::go_down_creating_newline;
+    normalMap['O'] = action::movement::go_up_creating_newline;
     normalMap['a'] = action::movement::move_to_end_of_line;
+    normalMap['A'] = action::movement::move_to_beginning_of_line;
     normalMap['g'] = action::movement::move_to_end_of_file;
     normalMap['G'] = action::movement::move_to_beginning_of_file;
     normalMap['p'] = action::modify::paste;
@@ -71,6 +73,12 @@ public:
     visualMap['j'] = action::movement::move_down; 
     visualMap['k'] = action::movement::move_up;
     visualMap['l'] = action::movement::move_right;
+    visualMap['a'] = action::movement::move_to_end_of_line;
+    visualMap['A'] = action::movement::move_to_beginning_of_line;
+    visualMap['g'] = action::movement::move_to_end_of_file;
+    visualMap['G'] = action::movement::move_to_beginning_of_file;
+    visualMap['w'] = action::movement::move_to_next_word;
+
     visualMap['y'] = action::visual::copy_highlighted;
 
     visualMap[ESC] = action::system::change2normal;

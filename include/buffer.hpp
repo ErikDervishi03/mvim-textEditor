@@ -35,4 +35,5 @@ public:
   std::vector<std::string> get_buffer() const;
   void restore();
   bool is_void() const;
+  void swap_rows(int row1, int row2);
 };
