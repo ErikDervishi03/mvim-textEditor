@@ -62,9 +62,6 @@ public:
 
     /*command*/
 
-    commandMap['w'] = action::file::save;
-    // insertMap[ESC] = action::system::change2normal;
-
     /*visual*/
     visualMap[KEY_UP] = action::movement::move_up;
     visualMap[KEY_DOWN] = action::movement::move_down;
