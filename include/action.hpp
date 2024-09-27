@@ -149,9 +149,6 @@ namespace action{
         }
     }
 
-
-
-
     void move_to_end_of_file() {
       // point to the last row
       pointed_row = buffer.get_number_rows() - 1;
@@ -267,23 +264,9 @@ namespace action{
           cursor.setY(0);
           pointed_row = 0;       // Reimposta la riga puntata a 0
           starting_row = 0;      // Reimposta lo scrolling
-      } else {
-          // Se il buffer ha ancora altre righe, sposta il cursore e gestisci lo scrolling
-          if (cursor.getY() > 0 || starting_row > 0) {
-              if (starting_row > 0 && cursor.getY() == SCROLL_START_THRESHOLD) {
-                  starting_row--;
-              } else if (cursor.getY() > 0) {
-                  cursor.move_up();
-              }
-
-              // Assicurati che il cursore sia posizionato correttamente
-              if (pointed_row > 0) {
-                  pointed_row--;
-                  cursor.setX(buffer.get_string_row(pointed_row).length()); // Posiziona alla fine della riga precedente
-              } else {
-                  cursor.setX(0); // Se si è sulla prima riga, posiziona all'inizio
-              }
-          }
+      } else{
+          action::movement::move_up();
+          cursor.setX(buffer.get_string_row(pointed_row).length()); // Posiziona alla fine della riga precedentess
       }
   }
 

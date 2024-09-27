@@ -95,7 +95,6 @@ void Ide::run(){
       }
       
       cursor.restore(span);
-      print_to_terminal(starting_row);
     }
   }
   
