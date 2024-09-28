@@ -142,6 +142,14 @@ namespace file {
       * If the file is valid, its content is read line by line into the buffer. If the file can't be opened, an error is printed.
       */
       void read(const char* file_name);
+
+      /** 
+      * Displays a file selection menu to choose a file to open.
+      * The user can navigate through the files and directories using arrow keys and select a file to open.
+      * If the selected item is a directory, it navigates into the directory. If it's a file, it opens the file.
+      * The user can exit the menu by pressing the ESC key.
+      */
+      void file_selection_menu();
   };
 
 

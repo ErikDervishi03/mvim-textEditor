@@ -49,6 +49,7 @@ public:
     normalMap['G'] = action::movement::move_to_beginning_of_file;
     normalMap['p'] = action::modify::paste;
     normalMap['w'] = action::movement::move_to_next_word;
+    normalMap['e'] = action::file::file_selection_menu;
 
     normalMap['x'] = action::modify::normal_delete_letter;
     normalMap['d'] = action::modify::delete_row;
