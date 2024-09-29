@@ -1,5 +1,5 @@
 #include "../include/action.hpp"
-#include <ncurses.h>
+#include <cstring>
 
   namespace fs = std::filesystem;
 
@@ -113,32 +113,60 @@
       }
   }
 
-  // Read function
-  void action::file::read(const char* file_name) {
-      if (std::filesystem::exists(file_name) && 
-          std::filesystem::is_regular_file(file_name) &&
-          std::filesystem::file_size(file_name) < 1000000 &&
-          std::filesystem::file_size(file_name) > 0) {
+  bool is_readable(const char* file_name) {
 
-          std::ifstream myfile(file_name);
-          if (!myfile.is_open()) {
-              std::cerr << "Can't open: " << file_name << "\n";
-              return;
-          }
+    fs::perms file_perms = fs::status(file_name).permissions();
 
-          status = Status::saved;
+    if (fs::exists(file_name) &&
+        fs::is_regular_file(file_name) &&
+        fs::file_size(file_name) < 1000000 &&
+        fs::file_size(file_name) > 0 &&
+        (file_perms & fs::perms::owner_read) != fs::perms::none &&
+        (file_perms & fs::perms::group_read) != fs::perms::none &&
+        (file_perms & fs::perms::others_read) != fs::perms::none) {
 
-          buffer.clear();
-          std::string line;
-          while (std::getline(myfile, line)) {
-              buffer.push_back(line);
-          }
+        return true;
 
-          myfile.close();
       } else {
-          buffer.restore();
+        return false;
       }
   }
+
+  // Read function
+  void action::file::read(const char* file_name) {
+
+    // If the status is unsaved, prompt for confirmation
+    if (status == Status::unsaved) {
+        bool confirmed = action::system::confirm_exit();
+        if (!confirmed) {
+            // If the user selects "No", return to the editor
+            return;
+        }
+    }
+
+    if (is_readable(file_name)) {
+        std::ifstream myfile(file_name);
+        if (!myfile.is_open()) {
+            std::cerr << "Can't open: " << file_name << "\n";
+            return;
+        }
+
+        status = Status::saved;
+
+        strcpy(pointed_file, file_name);
+
+        buffer.clear();
+        std::string line;
+        while (std::getline(myfile, line)) {
+            buffer.push_back(line);
+        }
+
+        myfile.close();
+    } else if(strcmp(file_name, "") == 0) {
+        buffer.restore();
+    }
+}
+
 
 void action::file::file_selection_menu() {
     initscr();
@@ -173,7 +201,7 @@ void action::file::file_selection_menu() {
         clear();  // Clear the screen
 
         // Display the full path of the current directory
-        std::string full_path = current_path.string();  // Full path
+        std::string full_path = current_path.string();  
         mvprintw(0, 0, "Current Path: %s", full_path.c_str());
 
         // Display the list of files
@@ -208,7 +236,7 @@ void action::file::file_selection_menu() {
                 } else {
                     // Check if it's a directory or file
                     fs::path chosen_path = current_path / files[selected];
-                    if (fs::is_directory(chosen_path)) {
+                    if (fs::is_directory(chosen_path) && access(chosen_path.c_str(), R_OK | W_OK) == 0) {
                         current_path = fs::absolute(chosen_path);
                         load_directory();
                         selected = 0;  // Reset selection to the top

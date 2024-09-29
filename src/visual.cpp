@@ -1,53 +1,98 @@
 #include "../include/action.hpp"
 
-  void action::visual::highlight_text() {
-    int row_end_col;
-    int row_start_col;
-    // Clear the previous selection
-    for (int i = 0; i <= abs(visual_end_row - visual_start_row); i++) {
-        int curr_row = (visual_end_row > visual_start_row) ? visual_start_row + i : visual_start_row - i;
-        // Get the length of the row text
-        int row_length = buffer.get_string_row(curr_row + starting_row).length();
+void action::visual::highlight_text() {
+    
+    int start_col;
+    int end_col;
+    int curr_row;
+
+    // Limita le righe da evidenziare alle righe visibili, basandosi su `starting_row` e `max_row`
+    int row_to_highlight = abs(visual_end_row - visual_start_row);
+
+    // Ciclo attraverso le righe da evidenziare
+    for (int i = 0; i <= row_to_highlight; i++) {
+        curr_row = (visual_end_row > visual_start_row) ? visual_start_row + i : visual_start_row - i;
+        
+        // Considera solo le righe visibili (tra `starting_row` e `max_row`)
+        if (curr_row < starting_row || curr_row > max_row + starting_row) {
+            continue; // Salta le righe che sono fuori dal range visibile
+        }
+
+        // Lunghezza della riga corrente
+        int row_length = buffer[curr_row].length();
+
+        // Tratta le righe vuote come se avessero almeno un carattere per l'evidenziazione
+        if (row_length == 0) {
+            row_length = 1;  // Tratta la riga vuota come se contenesse un carattere
+        }
 
         if (visual_end_row == visual_start_row) {
-          // Get the start and end columns for the current row
-          row_start_col = visual_start_col;
-          row_end_col   = visual_end_col;
-        }else {
-          if (i == 0) {
-            // Get the start and end columns for the first row
-            row_start_col = visual_start_col;
-            row_end_col   = (visual_end_row < visual_start_row) ? span : row_length + span + 1;
-
-          } else if (i == abs(visual_end_row - visual_start_row)) {
-            row_start_col = (visual_end_row < visual_start_row) ? row_length + span + 1 : span + 1;
-            row_end_col   = visual_end_col;
-          } else {
-            // Get the start and end columns for the middle rows
-            row_start_col = span + 1;
-            row_end_col   = row_length + span + 1;
-          }
+            // Ottieni la colonna iniziale e finale per la riga corrente (stessa riga)
+            start_col = visual_start_col;
+            end_col = visual_end_col;
+        } else if (i == 0) {
+            // Prima riga della selezione
+            start_col = visual_start_col;
+            end_col = (visual_end_row < visual_start_row) ? span + 1 : row_length + span + 1;
+        } else if (i == row_to_highlight) {
+            // Ultima riga della selezione
+            start_col = (visual_end_row < visual_start_row) ? row_length + span + 1 : span + 1;
+            end_col = visual_end_col;
+        } else {
+            // Righe intermedie
+            start_col = span + 1;
+            end_col = row_length + span + 1;
         }
 
-        // Highlight the text in the current row
-        for (int j = 0; j < abs(row_end_col - row_start_col); j++) {
-            // Get the current position on the screen
-            int screen_x = (row_end_col > row_start_col) ? row_start_col + j : row_start_col - j;
-            int screen_y = (visual_end_row > visual_start_row) ? visual_start_row + i : visual_start_row - i;
+        // Assicurati che almeno un carattere venga evidenziato
+        int highlight_length = std::max(abs(end_col - start_col), 1); 
 
-            // Definisci la coppia di colori (colore testo, colore sfondo)
-            init_pair(1, COLOR_WHITE, COLOR_RED); // Testo bianco, sfondo rosso
-
-            // Cambia il carattere a coordinate specificate con sfondo rosso
-            mvchgat(screen_y, screen_x, 1, A_NORMAL, 1, NULL);
-        }
+        // Evidenziazione della riga corrente
+        mvchgat(curr_row - starting_row, std::min(start_col, end_col), highlight_length, A_NORMAL, 1, NULL);
     }
-  }
+}
 
-    // Function to copy the highlighted text based on visual mode selection
-  void action::visual::copy_highlighted() {
+
+// Function to copy the highlighted text based on visual mode selection
+void action::visual::copy_highlighted() {
 
     copy_paste_buffer = "";
+
+    int start_row = visual_start_row;
+    int end_row = visual_end_row;
+    int start_col = visual_start_col - span - 1;
+    int end_col = visual_end_col - span;
+
+    // Case 1: Highlight is within a single row
+    if (start_row == end_row) {
+        // the copying process must occur from left to right so we start from the column that is furthest to the left
+        int copy_start   = std::min(start_col, end_col);
+        int char_to_copy = std::max(abs(end_col - start_col),1); // number of characters to copy, at least 1
+
+        copy_paste_buffer = buffer[start_row].substr(copy_start, char_to_copy); 
+        return;
+    }
+
+    // Case 2: Highlight spans multiple rows
+    if (end_row < start_row) std::swap(start_row, end_row); // swap the rows if the end row is before the start row
+
+    copy_paste_buffer = buffer[start_row].substr(start_col);
+
+    // Copy the middle rows entirely
+    for (int i = 0; i < abs(start_row - end_row) - 1; ++i) {
+        int curr_row = start_row + i + 1;
+        copy_paste_buffer += '\n' + buffer[curr_row];
+    }
+
+    copy_paste_buffer += '\n' + buffer[end_row].substr(0, end_col);
+
+    action::system::change2normal();
+}
+
+// Function to delete and copy the highlighted text based on visual mode selection
+void action::visual::delete_highlighted() {
+
+    copy_paste_buffer = "";  // Clear the buffer before copying the highlighted text
 
     int start_row = visual_start_row;
     int end_row = visual_end_row;
@@ -56,37 +101,34 @@
 
     // Case 1: Highlight is within a single row
     if (start_row == end_row) {
-        //std::cout << "start row : " << start_row << std::endl;
-        if(end_col > start_col)
-          copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(start_col, end_col - start_col);
-        else
-          copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(end_col, start_col - end_col);
-    }
-    // Case 2: Highlight spans multiple rows
-    else if(end_row > start_row){
+        // The copying and deletion process must occur from left to right
+        int copy_start = std::min(start_col, end_col);
+        int char_to_copy = abs(end_col - start_col);  // Number of characters to copy and delete
 
-        copy_paste_buffer = buffer.get_string_row(start_row + starting_row).substr(start_col);
+        // Copy and delete the text
+        copy_paste_buffer = buffer.slice_row(start_row, copy_start, copy_start + char_to_copy);
 
-        // Copy the middle rows entirely
-        for (int row = 0; row < abs(start_row - end_row) - 1; ++row) {
-            int curr_row = start_row + row + 1;
-            copy_paste_buffer += '\n' + buffer.get_string_row(curr_row);
-        }
+    } else{
+        // Case 2: Highlight spans multiple rows
+        if (end_row < start_row) std::swap(start_row, end_row); // swap the rows if the end row is before the start row
 
-        copy_paste_buffer += '\n' + buffer.get_string_row(end_row + starting_row).substr(0, end_col);
-
-    }else{
-        copy_paste_buffer = buffer.get_string_row(end_row + starting_row).substr(end_col);
+        copy_paste_buffer = buffer.slice_row(start_row, start_col, buffer[start_row].length());
 
         // Copy the middle rows entirely
-        for (int row = 0; row < abs(start_row - end_row) - 1; ++row) {
-            int curr_row = end_row + row + 1;
-            copy_paste_buffer += '\n' + buffer.get_string_row(curr_row);
+        for (int i = 0; i < abs(start_row - end_row) - 1; ++i) {
+            int curr_row = start_row + i + 1;
+            copy_paste_buffer += '\n' + buffer[curr_row];
+            buffer.del_row(curr_row);  // Delete the current row after copying it
+            end_row--;  // Adjust the end row after deleting a row
         }
 
-        copy_paste_buffer += '\n' + buffer.get_string_row(start_row + starting_row).substr(0,start_col);
-
+        copy_paste_buffer += '\n' + buffer.slice_row(end_row, 0, end_col);
+        
+        buffer.merge_rows(start_row, start_row + 1);
+        pointed_row = start_row;
+        cursor.set(start_col, start_row - starting_row);
     }
-    
+
+    // Switch back to normal mode after deletion and copying
     action::system::change2normal();
-  }
+}

@@ -10,8 +10,7 @@ void action::movement::new_line() {
 
   const int curr_row_length = buffer.get_string_row(pointed_row).length();
   if (cursor.getX() != curr_row_length) {
-    std::string line_break =
-        buffer.slice_row(pointed_row, cursor.getX(), curr_row_length);
+    std::string line_break = buffer.slice_row(pointed_row, cursor.getX(), curr_row_length);
     buffer.row_append(pointed_row + 1, line_break);
   }
 
@@ -87,7 +86,18 @@ void action::movement::move_right() {
 void action::movement::go_down_creating_newline() {
   // Create a new line below the current pointed_row
   buffer.new_row("", pointed_row + 1);
-  action::movement::move_down();
+
+  if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
+    !buffer.is_void_row(max_row) && pointed_row < buffer.get_number_rows()) {
+
+    starting_row++;
+  } else if (cursor.getY() < max_row - 1) {
+    cursor.move_down();
+  }
+
+  cursor.setX(0);
+  pointed_row++;
+
   action::system::change2insert();
 }
 

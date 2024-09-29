@@ -72,7 +72,7 @@
   void action::system::exit_ide() {
       // If the status is unsaved, prompt for confirmation
       if (status == Status::unsaved) {
-          bool confirmed = confirm_exit();
+          bool confirmed = action::system::confirm_exit();
           if (!confirmed) {
               // If the user selects "No", return to the editor
               return;

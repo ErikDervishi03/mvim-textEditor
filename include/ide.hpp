@@ -36,27 +36,31 @@ class Ide{
 Ide::Ide() : screen(Screen::getScreen()) {
   screen.start();
   start_color();
+  init_pair(1, COLOR_WHITE, COLOR_RED);
 
   copy_paste_buffer = (char *)malloc(10000);
   pointed_file = (char *)malloc(10000);
   strcpy(pointed_file, "");  
-  status = Status::unsaved;
-  visual_start_row = visual_end_row = cursor.getX();
+  status = Status::saved;
+  visual_start_row = visual_end_row = pointed_row;
   visual_start_col = visual_end_col = cursor.getY();
 }
 
 Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
   screen.start();
   start_color();
-  cursor.restore(span);
-  action::file::read(filename);
-  screen.update();
+  init_pair(1, COLOR_WHITE, COLOR_RED);
 
   copy_paste_buffer = (char *)malloc(10000);
   pointed_file = (char *)malloc(10000);
-  strcpy(pointed_file, filename);
+  strcpy(pointed_file, "");
+
+  cursor.restore(span);
+  action::file::read(filename);
+  screen.update();
   status = Status::saved;
-  visual_start_row = visual_end_row = cursor.getX();
+
+  visual_start_row = visual_end_row = pointed_row;
   visual_start_col = visual_end_col = cursor.getY();
 
 }
@@ -86,10 +90,10 @@ void Ide::run(){
       screen.update();
 
       if(mode != visual){
-        visual_start_row = cursor.getY();
+        visual_start_row = pointed_row;
         visual_start_col = cursor.getX() + span + 1;
       }else{
-        visual_end_row = cursor.getY();
+        visual_end_row = pointed_row;
         visual_end_col = cursor.getX() + span + 1;
         action::visual::highlight_text();
       }

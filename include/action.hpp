@@ -4,6 +4,7 @@
 #include "utils.h"
 #include <cstring>
 #include <iostream>
+#include <unistd.h>
 #include <ncurses.h>
 
 namespace action{
@@ -212,6 +213,11 @@ namespace file {
       * After copying, it switches the mode back to normal mode.
       */
       void copy_highlighted();
+
+      /**
+      * Deletes and copy the highlighted text based on the visual selection.
+      **/
+      void delete_highlighted();
   };
 };
 

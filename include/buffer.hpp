@@ -20,6 +20,7 @@ private:
 
 public:
   Buffer();
+  std::string& operator[](int row); 
   void new_row(std::string row, int pos);
   void del_row(int pos);
   void insert_letter(int row, int pos, char letter);

@@ -33,9 +33,9 @@ public:
 
     /*normal*/
 
-    normalMap[KEY_UP]    = action::movement::move_up;
-    normalMap[KEY_DOWN]  = action::movement::move_down;
-    normalMap[KEY_LEFT]  = action::movement::move_left;
+    normalMap[KEY_UP] = action::movement::move_up;
+    normalMap[KEY_DOWN] = action::movement::move_down;
+    normalMap[KEY_LEFT] = action::movement::move_left;
     normalMap[KEY_RIGHT] = action::movement::move_right;
     normalMap['h'] = action::movement::move_left;
     normalMap['j'] = action::movement::move_down;
@@ -71,7 +71,7 @@ public:
     visualMap[KEY_LEFT] = action::movement::move_left;
     visualMap[KEY_RIGHT] = action::movement::move_right;
     visualMap['h'] = action::movement::move_left;
-    visualMap['j'] = action::movement::move_down; 
+    visualMap['j'] = action::movement::move_down;
     visualMap['k'] = action::movement::move_up;
     visualMap['l'] = action::movement::move_right;
     visualMap['a'] = action::movement::move_to_end_of_line;
@@ -79,6 +79,7 @@ public:
     visualMap['g'] = action::movement::move_to_end_of_file;
     visualMap['G'] = action::movement::move_to_beginning_of_file;
     visualMap['w'] = action::movement::move_to_next_word;
+    visualMap['d'] = action::visual::delete_highlighted;
 
     visualMap['y'] = action::visual::copy_highlighted;
 
