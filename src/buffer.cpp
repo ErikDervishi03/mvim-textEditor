@@ -66,12 +66,6 @@ bool Buffer::is_void_row(int row){
 }
 
 std::string Buffer::slice_row(int row, int pos, int pos2) {
-  if(pos == 0 && pos2 == buffer[row].length()){
-    std::string to_del = buffer[row];
-    del_row(row);
-    return to_del;
-  }
-
   std::string to_del = this->buffer[row].substr(pos, pos2 - pos);
   this->buffer[row].erase(pos, pos2 - pos);
   return to_del;
