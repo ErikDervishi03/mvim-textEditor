@@ -3,6 +3,7 @@
 #include <menu.h>
 #include "globals/mem.h"
 #include "globals/consts.h"
+#include "globals/keywords.h"
 #include <ncurses.h>
 #include <memory>
 #include <string.h>

@@ -141,6 +141,57 @@ void action::visual::delete_highlighted() {
     action::system::change2normal();
 }
 
+static void highlight_row_selected(int row, int start_col, int end_col, int color_scheme) {
+    int highlight_length = std::max(abs(end_col - start_col), 1);
+    mvchgat(row - starting_row, std::min(start_col, end_col), highlight_length, A_NORMAL, color_scheme, NULL);
+}
 
+void action::visual::highlight_keywords() {
+    int visible_start_row = starting_row;
+    int visible_end_row = std::min((int)(starting_row + max_row), buffer.get_number_rows() - 1);
 
+    // Loop through each visible row
+    for (int row = visible_start_row; row <= visible_end_row; ++row) {
+        std::string& buffer_row = buffer[row];
+
+        // Check types_old keywords
+        for (int i = 0; types_old[i] != nullptr; ++i) {
+            const char* keyword = types_old[i];
+            size_t keyword_len = strlen(keyword);
+
+            size_t found_pos = buffer_row.find(keyword);
+            while (found_pos != std::string::npos) {
+                // Check for whitespace or delimiters around the keyword
+                if ((found_pos == 0 || isspace(buffer_row[found_pos - 1]) || 
+                    strchr("(){}[]", buffer_row[found_pos - 1])) && // Check left boundary
+                    (found_pos + keyword_len == buffer_row.size() || 
+                    isspace(buffer_row[found_pos + keyword_len]) || 
+                    strchr("(){}[]", buffer_row[found_pos + keyword_len]) || 
+                    strchr("+-*/%=" , buffer_row[found_pos + keyword_len]))) { // Check right boundary
+
+                    highlight_row_selected( row, found_pos + span + 1, found_pos + keyword_len + span + 1, 2);
+                }
+                found_pos = buffer_row.find(keyword, found_pos + keyword_len);
+            }
+        }
+
+        // Check brackets
+        for (int j = 0; brackets[j] != nullptr; ++j) {
+            const char* bracket = brackets[j];
+            size_t found_pos = buffer_row.find(bracket);
+            while (found_pos != std::string::npos) {
+                // Highlight bracket
+                highlight_row_selected( row, found_pos + span + 1, found_pos + 1 + span + 1,3);
+                found_pos = buffer_row.find(bracket, found_pos + 1);
+            }
+        }
+
+        // Check for single-line comments (//)
+        size_t single_line_comment_pos = buffer_row.find("//");
+        if (single_line_comment_pos != std::string::npos) {
+            highlight_row_selected(row, single_line_comment_pos + span + 1, buffer_row.size() + span + 1, 4);
+        }
+
+    }
+}
 

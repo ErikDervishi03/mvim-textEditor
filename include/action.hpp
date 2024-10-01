@@ -126,7 +126,9 @@ namespace action{
      */
     void paste();
 
-
+    /**
+      * when in find mode, replace the current word searched with the word provided by the user.
+    */
     void replace();
     
   };
@@ -154,8 +156,6 @@ namespace file {
       * The user can exit the menu by pressing the ESC key.
       */
       void file_selection_menu();
-
-
   };
 
 
@@ -239,6 +239,11 @@ namespace file {
       * Deletes and copy the highlighted text based on the visual selection.
       **/
       void delete_highlighted();
+
+      /**
+      * Highlights all occurrences of the keywords in the buffer.
+      **/
+      void highlight_keywords();
 
   };
 

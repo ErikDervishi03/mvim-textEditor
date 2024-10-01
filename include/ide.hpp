@@ -39,6 +39,9 @@ Ide::Ide() : screen(Screen::getScreen()) {
   screen.start();
   start_color();
   init_pair(1, COLOR_WHITE, COLOR_RED);
+  init_pair(2, COLOR_BLUE, COLOR_BLACK);
+  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(4, COLOR_CYAN, COLOR_BLACK);
 
   copy_paste_buffer = (char *)malloc(10000);
   pointed_file = (char *)malloc(10000);
@@ -52,6 +55,9 @@ Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
   screen.start();
   start_color();
   init_pair(1, COLOR_WHITE, COLOR_RED);
+  init_pair(2, COLOR_BLUE, COLOR_BLACK);
+  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(4, COLOR_CYAN, COLOR_BLACK);
 
   copy_paste_buffer = (char *)malloc(10000);
   pointed_file = (char *)malloc(10000);
@@ -60,6 +66,9 @@ Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
   cursor.restore(span);
   action::file::read(filename);
   screen.update();
+  action::visual::highlight_keywords();
+
+  refresh();
   status = Status::saved;
 
   visual_start_row = visual_end_row = pointed_row;
@@ -91,7 +100,8 @@ void Ide::run(){
       erase();
       _command.execute(input);
       screen.update();
-    
+      action::visual::highlight_keywords();
+
       if(mode != visual){
         visual_start_row = pointed_row;
         visual_start_col = cursor.getX() + span + 1;

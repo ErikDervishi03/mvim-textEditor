@@ -1,5 +1,4 @@
-
-
+#pragma once
 
 constexpr int KEY_ENTER_ = 10;
 
