@@ -1,11 +1,13 @@
 #pragma once
 #include "action.hpp"
 #include "globals/mem.h"
+#include "globals/mode.h"
 #include "utils.h"
 #include "screen.hpp"
 #include "command.hpp"
 #include <cstdlib>
 #include <cstring>
+#include <ncurses.h>
 
 
 const char * ide_name = R"(
@@ -43,7 +45,7 @@ Ide::Ide() : screen(Screen::getScreen()) {
   strcpy(pointed_file, "");  
   status = Status::saved;
   visual_start_row = visual_end_row = pointed_row;
-  visual_start_col = visual_end_col = cursor.getY();
+  visual_start_col = visual_end_col = cursor.getX();
 }
 
 Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
@@ -61,7 +63,7 @@ Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
   status = Status::saved;
 
   visual_start_row = visual_end_row = pointed_row;
-  visual_start_col = visual_end_col = cursor.getY();
+  visual_start_col = visual_end_col = cursor.getX();
 
 }
 
@@ -85,20 +87,26 @@ void Ide::run(){
   cursor.restore(span);
   while(true){
     int input = getch();
-    if(input != ERR){
+    if(input != ERR){ 
+      erase();
       _command.execute(input);
       screen.update();
-
+    
       if(mode != visual){
         visual_start_row = pointed_row;
         visual_start_col = cursor.getX() + span + 1;
       }else{
         visual_end_row = pointed_row;
         visual_end_col = cursor.getX() + span + 1;
-        action::visual::highlight_text();
+        action::visual::highlight_selected();
       }
       
+      if(mode == find){
+        action::find::highlight_visible_occurrences();
+      }
+
       cursor.restore(span);
+      refresh();
     }
   }
   

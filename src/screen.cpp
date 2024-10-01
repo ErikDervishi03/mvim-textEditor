@@ -17,14 +17,6 @@ void Screen::start(){
 }
 
 void Screen::update(){
-  /*
-  if(mode == command){
-    erase();
-    print_command();
-    print_buffer();
-  }*/
-
-  erase();
   print_buffer();
   
 }
@@ -75,6 +67,4 @@ void Screen::print_multiline_string(int start_y, int start_x, const char *str) {
             mvaddch(current_y, current_x++, str[i]); // Stampa il carattere e incrementa X
         }
     }
-
-    refresh();  // Aggiorna lo schermo per visualizzare la stringa stampata
 }

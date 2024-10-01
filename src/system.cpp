@@ -218,3 +218,7 @@
   void action::system::change2visual(){
     mode = Mode::visual;
   }
+
+  void action::system::change2find(){
+    mode = Mode::find;
+  }

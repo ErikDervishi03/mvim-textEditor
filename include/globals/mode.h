@@ -8,6 +8,8 @@ enum Mode {
 
   command,
 
-  visual
+  visual,
+
+  find
 
 };

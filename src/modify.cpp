@@ -1,4 +1,5 @@
 #include "../include/action.hpp"
+#include <ncurses.h>
 
   void action::modify::insert_letter(int letter){
     status = Status::unsaved;
@@ -101,3 +102,26 @@
       }
     }
   }
+
+void action::modify::replace() {
+    char* replace_term = action::system::text_form("Replace with: ");
+    if (replace_term == NULL || strlen(replace_term) == 0) {
+        free(replace_term);
+        return;
+    }
+
+    status = Status::unsaved;
+    // Replace occurrences
+    for (const auto& occ : found_occurrences) {
+        int row = occ.first;
+        int col = occ.second;
+
+        // Replace the word in the buffer at the found position
+        buffer[row].replace(col, current_searched_word_length, replace_term);
+    }
+
+    action::system::change2normal();
+
+    // Clean up
+    free(replace_term);
+}

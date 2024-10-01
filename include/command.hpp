@@ -16,7 +16,7 @@ private:
   keymap commandMap;
   keymap normalMap;
   keymap visualMap;
-
+  keymap findMap;
 public:
   Command() {
     /*insert*/
@@ -63,7 +63,7 @@ public:
 
     normalMap['v'] = action::system::change2visual;
 
-    /*command*/
+    normalMap['f'] = action::find::find;
 
     /*visual*/
     visualMap[KEY_UP] = action::movement::move_up;
@@ -84,53 +84,68 @@ public:
     visualMap['y'] = action::visual::copy_highlighted;
 
     visualMap[ESC] = action::system::change2normal;
+
+    /*find*/
+    findMap[ESC] = action::system::change2normal;
+    findMap['n'] = action::find::go_to_next_occurrence;
+    findMap['N'] = action::find::go_to_previous_occurrence;
+    findMap['r'] = action::modify::replace;
   }
 
-  void execute(int key) {
-    if (mode == insert) {
+void execute(int key) {
+  switch (mode) {
+    case insert:
       if (insertMap.find(key) != insertMap.end()) {
-        insertMap[key]();
+          insertMap[key]();
       } else {
-        action::modify::insert_letter(key);
+          action::modify::insert_letter(key);
       }
-      return;
-    }
+      break;
 
-    if (mode == normal) {
+    case normal:
       if (normalMap.find(key) != normalMap.end()) {
-        normalMap[key]();
+          normalMap[key]();
       }
-      return;
-    }
+      break;
 
-    if (mode == command) {
-      if (commandMap.find(key) != commandMap.end()) {
-        commandMap[key]();
-      }
-      return;
-    }
-
-    if (mode == visual) {
+    case visual:
       if (visualMap.find(key) != visualMap.end()) {
-        visualMap[key]();
+          visualMap[key]();
       }
-      return;
-    }
-  }
+      break;
 
-  void bind(int key, std::function<void()> action, Mode mode_) {
-    if (mode_ == insert) {
+    case find:
+      if (findMap.find(key) != findMap.end()) {
+          findMap[key]();
+      }
+      break;
+
+    default:
+      // Optional: handle unknown mode
+      break;
+  }
+}
+
+void bind(int key, std::function<void()> action, Mode mode_) {
+  switch (mode_) {
+    case insert:
       insertMap[key] = action;
-    }
+      break;
 
-    else if (mode_ == normal) {
+    case normal:
       normalMap[key] = action;
-    }
+      break;
 
-    else if (mode_ == command) {
+    case command:
       commandMap[key] = action;
-    }
+      break;
+
+    default:
+      // Optional: handle unknown mode
+      break;
   }
+}
+
 
   void menu() {
     // TODO

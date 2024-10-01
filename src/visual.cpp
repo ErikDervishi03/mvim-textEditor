@@ -1,54 +1,51 @@
 #include "../include/action.hpp"
+#include <ncurses.h>
 
-void action::visual::highlight_text() {
+void action::visual::highlight(int start_row, int end_row, int start_col, int end_col) {
+    int curr_row,curr_start_col, curr_end_col;;
 
-    int start_col;
-    int end_col;
-    int curr_row;
-
-    // Imposta il tetto minimo e massimo per visual_start_row e visual_end_row
-    int visible_start_row = std::max((int)visual_start_row, (int)starting_row); // Assicura che non vada sotto la prima riga visibile
-    int visible_end_row = std::min((int)visual_end_row, (int)(max_row + starting_row)); // Assicura che non vada sopra l'ultima riga visibile
-
-    // Calcola il numero di righe da evidenziare, basato sui valori visibili
+    // Ensure the highlighting respects the visible range
+    int visible_start_row = std::max(start_row, (int)starting_row);
+    int visible_end_row   = std::min(end_row, (int)(max_row + starting_row));
+    
     int row_to_highlight = abs(visible_end_row - visible_start_row);
 
-    // Ciclo attraverso le righe visibili da evidenziare
-    for (int i = 0; i <= row_to_highlight; i++) {
+    // Loop through visible rows to highlight
+    for (int i = 0; i <= row_to_highlight; ++i) {
         curr_row = (visible_end_row > visible_start_row) ? visible_start_row + i : visible_start_row - i;
 
-        // Lunghezza della riga corrente
+        // Length of the current row
         int row_length = buffer[curr_row].length();
 
-        // Tratta le righe vuote come se avessero almeno un carattere per l'evidenziazione
-        if (row_length == 0) {
-            row_length = 1;  // Tratta la riga vuota come se contenesse un carattere
-        }
-
-        if (visible_end_row == visible_start_row) {
-            // Ottieni la colonna iniziale e finale per la riga corrente (stessa riga)
-            start_col = visual_start_col;
-            end_col = visual_end_col;
+        // Logic to determine start and end columns for each row
+        if (end_row == start_row) {
+            // Single-row selection
+            curr_start_col = start_col;
+            curr_end_col = end_col;
         } else if (i == 0) {
-            // Prima riga della selezione
-            start_col = visual_start_col;
-            end_col = (visible_end_row < visible_start_row) ? span + 1 : row_length + span + 1;
+            // First row of the selection
+            curr_start_col = start_col;
+            curr_end_col = (end_row < start_row) ? span + 1 : row_length + span + 1;
         } else if (i == row_to_highlight) {
-            // Ultima riga della selezione
-            start_col = (visible_end_row < visible_start_row) ? row_length + span + 1 : span + 1;
-            end_col = visual_end_col;
+            // Last row of the selection
+            curr_start_col = (end_row < start_row) ? row_length + span + 1 : span + 1;
+            curr_end_col = end_col;
         } else {
-            // Righe intermedie
-            start_col = span + 1;
-            end_col = row_length + span + 1;
+            // Intermediate rows
+            curr_start_col = span + 1;
+            curr_end_col = row_length + span + 1;
         }
 
-        // Assicurati che almeno un carattere venga evidenziato
-        int highlight_length = std::max(abs(end_col - start_col), 1); 
+        // Ensure at least one character is highlighted
+        int highlight_length = std::max(abs(curr_end_col - curr_start_col), 1);
 
-        // Evidenziazione della riga corrente
-        mvchgat(curr_row - starting_row, std::min(start_col, end_col), highlight_length, A_NORMAL, 1, NULL);
+        // Highlight the current row
+        mvchgat(curr_row - starting_row, std::min(curr_start_col, curr_end_col), highlight_length, A_NORMAL, 1, NULL);
     }
+}
+
+void action::visual::highlight_selected() {
+    highlight(visual_start_row, visual_end_row, visual_start_col, visual_end_col);
 }
 
 
@@ -143,4 +140,7 @@ void action::visual::delete_highlighted() {
     // Switch back to normal mode after deletion and copying
     action::system::change2normal();
 }
+
+
+
 
