@@ -143,3 +143,4 @@ void action::visual::delete_highlighted() {
     // Switch back to normal mode after deletion and copying
     action::system::change2normal();
 }
+

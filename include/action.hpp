@@ -183,6 +183,13 @@ namespace file {
       void change2command();
 
       /**
+      * Displays a form to input a string
+      * The user can input a string and confirm with Enter or cancel with ESC.
+      * The input is returned.
+      */
+      char* text_form(const char* label);
+
+      /**
       * Switches the editor mode to "normal" mode.
       */
       void change2normal();
