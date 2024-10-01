@@ -48,7 +48,10 @@ void Screen::draw_rectangle(int y1, int x1, int y2, int x2){
 void Screen::print_buffer() {
   std::vector<std::string> buffer_ = buffer.get_buffer();
   for (int i = 0 ; (i + starting_row) < buffer_.size() && i < max_row; i++) { 
-    mvprintw(i, 0, "%d",i + starting_row + 1);
+    attron(COLOR_PAIR(3)); // Enable yellow color
+    mvprintw(i, 0, "%d", i + starting_row + 1);
+    attroff(COLOR_PAIR(3));
+
     mvprintw(i, span + 1, buffer_[i + starting_row].c_str());
   }
 }
