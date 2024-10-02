@@ -1,4 +1,6 @@
 #pragma once
+
+// Include necessary headers
 #include "action.hpp"
 #include "globals/mem.h"
 #include "globals/mode.h"
@@ -9,7 +11,7 @@
 #include <cstring>
 #include <ncurses.h>
 
-
+// Define constants and global variables
 const char * ide_name = R"(
                       _             
                      (_)            
@@ -21,134 +23,139 @@ const char * ide_name = R"(
         press a key to start
 )";
 
+// Ide class definition
+class Ide {
+private:
+    Screen& screen;       // Screen instance
+    Command _command;     // Command processor
 
-class Ide{
-  private:
-    Screen& screen;
-    Command _command;
+    // Private methods
     void draw_command_box();
     void show_initial_screen();
-  public:
+    void initialize_ncurses();  // Helper function to initialize ncurses and colors
+
+public:
+    // Constructors
     Ide();
     Ide(const char* filename);
+
+    // Run the IDE main loop
     void run();
 };
 
-
+// Constructor implementations
 Ide::Ide() : screen(Screen::getScreen()) {
-  screen.start();
-  start_color();
-  init_pair(1, COLOR_WHITE, COLOR_RED);
-  init_pair(2, COLOR_BLUE, COLOR_BLACK);
-  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(4, COLOR_CYAN, COLOR_BLACK);
-
-  copy_paste_buffer = (char *)malloc(10000);
-  pointed_file = (char *)malloc(10000);
-  strcpy(pointed_file, "");  
-  status = Status::saved;
-  visual_start_row = visual_end_row = pointed_row;
-  visual_start_col = visual_end_col = cursor.getX();
+    initialize_ncurses();  // Initialize ncurses and colors
+    strcpy(pointed_file, "");  
+    status = Status::saved;
+    visual_start_row = visual_end_row = pointed_row;
+    visual_start_col = visual_end_col = cursor.getX();
 }
 
 Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
-  screen.start();
-  start_color();
-  init_pair(1, COLOR_WHITE, COLOR_RED);
-  init_pair(2, COLOR_BLUE, COLOR_BLACK);
-  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(4, COLOR_CYAN, COLOR_BLACK);
+    initialize_ncurses();  // Initialize ncurses and colors
+    strcpy(pointed_file, "");
 
-  copy_paste_buffer = (char *)malloc(10000);
-  pointed_file = (char *)malloc(10000);
-  strcpy(pointed_file, "");
+    cursor.restore(span);  // Restore cursor position
+    action::file::read(filename);  // Load file content
+    screen.update();  // Update screen
+    action::visual::highlight_keywords();  // Highlight keywords
 
-  cursor.restore(span);
-  action::file::read(filename);
-  screen.update();
-  action::visual::highlight_keywords();
-
-  refresh();
-  status = Status::saved;
-
-  visual_start_row = visual_end_row = pointed_row;
-  visual_start_col = visual_end_col = cursor.getX();
-
-}
-
-
-void print_to_terminal(int message) {
-    // Esci dalla modalità ncurses
-    endwin();
-
-    // Usa std::cout o printf per stampare direttamente nel terminale
-    std::cout << message << std::endl;
-
-    // Rientra nella modalità ncurses
     refresh();
+    status = Status::saved;
+    visual_start_row = visual_end_row = pointed_row;
+    visual_start_col = visual_end_col = cursor.getX();
 }
 
+// Helper function to initialize ncurses and color pairs
+void Ide::initialize_ncurses() {
+    screen.start();
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_RED);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(4, COLOR_CYAN, COLOR_BLACK);
 
-void Ide::run(){ 
-  show_initial_screen();
+    // Allocate memory for buffers
+    copy_paste_buffer = (char *)malloc(10000);
+    pointed_file = (char *)malloc(10000);
+}
 
-  //draw_command_box();
-  cursor.restore(span);
-  while(true){
+// Run the IDE main loop
+void Ide::run() {
+  show_initial_screen();  // Show initial screen if no file is loaded
+
+ cursor.restore(span);
+  while (true) {
     int input = getch();
-    if(input != ERR){ 
-      erase();
-      _command.execute(input);
-      screen.update();
-      action::visual::highlight_keywords();
+    if (input != ERR) {
+        erase();  // Pulisce lo schermo
 
-      if(mode != visual){
-        visual_start_row = pointed_row;
-        visual_start_col = cursor.getX() + span + 1;
-      }else{
-        visual_end_row = pointed_row;
-        visual_end_col = cursor.getX() + span + 1;
-        action::visual::highlight_selected();
-      }
-      
-      if(mode == find){
-        action::find::highlight_visible_occurrences();
-      }
+        // Esegui il comando basato sull'input (modifica il buffer se necessario)
+        _command.execute(input);
 
-      cursor.restore(span);
-      refresh();
+        // Stampa il buffer aggiornato
+        screen.update();
+
+        // Evidenzia le parole chiave dopo aver stampato il buffer
+        action::visual::highlight_keywords();
+
+        // Se sei in modalità visual, evidenzia la selezione
+        if (mode == visual) {
+            visual_end_row = pointed_row;
+            visual_end_col = cursor.getX() + span + 1;
+            action::visual::highlight_selected();  // Evidenzia selezione visual mode
+        }else{
+            visual_start_row = pointed_row;
+            visual_start_col = cursor.getX() + span + 1;
+        }
+
+        // Se sei in modalità find, evidenzia le occorrenze trovate
+        if (mode == find) {
+            action::find::highlight_visible_occurrences();  // Evidenzia occorrenze trovate
+        }
+
+        // Ripristina la posizione del cursore dopo tutte le operazioni
+        cursor.restore(span);
+
+        // Visualizza i risultati sullo schermo
+        refresh();
     }
   }
-  
+
 }
 
-void Ide::draw_command_box(){
-  screen.draw_rectangle(screen.get_height() - 3, 0, screen.get_height() - 1, screen.get_width()-1);
+
+// Draw command box at the bottom of the screen
+void Ide::draw_command_box() {
+    screen.draw_rectangle(screen.get_height() - 3, 0, screen.get_height() - 1, screen.get_width() - 1);
 }
 
+// Show the initial welcome screen
 void Ide::show_initial_screen() {
     if (strcmp(pointed_file, "") == 0) {
         curs_set(0);
 
-        // Calculate the dimensions of the text
-        int text_width = 40;  // Width of the text block (longest line)
-        int text_height = 9;  // Height of the text block (number of lines)
-
-        // Get the screen size
+        // Calculate dimensions for centering the text
+        int text_width = 40;  // Width of the text block
+        int text_height = 9;  // Height of the text block
         int screen_width = screen.get_width();
         int screen_height = screen.get_height();
-
-        // Calculate the starting position for centering the text
         int start_x = (screen_width - text_width) / 2;
         int start_y = (screen_height - text_height) / 2;
 
-        // Print the multiline string centered
+        // Print the welcome message
         screen.print_multiline_string(start_y, start_x, ide_name);
 
         getch();  // Wait for user input
-        screen.update();  // Update the screen
+        screen.update();  // Update screen
         curs_set(1);  // Restore cursor visibility
     }
 }
 
-
+// Utility function to print a message directly to the terminal (outside of ncurses mode)
+void print_to_terminal(int message) {
+    endwin();  // End ncurses mode
+    std::cout << message << std::endl;  // Print message to terminal
+    refresh();  // Re-enter ncurses mode
+}

@@ -226,6 +226,11 @@ namespace file {
       * color of the highlighted text to indicate the selection.
       */
       void highlight_selected();
+      
+      /**
+      * Highlights the text in the specified row with the given color scheme.
+      **/
+      void highlight_row_selected(int row, int start_col, int end_col, int color_scheme);
 
       /**
       * Copies the highlighted text based on the visual selection.

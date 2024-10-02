@@ -111,13 +111,25 @@ void action::modify::replace() {
     }
 
     status = Status::unsaved;
+    int replace_len = strlen(replace_term);
+
     // Replace occurrences
-    for (const auto& occ : found_occurrences) {
+    for (auto& occ : found_occurrences) {
         int row = occ.first;
         int col = occ.second;
 
         // Replace the word in the buffer at the found position
         buffer[row].replace(col, current_searched_word_length, replace_term);
+
+        // Update occurrences in the same row after replacement
+        if (replace_len != current_searched_word_length) {
+            int shift = replace_len - current_searched_word_length;
+            for (auto& occ_update : found_occurrences) {
+                if (occ_update.first == row && occ_update.second > col) {
+                    occ_update.second += shift;
+                }
+            }
+        }
     }
 
     action::system::change2normal();
@@ -125,3 +137,4 @@ void action::modify::replace() {
     // Clean up
     free(replace_term);
 }
+

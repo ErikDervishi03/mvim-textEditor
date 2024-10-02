@@ -141,7 +141,7 @@ void action::visual::delete_highlighted() {
     action::system::change2normal();
 }
 
-static void highlight_row_selected(int row, int start_col, int end_col, int color_scheme) {
+void action::visual::highlight_row_selected(int row, int start_col, int end_col, int color_scheme) {
     int highlight_length = std::max(abs(end_col - start_col), 1);
     mvchgat(row - starting_row, std::min(start_col, end_col), highlight_length, A_NORMAL, color_scheme, NULL);
 }
@@ -169,7 +169,7 @@ void action::visual::highlight_keywords() {
                     strchr("(){}[]", buffer_row[found_pos + keyword_len]) || 
                     strchr("+-*/%=" , buffer_row[found_pos + keyword_len]))) { // Check right boundary
 
-                    highlight_row_selected( row, found_pos + span + 1, found_pos + keyword_len + span + 1, 2);
+                    action::visual::highlight_row_selected( row, found_pos + span + 1, found_pos + keyword_len + span + 1, 2);
                 }
                 found_pos = buffer_row.find(keyword, found_pos + keyword_len);
             }
@@ -181,7 +181,7 @@ void action::visual::highlight_keywords() {
             size_t found_pos = buffer_row.find(bracket);
             while (found_pos != std::string::npos) {
                 // Highlight bracket
-                highlight_row_selected( row, found_pos + span + 1, found_pos + 1 + span + 1,3);
+                action::visual::highlight_row_selected( row, found_pos + span + 1, found_pos + 1 + span + 1,3);
                 found_pos = buffer_row.find(bracket, found_pos + 1);
             }
         }
@@ -189,7 +189,7 @@ void action::visual::highlight_keywords() {
         // Check for single-line comments (//)
         size_t single_line_comment_pos = buffer_row.find("//");
         if (single_line_comment_pos != std::string::npos) {
-            highlight_row_selected(row, single_line_comment_pos + span + 1, buffer_row.size() + span + 1, 4);
+            action::visual::highlight_row_selected(row, single_line_comment_pos + span + 1, buffer_row.size() + span + 1, 4);
         }
 
     }

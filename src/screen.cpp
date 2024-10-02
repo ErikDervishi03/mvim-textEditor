@@ -18,7 +18,6 @@ void Screen::start(){
 
 void Screen::update(){
   print_buffer();
-  
 }
 
 void  Screen::print_command(){

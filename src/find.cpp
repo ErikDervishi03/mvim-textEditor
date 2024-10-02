@@ -88,7 +88,6 @@
       // If any occurrences were found, move the cursor to the first one
       if (!found_occurrences.empty()) {
         // Highlight occurrences in the visible rows
-        action::find::highlight_visible_occurrences();
         go_to_next_occurrence();
         action::system::change2find();
       }

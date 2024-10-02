@@ -3,16 +3,6 @@
 #include <string>
 #include <vector>
 
-namespace action {
-    namespace modify {
-      void insert_letter(int letter);
-    };
-
-    namespace movement { 
-      void new_line(); 
-    }; 
-};
-
 class Buffer {
 private:
   std::vector<std::string> buffer;
