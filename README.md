@@ -8,7 +8,8 @@ mvim is a VIM inspired modal-based text editor written in Cpp using the [ncurses
 If you find a bug or want to discuss the best way to add a new feature, please
 [open an issue](https://github.com/ErikDervishi03/mvim-textEditor/issues/new/choose).
 
-# Demo
+## Demo
+[![asciicast](https://asciinema.org/a/Br4T6BdQZIllMMYBE5zGBr4xI.svg)](https://asciinema.org/a/Br4T6BdQZIllMMYBE5zGBr4xI)
 
 ## Quick Start
 mvim has the following dependencies:
