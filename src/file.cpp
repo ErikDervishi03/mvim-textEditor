@@ -1,4 +1,5 @@
 #include "../include/action.hpp"
+#include <ncurses.h>
 
 
   namespace fs = std::filesystem;
@@ -176,5 +177,6 @@ void action::file::file_selection_menu() {
         }
     }
     curs_set(1);
+    erase();
     endwin();
 }
