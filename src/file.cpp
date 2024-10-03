@@ -52,7 +52,8 @@
 
         return true;
 
-      } else {
+      } else {  
+        std::cerr << "File is not readable or does not exist.\n";
         return false;
       }
   }

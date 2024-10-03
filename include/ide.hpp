@@ -10,6 +10,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <ncurses.h>
+#include <chrono>  // For high-resolution timing
+#include <iostream> // For printing output
 
 // Define constants and global variables
 const char * ide_name = R"(
@@ -28,6 +30,7 @@ class Ide {
 private:
     Screen& screen;       // Screen instance
     Command _command;     // Command processor
+    bool benchmark;       // Flag to indicate if benchmarking is enabled
 
     // Private methods
     void draw_command_box();
@@ -37,14 +40,14 @@ private:
 public:
     // Constructors
     Ide();
-    Ide(const char* filename);
+    Ide(std::string filename, bool benchmark = false);
 
     // Run the IDE main loop
     void run();
 };
 
 // Constructor implementations
-Ide::Ide() : screen(Screen::getScreen()) {
+Ide::Ide() : screen(Screen::getScreen()), benchmark(false) {
     initialize_ncurses();  // Initialize ncurses and colors
     pointed_file = "";  
     status = Status::saved;
@@ -52,19 +55,35 @@ Ide::Ide() : screen(Screen::getScreen()) {
     visual_start_col = visual_end_col = cursor.getX();
 }
 
-Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
-    initialize_ncurses();  // Initialize ncurses and colors
-    pointed_file = "";
+Ide::Ide(std::string filename, bool benchmark) 
+    : screen(Screen::getScreen()), benchmark(benchmark) {
+    if (benchmark) {
+        auto start_time = std::chrono::high_resolution_clock::now();  // Start timing
 
-    cursor.restore(span);  // Restore cursor position
-    action::file::read(filename);  // Load file content
-    screen.update();  // Update screen
-    action::visual::highlight_keywords();  // Highlight keywords
+        cursor.restore(span);  // Restore cursor position
+        action::file::read(filename);  // Load file content
+        screen.update();  // Update screen
+        action::visual::highlight_keywords();  // Highlight keywords
+        auto end_time = std::chrono::high_resolution_clock::now();  // End timing
+        std::chrono::duration<double, std::milli> load_time = end_time - start_time;  // Get load time in milliseconds
 
-    refresh();
-    status = Status::saved;
-    visual_start_row = visual_end_row = pointed_row;
-    visual_start_col = visual_end_col = cursor.getX();
+        std::cout << "Time taken to load the file: " << load_time.count() << " ms" << std::endl;
+        std::cout << "Benchmarking mode: Exiting IDE after loading." << std::endl;
+        exit(0);  // Exit the program after showing benchmark results
+    } else {
+        initialize_ncurses();  // Initialize ncurses and colors
+
+        pointed_file = "";
+        cursor.restore(span);  // Restore cursor position
+        action::file::read(filename);  // Load file content
+        screen.update();  // Update screen
+        action::visual::highlight_keywords();  // Highlight keywords
+
+        refresh();
+        status = Status::saved;
+        visual_start_row = visual_end_row = pointed_row;
+        visual_start_col = visual_end_col = cursor.getX();
+    }
 }
 
 // Helper function to initialize ncurses and color pairs
@@ -83,48 +102,46 @@ void Ide::initialize_ncurses() {
 
 // Run the IDE main loop
 void Ide::run() {
-  show_initial_screen();  // Show initial screen if no file is loaded
+    show_initial_screen();  // Show initial screen if no file is loaded
 
- cursor.restore(span);
-  while (true) {
-    int input = getch();
-    if (input != ERR) {
-        erase();  // Pulisce lo schermo
+    cursor.restore(span);
+    while (true) {
+        int input = getch();
+        if (input != ERR) {
+            erase();  // Clear the screen
 
-        // Esegui il comando basato sull'input (modifica il buffer se necessario)
-        _command.execute(input);
+            // Execute command based on input (modify the buffer if necessary)
+            _command.execute(input);
 
-        // Stampa il buffer aggiornato
-        screen.update();
+            // Print the updated buffer
+            screen.update();
 
-        // Evidenzia le parole chiave dopo aver stampato il buffer
-        action::visual::highlight_keywords();
+            // Highlight keywords after printing the buffer
+            action::visual::highlight_keywords();
 
-        // Se sei in modalità visual, evidenzia la selezione
-        if (mode == visual) {
-            visual_end_row = pointed_row;
-            visual_end_col = cursor.getX() + span + 1;
-            action::visual::highlight_selected();  // Evidenzia selezione visual mode
-        }else{
-            visual_start_row = pointed_row;
-            visual_start_col = cursor.getX() + span + 1;
+            // If in visual mode, highlight the selection
+            if (mode == visual) {
+                visual_end_row = pointed_row;
+                visual_end_col = cursor.getX() + span + 1;
+                action::visual::highlight_selected();  // Highlight selection in visual mode
+            } else {
+                visual_start_row = pointed_row;
+                visual_start_col = cursor.getX() + span + 1;
+            }
+
+            // If in find mode, highlight found occurrences
+            if (mode == find) {
+                action::find::highlight_visible_occurrences();  // Highlight found occurrences
+            }
+
+            // Restore cursor position after all operations
+            cursor.restore(span);
+
+            // Refresh screen to display results
+            refresh();
         }
-
-        // Se sei in modalità find, evidenzia le occorrenze trovate
-        if (mode == find) {
-            action::find::highlight_visible_occurrences();  // Evidenzia occorrenze trovate
-        }
-
-        // Ripristina la posizione del cursore dopo tutte le operazioni
-        cursor.restore(span);
-
-        // Visualizza i risultati sullo schermo
-        refresh();
     }
-  }
-
 }
-
 
 // Draw command box at the bottom of the screen
 void Ide::draw_command_box() {
