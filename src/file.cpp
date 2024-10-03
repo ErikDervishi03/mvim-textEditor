@@ -1,6 +1,4 @@
 #include "../include/action.hpp"
-#include <ncurses.h>
-
 
   namespace fs = std::filesystem;
 
@@ -28,6 +26,9 @@
               std::cerr << "Failed to open file for writing: " << pointed_file << "\n";
               return;
           }
+
+          action::system::restore();
+
           for (int i = 0; i < buffer.get_number_rows(); i++) {
               myfile << buffer.get_buffer()[i] << "\n";
           }

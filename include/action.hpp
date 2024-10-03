@@ -212,6 +212,8 @@ namespace file {
       * Switches the editor mode to "find" mode.
       **/
       void change2find();
+
+      void restore();
   };
 
   namespace visual {

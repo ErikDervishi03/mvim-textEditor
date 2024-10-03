@@ -15,6 +15,8 @@ void redirect_output_to_null() {
 }
 
 int main(int argc, char* argv[]) {
+    redirect_output_to_null();
+
     if (argc > 1) {
       Ide ide(argv[1]);
       ide.run();

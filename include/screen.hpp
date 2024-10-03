@@ -18,6 +18,8 @@ public:
     
     void start();
 
+    void restore();
+
     int get_width();
 
     int get_height();

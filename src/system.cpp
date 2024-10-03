@@ -222,3 +222,15 @@
   void action::system::change2find(){
     mode = Mode::find;
   }
+
+  void action::system::restore(){
+    starting_row = 0;
+    pointed_row = 0;
+    cursor.set(0,0);
+    copy_paste_buffer = "";
+    status = Status::saved;
+    visual_start_row = visual_end_row = pointed_row;
+    visual_start_col = visual_end_col = cursor.getX();
+    current_occurrence_index = -1;
+    found_occurrences.clear();
+  }

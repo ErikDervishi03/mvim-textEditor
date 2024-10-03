@@ -50,6 +50,7 @@ Ide::Ide() : screen(Screen::getScreen()) {
     status = Status::saved;
     visual_start_row = visual_end_row = pointed_row;
     visual_start_col = visual_end_col = cursor.getX();
+    current_occurrence_index = -1;
 }
 
 Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
@@ -65,6 +66,7 @@ Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
     status = Status::saved;
     visual_start_row = visual_end_row = pointed_row;
     visual_start_col = visual_end_col = cursor.getX();
+    current_occurrence_index = -1;
 }
 
 // Helper function to initialize ncurses and color pairs
@@ -78,7 +80,7 @@ void Ide::initialize_ncurses() {
 
     // Allocate memory for buffers
     copy_paste_buffer = (char *)malloc(10000);
-    pointed_file = (char *)malloc(10000);
+    pointed_file      = (char *)malloc(10000);
 }
 
 // Run the IDE main loop
@@ -124,7 +126,6 @@ void Ide::run() {
   }
 
 }
-
 
 // Draw command box at the bottom of the screen
 void Ide::draw_command_box() {
