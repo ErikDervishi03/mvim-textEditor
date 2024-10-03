@@ -4,6 +4,7 @@
 #include "../buffer.hpp"
 #include "mode.h"
 #include "status.h"
+#include <memory>
 
 /*
 
@@ -21,7 +22,7 @@ extern size_t max_col;
 extern size_t pointed_row;
 extern size_t starting_row;
 extern Mode mode;
-extern char* pointed_file;
+extern std::string pointed_file;
 extern Status status;
 extern int visual_start_row;
 extern int visual_start_col;

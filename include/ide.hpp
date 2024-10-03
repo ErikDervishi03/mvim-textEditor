@@ -46,16 +46,15 @@ public:
 // Constructor implementations
 Ide::Ide() : screen(Screen::getScreen()) {
     initialize_ncurses();  // Initialize ncurses and colors
-    strcpy(pointed_file, "");  
+    pointed_file = "";  
     status = Status::saved;
     visual_start_row = visual_end_row = pointed_row;
     visual_start_col = visual_end_col = cursor.getX();
-    current_occurrence_index = -1;
 }
 
 Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
     initialize_ncurses();  // Initialize ncurses and colors
-    strcpy(pointed_file, "");
+    pointed_file = "";
 
     cursor.restore(span);  // Restore cursor position
     action::file::read(filename);  // Load file content
@@ -66,7 +65,6 @@ Ide::Ide(const char* filename) : screen(Screen::getScreen()) {
     status = Status::saved;
     visual_start_row = visual_end_row = pointed_row;
     visual_start_col = visual_end_col = cursor.getX();
-    current_occurrence_index = -1;
 }
 
 // Helper function to initialize ncurses and color pairs
@@ -80,7 +78,7 @@ void Ide::initialize_ncurses() {
 
     // Allocate memory for buffers
     copy_paste_buffer = (char *)malloc(10000);
-    pointed_file      = (char *)malloc(10000);
+    pointed_file = (char *)malloc(10000);
 }
 
 // Run the IDE main loop
@@ -127,6 +125,7 @@ void Ide::run() {
 
 }
 
+
 // Draw command box at the bottom of the screen
 void Ide::draw_command_box() {
     screen.draw_rectangle(screen.get_height() - 3, 0, screen.get_height() - 1, screen.get_width() - 1);
@@ -134,7 +133,7 @@ void Ide::draw_command_box() {
 
 // Show the initial welcome screen
 void Ide::show_initial_screen() {
-    if (strcmp(pointed_file, "") == 0) {
+    if (pointed_file.empty()) {
         curs_set(0);
 
         // Calculate dimensions for centering the text

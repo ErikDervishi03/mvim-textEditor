@@ -14,12 +14,12 @@
   // Save function
   void action::file::save() {
 
-      if (strcmp(pointed_file, "") == 0) {
+      if (pointed_file.empty()) {
           pointed_file = action::system::text_form("Insert file name:");  // Prompt for filename if not set
       }
 
       // Only save if a filename was entered
-      if (strcmp(pointed_file, "") != 0) {
+      if (!pointed_file.empty()) {
           status = Status::saved;
           std::ofstream myfile(pointed_file);
           if (!myfile.is_open()) {
@@ -38,7 +38,7 @@
       }
   }
 
-  bool is_readable(const char* file_name) {
+  bool is_readable(std::string file_name) {
 
     fs::perms file_perms = fs::status(file_name).permissions();
 
@@ -58,7 +58,7 @@
   }
 
   // Read function
-  void action::file::read(const char* file_name) {
+  void action::file::read(std::string file_name) {
 
     // If the status is unsaved, prompt for confirmation
     if (status == Status::unsaved) {
@@ -78,7 +78,7 @@
 
         status = Status::saved;
 
-        strcpy(pointed_file, file_name);
+        pointed_file = file_name;
 
         buffer.clear();
         std::string line;
@@ -87,7 +87,7 @@
         }
 
         myfile.close();
-    } else if(strcmp(file_name, "") == 0) {
+    } else if(file_name.empty()) {
         buffer.restore();
     }
 }

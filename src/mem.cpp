@@ -8,7 +8,7 @@ size_t max_col;
 size_t pointed_row;
 size_t starting_row;
 Mode mode;
-char* pointed_file;
+std::string pointed_file;
 Status status;
 int visual_start_row;
 int visual_start_col;

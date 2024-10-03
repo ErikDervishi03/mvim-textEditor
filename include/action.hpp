@@ -147,7 +147,7 @@ namespace file {
       * It checks if the file exists, if it's a regular file, and if the file size is within a certain limit.
       * If the file is valid, its content is read line by line into the buffer. If the file can't be opened, an error is printed.
       */
-      void read(const char* file_name);
+      void read(std::string file_name);
 
       /** 
       * Displays a file selection menu to choose a file to open.
