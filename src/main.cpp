@@ -3,6 +3,13 @@
 #include "../include/ide.hpp"  // Include your Ide class header
 
 int main(int argc, char* argv[]) {
+
+    if(argc == 1){
+        Ide ide;
+        ide.run();
+        return 0;
+    }
+
     const char* filename = nullptr;  // To hold the filename
     bool benchmark = false;           // Flag for benchmarking mode
 
@@ -14,12 +21,6 @@ int main(int argc, char* argv[]) {
         } else if (std::strcmp(argv[i], "-b") == 0) {
             benchmark = true;  // Enable benchmarking
         }
-    }
-
-    // Check if a filename was provided
-    if (!filename) {
-        std::cerr << "Usage: " << argv[0] << " <filename> [-b]" << std::endl;
-        return 1;  // Exit if no filename is provided
     }
 
     // Create an instance of Ide, passing the filename and benchmark flag
