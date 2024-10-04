@@ -22,6 +22,7 @@ you can install them with:
   chmod +x install_dependencies.sh && ./install_dependencies.sh
 ```
 ## install mvim
+option 1:
 ```sh
   git clone https://github.com/ErikDervishi03/mvim-textEditor.git
   cd mvim-textEditor
@@ -30,6 +31,10 @@ you can install them with:
   cmake ..
   sudo make install
 ```
+option 2 use [sget](https://github.com/d99kris/sget):
+```sh
+  sudo sget install https://github.com/ErikDervishi03/mvim-textEditor.git
+```
 or uninstall with:
 ```sh
   sudo xargs rm < install_manifest.txt
@@ -37,7 +42,7 @@ or uninstall with:
 ## Modes
 Normal - For motions and deletion \
 Insert - For inserting text \
-Find -   For search/replace text in the current buffer \
+Find -   For search/replace text in the current buffer 
 
 ## Keybinds
 |Mode  | Keybind        | Action                                          |
