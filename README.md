@@ -98,6 +98,18 @@ Search mode takes a string and finds it in the file.
   mvim filename
 ```
 
+## Technical Details
+
+mvim uses [doxygenmd](https://github.com/d99kris/doxygenmd) to generate
+its Markdown API documentation:
+
+    doxygenmd src doc
+
+mvim uses Uncrustify to ensure consistent code formatting:
+
+    uncrustify -c uncrustify.cfg --no-backup src/*
+    uncrustify -c uncrustify.cfg --no-backup include/*
+
 ## inspiration
 - [vim](https://github.com/vim/vim)
 - [Cano](https://github.com/CobbCoding1/Cano?tab=readme-ov-file) for this README
