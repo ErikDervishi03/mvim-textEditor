@@ -73,7 +73,7 @@ Ide::Ide(std::string filename, bool benchmark)
     } else {
         initialize_ncurses();  // Initialize ncurses and colors
 
-        pointed_file = "";
+        pointed_file = filename;
         cursor.restore(span);  // Restore cursor position
         action::file::read(filename);  // Load file content
         screen.update();  // Update screen
