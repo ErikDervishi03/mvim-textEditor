@@ -14,6 +14,7 @@
 
 */
 
+/*system variables*/
 extern Cursor cursor;
 extern Buffer buffer;
 extern std::string command_buffer;
@@ -30,7 +31,8 @@ extern int visual_end_row;
 extern int visual_end_col;
 extern std::string copy_paste_buffer;
 
-// Find mode
-extern std::vector<std::pair<int, int>> found_occurrences;  // Store (row, col) of each found occurrence
-extern int current_occurrence_index;  // Track which occurrence is currently highlighted
-extern int current_searched_word_length;  // Length of the word being searched
+/*Ide colors*/
+typedef int color;
+extern color keyWordColor;
+extern color numberRowsColor;
+extern color commentsColor;

@@ -1,18 +1,14 @@
 #include "../include/screen.hpp"
 
-Screen::~Screen()
-{
-}
+Screen::~Screen(){}
 
-Screen::Screen()
-{
-}
+Screen::Screen(){}
 
 void Screen::start()
 {
   initscr();
-  noecho();
   keypad(stdscr, TRUE);
+  noecho();
   getmaxyx(stdscr, max_row, max_col);
   starting_row = 0;
   pointed_row = 0;

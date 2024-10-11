@@ -9,15 +9,34 @@
 
 namespace action
 {
+  enum ActionType {
+    INSERT,
+    DELETE,
+    MOVE_UP,
+    MOVE_DOWN,
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    TAB,
+    DELETE_ROW,
+    PASTE
+  };
+
+  struct Action {
+    ActionType type;
+    int row;
+    int col;
+    char letter;              // For insert/delete actions
+    std::string copied_text;  // For copy/paste actions
+  };
+
+  inline std::stack<Action> action_history;
+
+  inline std::vector<std::pair<int, int>> found_occurrences;  // Store (row, col) of each found occurrence
+  inline int current_occurrence_index;  // Track which occurrence is currently highlighted
+  inline int current_searched_word_length;  // Length of the word being searched
 
   namespace movement
   {
-    /**
-     * @brief Create a new line in the buffer.
-     * If the cursor is not at the end of the line, the text from the cursor to the end of the line will be moved to the new line.
-     */
-    void new_line();
-
     /**
      * @brief Move the cursor up one row.
      */
@@ -98,6 +117,12 @@ namespace action
     void insert_letter(int letter);
 
     /**
+     * @brief Create a new line in the buffer.
+     * If the cursor is not at the end of the line, the text from the cursor to the end of the line will be moved to the new line.
+     */
+    void new_line();
+    
+    /**
      * @brief Deletes a letter at the current cursor position.
      * If the cursor is at the start of a line, the line merges with the previous line.
      * Adjusts the cursor position based on the changes made.
@@ -137,6 +162,17 @@ namespace action
      * This function is used when in find mode.
      */
     void replace();
+
+    /**
+     * @brief Deletes and copies the highlighted text based on the visual selection.
+     */
+    void delete_highlighted();
+
+    void delete_word();
+
+    void delete_word_backyard();
+
+    void undo();
   };
 
   namespace file
@@ -264,11 +300,6 @@ namespace action
      * After copying, it switches the mode back to normal mode.
      */
     void copy_highlighted();
-
-    /**
-     * @brief Deletes and copies the highlighted text based on the visual selection.
-     */
-    void delete_highlighted();
 
     /**
      * @brief Highlights all occurrences of the keywords in the buffer.

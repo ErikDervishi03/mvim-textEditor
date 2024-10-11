@@ -1,7 +1,5 @@
 #include "utils.h"
 
-#include "utils.h"
-
 /**
  * @class Screen
  * @brief A singleton class to manage the screen interface for the text editor.

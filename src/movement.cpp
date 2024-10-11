@@ -1,36 +1,5 @@
 #include "../include/action.hpp"
 
-void action::movement::new_line()
-{
-  buffer.new_row("", pointed_row + 1);
-
-  // here we are breaking down the line.
-  // All the text from the current cursor
-  // position to the end of the line go in
-  // the next line
-
-  const int curr_row_length = buffer.get_string_row(pointed_row).length();
-  if (cursor.getX() != curr_row_length)
-  {
-    std::string line_break = buffer.slice_row(pointed_row, cursor.getX(), curr_row_length);
-    buffer.row_append(pointed_row + 1, line_break);
-  }
-
-  if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
-      !buffer.is_void_row(max_row) && pointed_row < buffer.get_number_rows())
-  {
-
-    starting_row++;
-  }
-  else if (cursor.getY() < max_row - 1)
-  {
-    cursor.move_down();
-  }
-
-  cursor.setX(0);
-  pointed_row++;
-}
-
 void action::movement::move_up()
 {
   if (!(starting_row == 0 && pointed_row == 0))
@@ -173,7 +142,7 @@ void action::movement::move_to_beginning_of_line()
 
 void action::movement::move_to_next_word()
 {
-  std::string current_row = buffer.get_string_row(pointed_row);
+  std::string current_row = buffer[pointed_row];
   int row_length = current_row.length();
 
   // if we are in the middle of a word we go at the end of it

@@ -25,7 +25,43 @@ void action::modify::insert_letter(int letter)
   }
   buffer.insert_letter(pointed_row, cursor.getX(), letter);
   cursor.move_right();
+
+  action_history.push({ ActionType::INSERT, static_cast<int>(pointed_row), 
+                          cursor.getX(), static_cast<char>(letter), "" });
 }
+
+void action::modify::new_line()
+{
+  status = Status::unsaved;
+  buffer.new_row("", pointed_row + 1);
+
+  // here we are breaking down the line.
+  // All the text from the current cursor
+  // position to the end of the line go in
+  // the next line
+
+  const int curr_row_length = buffer.get_string_row(pointed_row).length();
+  if (cursor.getX() != curr_row_length)
+  {
+    std::string line_break = buffer.slice_row(pointed_row, cursor.getX(), curr_row_length);
+    buffer.row_append(pointed_row + 1, line_break);
+  }
+
+  if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
+      !buffer.is_void_row(max_row) && pointed_row < buffer.get_number_rows())
+  {
+
+    starting_row++;
+  }
+  else if (cursor.getY() < max_row - 1)
+  {
+    cursor.move_down();
+  }
+
+  cursor.setX(0);
+  pointed_row++;
+}
+
 
 void action::modify::delete_letter()
 {
@@ -78,7 +114,6 @@ void action::modify::tab()
     buffer.insert_letter(pointed_row, cursor.getX(), ' ');
     cursor.move_right();
   }
-  // refresh_row(pointed_row);
 }
 
 void action::modify::delete_row()
@@ -121,7 +156,7 @@ void action::modify::paste()
       if (c == '\n')
       {
         // Inserisci newline e sposta alla riga successiva
-        action::movement::new_line();
+        action::modify::new_line();
       }
       else
       {
@@ -172,3 +207,126 @@ void action::modify::replace()
   // Clean up
   free(replace_term);
 }
+
+// Function to delete and copy the highlighted text based on visual mode selection
+void action::modify::delete_highlighted()
+{
+  status = Status::unsaved;
+  
+  copy_paste_buffer = "";    // Clear the buffer before copying the highlighted text
+
+  int start_row = visual_start_row;
+  int end_row = visual_end_row;
+  int start_col = visual_start_col - span - 1;
+  int end_col = visual_end_col - span - 1;
+
+  // Case 1: Highlight is within a single row
+  if (start_row == end_row)
+  {
+    // The copying and deletion process must occur from left to right
+    int copy_start = std::min(start_col, end_col);
+    int char_to_copy = std::min(abs(end_col - start_col) + 1, (int) buffer[start_row].length());     // Number of characters to copy and delete
+
+    // Copy and delete the text
+    copy_paste_buffer = buffer.slice_row(start_row, copy_start, copy_start + char_to_copy);
+
+    cursor.setX(std::min(start_col, end_col));      // Set the cursor to the start of the highlighted text
+    action::system::change2normal();
+    return;
+
+  }
+  // Case 2: Highlight spans multiple rows
+  if (end_row < start_row)
+  {
+    std::swap(start_row, end_row);
+    std::swap(start_col, end_col);
+  }   // swap the rows if the end row is before the start row
+
+  copy_paste_buffer = buffer.slice_row(start_row, start_col, buffer[start_row].length());
+
+  // Copy the middle rows entirely
+  for (int i = 0; i < end_row - start_row - 1; ++i)
+  {
+    copy_paste_buffer += '\n' + buffer[start_row + 1];
+    buffer.del_row(start_row + 1);      // Delete the current row after copying it
+  }
+
+  copy_paste_buffer += '\n' + buffer.slice_row(start_row + 1, 0, end_col);
+
+  buffer.merge_rows(start_row, start_row + 1);
+
+  pointed_row = start_row;
+
+  cursor.set(start_col, start_row - starting_row);
+
+  // Switch back to normal mode after deletion and copying
+  action::system::change2normal();
+}
+
+static void reverse_insert(int row, int col){
+    // Set the cursor to the position of the last action
+    cursor.set(col + 1, row);
+    pointed_row = row;
+
+    // Maintain the current selected word at the center of the screen
+    if (pointed_row > max_row / 2)
+    {
+        starting_row = pointed_row - max_row / 2;
+    }
+    else
+    {
+        starting_row = 0;
+    }
+}
+
+void action::modify::delete_word_backyard(){
+  if(cursor.getX() == 0)return;
+
+  char curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
+
+  //erase all spaces
+  while(curr_char_pointed == ' '){
+    action::modify::delete_letter();
+    if(cursor.getX() == 0)return;
+    curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
+  }
+  
+  while(curr_char_pointed != ' ' && cursor.getX() > 0){
+    action::modify::delete_letter();
+    curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
+  }
+
+
+}
+
+void action::modify::undo(){
+
+  if(!action::action_history.empty()){
+    Action last_action = action::action_history.top();
+    action::action_history.pop();
+
+    switch (last_action.type) {
+      case ActionType::INSERT:
+        reverse_insert(last_action.row, last_action.col);
+        while (!action::action_history.empty() && 
+              action::action_history.top().type == ActionType::INSERT)
+        {
+            // Retrieve the last action
+            Action last_action = action::action_history.top();
+
+            reverse_insert(last_action.row, last_action.col);
+
+            // Undo the insert action by deleting the letter
+            action::modify::delete_letter();
+
+            // Pop the action from the history stack
+            action::action_history.pop();
+        }
+
+        break;
+      default:
+        break;
+    }
+  }
+}
+

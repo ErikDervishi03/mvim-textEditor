@@ -60,7 +60,7 @@ void Cursor::update_cursor()
   move(y, x);
 }
 
-void Cursor::restore(int span = 0)
+void Cursor::restore(int span)
 {
   move(y, x + span + 1);
 }

@@ -94,10 +94,6 @@ void Ide::initialize_ncurses() {
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
     init_pair(3, COLOR_YELLOW, COLOR_BLACK);
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
-
-    // Allocate memory for buffers
-    copy_paste_buffer = (char *)malloc(10000);
-    pointed_file = (char *)malloc(10000);
 }
 
 // Run the IDE main loop
@@ -164,7 +160,9 @@ void Ide::show_initial_screen() {
         // Print the welcome message
         screen.print_multiline_string(start_y, start_x, ide_name);
 
-        getch();  // Wait for user input
+        int input = getch();  // Wait for user input
+        _command.execute(input);
+        erase();
         screen.update();  // Update screen
         curs_set(1);  // Restore cursor visibility
     }

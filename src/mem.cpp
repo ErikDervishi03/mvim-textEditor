@@ -15,6 +15,8 @@ int visual_start_col;
 int visual_end_row;
 int visual_end_col;
 std::string copy_paste_buffer;
-std::vector<std::pair<int, int>> found_occurrences;  // Store (row, col) of each found occurrence
-int current_occurrence_index;  // Track which occurrence is currently highlighted
-int current_searched_word_length;
+
+color keyWordColor;
+color numberRowsColor;
+color commentsColor;
+color highlightedTextColor;

@@ -2,12 +2,14 @@
 #include "action.hpp"
 #include "globals/mode.h"
 #include <ncurses.h>
-
+#define ctrl(x) ((x) & 0x1f)
+#define isPrintable(c) (isalpha(c) || isdigit(c) || isSpecialChar(c))
 /*
    need to map keys for the specific mode
  */
+typedef std::function<void ()> _action;
+typedef std::map<int, _action> keymap;
 
-typedef std::map<int, std::function<void ()>> keymap;
 
 class Command
 {
@@ -18,15 +20,17 @@ private:
   keymap normalMap;
   keymap visualMap;
   keymap findMap;
+  keymap specialKeys; /*ctrl s, ctrl w ...*/
 public:
   Command()
   {
+    
     /*insert*/
     insertMap[KEY_UP] = action::movement::move_up;
     insertMap[KEY_DOWN] = action::movement::move_down;
     insertMap[KEY_LEFT] = action::movement::move_left;
     insertMap[KEY_RIGHT] = action::movement::move_right;
-    insertMap[KEY_ENTER_] = action::movement::new_line;
+    insertMap[KEY_ENTER_] = action::modify::new_line;
 
     insertMap[KEY_BACKSPACE] = action::modify::delete_letter;
     insertMap[KEY_TAB] = action::modify::tab;
@@ -52,6 +56,7 @@ public:
     normalMap['p'] = action::modify::paste;
     normalMap['w'] = action::movement::move_to_next_word;
     normalMap['e'] = action::file::file_selection_menu;
+    normalMap['u'] = action::modify::undo;
 
     normalMap['x'] = action::modify::normal_delete_letter;
     normalMap['d'] = action::modify::delete_row;
@@ -81,21 +86,41 @@ public:
     visualMap['g'] = action::movement::move_to_end_of_file;
     visualMap['G'] = action::movement::move_to_beginning_of_file;
     visualMap['w'] = action::movement::move_to_next_word;
-    visualMap['d'] = action::visual::delete_highlighted;
+    visualMap['d'] = action::modify::delete_highlighted;
 
     visualMap['y'] = action::visual::copy_highlighted;
 
     visualMap[ESC] = action::system::change2normal;
 
     /*find*/
-    findMap[ESC] = action::system::change2normal;
     findMap['n'] = action::find::go_to_next_occurrence;
     findMap['N'] = action::find::go_to_previous_occurrence;
     findMap['r'] = action::modify::replace;
+
+    findMap[ESC] = action::system::change2normal;
+
+    /*special keys*/
+    specialKeys[ctrl('s')] = action::file::save;
   }
+
+  static bool isSpecialChar(char c) {
+    std::set<char> specialChars = {'[', ']', '%', '!', '@', '#', 
+                                  '$', '^', '&', '*', '(', ')', 
+                                  '{', '}', '<', '>', '/', '\\',
+                                   '|', '~', '-', '+', '=', '_',
+                                    ':',' '};
+    
+    return specialChars.find(c) != specialChars.end();
+}
 
   void execute(int key)
   {
+    if (specialKeys.find(key) != specialKeys.end())
+    {
+      specialKeys[key]();
+      return;
+    }
+
     switch (mode)
     {
     case insert:
@@ -103,11 +128,15 @@ public:
       if (insertMap.find(key) != insertMap.end())
       {
         insertMap[key]();
+        return;
       }
-      else
-      {
+
+      if(key == ctrl('w')){
+        action::modify::delete_word_backyard();
+      }else if(isPrintable(key)){ 
         action::modify::insert_letter(key);
       }
+      
       break;
     }
 
