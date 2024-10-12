@@ -281,6 +281,8 @@ static void reverse_insert(int row, int col){
 
 void action::modify::delete_word_backyard(){
   if(cursor.getX() == 0)return;
+  
+  status = Status::unsaved;
 
   char curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
 
@@ -302,6 +304,7 @@ void action::modify::delete_word_backyard(){
 void action::modify::undo(){
 
   if(!action::action_history.empty()){
+    status = Status::unsaved;
     Action last_action = action::action_history.top();
     action::action_history.pop();
 

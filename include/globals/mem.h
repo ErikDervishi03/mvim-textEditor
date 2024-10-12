@@ -36,3 +36,5 @@ typedef int color;
 extern color keyWordColor;
 extern color numberRowsColor;
 extern color commentsColor;
+extern color highlightedTextColor;
+extern color bracketsColor;

@@ -54,10 +54,10 @@ void Screen::print_buffer()
 {
   for (int i = 0; (i + starting_row) < buffer.get_number_rows() && i < max_row; i++)
   {
-    attron(COLOR_PAIR(3)); // Enable yellow color
-    mvprintw(i, 0, "%d", i + starting_row + 1);
-    attroff(COLOR_PAIR(3));
-    mvprintw(i, span + 1, buffer[i + starting_row].c_str());
+    attron(COLOR_PAIR(numberRowsColor));
+    mvprintw(i, 0, "%zu", i + starting_row + 1);
+    attroff(COLOR_PAIR(numberRowsColor));
+    mvprintw(i, span + 1, "%s", buffer[i + starting_row].c_str());
   }
 }
 

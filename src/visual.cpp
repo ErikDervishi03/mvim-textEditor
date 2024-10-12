@@ -1,5 +1,4 @@
 #include "../include/action.hpp"
-#include <ncurses.h>
 
 void action::visual::highlight(int start_row, int end_row, int start_col, int end_col)
 {
@@ -57,10 +56,9 @@ void action::visual::highlight(int start_row, int end_row, int start_col, int en
 
 void action::visual::highlight_selected()
 {
-  highlight(visual_start_row, visual_end_row, visual_start_col, visual_end_col);
+  highlight(visual_start_row, visual_end_row, 
+            visual_start_col, visual_end_col);
 }
-
-
 
 // Function to copy the highlighted text based on visual mode selection
 void action::visual::copy_highlighted()
@@ -145,7 +143,7 @@ void action::visual::highlight_keywords()
              strchr("+-*/%=", buffer_row[found_pos + keyword_len])))           // Check right boundary
         {
           action::visual::highlight_row_selected(row, found_pos + span + 1, 
-                                                found_pos + keyword_len + span + 1, 2);
+                                                found_pos + keyword_len + span + 1, keyWordColor);
         }
         found_pos = buffer_row.find(keyword, found_pos + keyword_len);
       }
@@ -160,7 +158,8 @@ void action::visual::highlight_keywords()
       while (found_pos != std::string::npos)
       {
         // Highlight bracket
-        action::visual::highlight_row_selected(row, found_pos + span + 1, found_pos + 1 + span + 1, 3);
+        action::visual::highlight_row_selected(row, found_pos + span + 1, 
+                                              found_pos + 1 + span + 1, bracketsColor);
         found_pos = buffer_row.find(bracket, found_pos + 1);
       }
     }
@@ -169,7 +168,8 @@ void action::visual::highlight_keywords()
     size_t single_line_comment_pos = buffer_row.find("//");
     if (single_line_comment_pos != std::string::npos)
     {
-      action::visual::highlight_row_selected(row, single_line_comment_pos + span + 1, buffer_row.size() + span + 1, 4);
+      action::visual::highlight_row_selected(row, single_line_comment_pos + span + 1, 
+                                            buffer_row.size() + span + 1, commentsColor);
     }
 
   }
