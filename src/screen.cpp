@@ -22,11 +22,6 @@ void Screen::update()
   print_buffer();
 }
 
-void Screen::print_command()
-{
-  mvprintw(get_height() - 2, 2, command_buffer.c_str());
-}
-
 int Screen::get_width()
 {
   return getmaxx(stdscr);

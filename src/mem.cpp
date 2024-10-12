@@ -21,3 +21,4 @@ color numberRowsColor;
 color commentsColor;
 color highlightedTextColor;
 color bracketsColor;
+color preprocessorColor;

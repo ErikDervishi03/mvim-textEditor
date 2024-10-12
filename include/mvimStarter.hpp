@@ -23,6 +23,7 @@ private:
         color comments;
         color highlightedText;
         color brackets;
+        color preprocessorColor;
     }; 
 
     Screen& screen;       // Screen instance
@@ -36,6 +37,7 @@ private:
     void setNumberRowsColor(color pColor);
     void setHighlightedTextColor(color pColor);
     void setBracketsColor(color pColor);
+    void setPreprocessorColor(color pColor);
     void setDefaults();
     void setColorSchema(colorSchema pColorSchema);
 

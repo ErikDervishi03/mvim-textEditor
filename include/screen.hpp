@@ -80,11 +80,6 @@ public:
     void update();
 
     /**
-     * @brief Prints the current command at the bottom of the screen.
-     */
-    void print_command();
-
-    /**
      * @brief Prints the text buffer content on the screen.
      */
     void print_buffer();

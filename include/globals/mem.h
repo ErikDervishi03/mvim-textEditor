@@ -38,3 +38,4 @@ extern color numberRowsColor;
 extern color commentsColor;
 extern color highlightedTextColor;
 extern color bracketsColor;
+extern color preprocessorColor;

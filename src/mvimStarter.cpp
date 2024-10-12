@@ -1,4 +1,5 @@
 #include "../include/mvimStarter.hpp"
+#include <curses.h>
 
 // Define constants and global variables
 const char * mvim_logo = R"(
@@ -122,6 +123,7 @@ void mvimStarter::initialize_ncurses() {
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
     init_pair(3, COLOR_YELLOW, COLOR_BLACK);
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
 }
 
 void mvimStarter::setKeyWordColor(color pColor){
@@ -143,16 +145,21 @@ void mvimStarter::setBracketsColor(color pColor){
     bracketsColor = pColor;
 }
 
+void mvimStarter::setPreprocessorColor(color pColor){
+    preprocessorColor = pColor;
+}
+
 void mvimStarter::setColorSchema(struct colorSchema pColorSchema){
     setKeyWordColor(pColorSchema.keyWord);
     setCommentColor(pColorSchema.comments);
     setNumberRowsColor(pColorSchema.numberRows);
     setBracketsColor(pColorSchema.brackets);
     setHighlightedTextColor(pColorSchema.highlightedText);
+    setPreprocessorColor(pColorSchema.preprocessorColor);
 }
 
 void mvimStarter::setDefaults(){
-    setColorSchema({2, 3, 4, 1,3});
+    setColorSchema({2, 3, 4, 1,3,5});
 }
 
 

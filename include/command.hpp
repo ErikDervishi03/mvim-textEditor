@@ -86,7 +86,7 @@ public:
     visualMap['g'] = action::movement::move_to_end_of_file;
     visualMap['G'] = action::movement::move_to_beginning_of_file;
     visualMap['w'] = action::movement::move_to_next_word;
-    visualMap['d'] = action::modify::delete_highlighted;
+    visualMap['d'] = action::visual::delete_highlighted;
 
     visualMap['y'] = action::visual::copy_highlighted;
 
@@ -132,7 +132,7 @@ public:
       }
 
       if(key == ctrl('w')){
-        action::modify::delete_word_backyard();
+        action::modify::delete_word();
       }else if(isPrintable(key)){ 
         action::modify::insert_letter(key);
       }

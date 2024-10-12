@@ -163,10 +163,7 @@ namespace action
      */
     void replace();
 
-    /**
-     * @brief Deletes and copies the highlighted text based on the visual selection.
-     */
-    void delete_highlighted();
+    void delete_selection(int start_row, int end_row, int start_col, int end_col);
 
     void delete_word();
 
@@ -305,6 +302,11 @@ namespace action
      * @brief Highlights all occurrences of the keywords in the buffer.
      */
     void highlight_keywords();
+
+    /**
+     * @brief Deletes and copies the highlighted text based on the visual selection.
+     */
+    void delete_highlighted();
   };
 
   namespace find
