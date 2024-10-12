@@ -9,7 +9,8 @@
 
 namespace action
 {
-  enum ActionType {
+  enum ActionType
+  {
     INSERT,
     DELETE,
     MOVE_UP,
@@ -21,7 +22,8 @@ namespace action
     PASTE
   };
 
-  struct Action {
+  struct Action
+  {
     ActionType type;
     int row;
     int col;
@@ -121,7 +123,7 @@ namespace action
      * If the cursor is not at the end of the line, the text from the cursor to the end of the line will be moved to the new line.
      */
     void new_line();
-    
+
     /**
      * @brief Deletes a letter at the current cursor position.
      * If the cursor is at the start of a line, the line merges with the previous line.

@@ -1,8 +1,12 @@
 #include "../include/screen.hpp"
 
-Screen::~Screen(){}
+Screen::~Screen()
+{
+}
 
-Screen::Screen(){}
+Screen::Screen()
+{
+}
 
 void Screen::start()
 {

@@ -24,7 +24,7 @@ private:
 public:
   Command()
   {
-    
+
     /*insert*/
     insertMap[KEY_UP] = action::movement::move_up;
     insertMap[KEY_DOWN] = action::movement::move_down;
@@ -103,15 +103,16 @@ public:
     specialKeys[ctrl('s')] = action::file::save;
   }
 
-  static bool isSpecialChar(char c) {
-    std::set<char> specialChars = {'[', ']', '%', '!', '@', '#', 
-                                  '$', '^', '&', '*', '(', ')', 
-                                  '{', '}', '<', '>', '/', '\\',
-                                   '|', '~', '-', '+', '=', '_',
-                                    ':',' '};
-    
+  static bool isSpecialChar(char c)
+  {
+    std::set<char> specialChars = { '[', ']', '%', '!', '@', '#',
+                                    '$', '^', '&', '*', '(', ')',
+                                    '{', '}', '<', '>', '/', '\\',
+                                    '|', '~', '-', '+', '=', '_',
+                                    ':', ' ' };
+
     return specialChars.find(c) != specialChars.end();
-}
+  }
 
   void execute(int key)
   {
@@ -131,12 +132,15 @@ public:
         return;
       }
 
-      if(key == ctrl('w')){
+      if (key == ctrl('w'))
+      {
         action::modify::delete_word();
-      }else if(isPrintable(key)){ 
+      }
+      else if (isPrintable(key))
+      {
         action::modify::insert_letter(key);
       }
-      
+
       break;
     }
 

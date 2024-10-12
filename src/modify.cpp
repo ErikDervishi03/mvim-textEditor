@@ -27,8 +27,8 @@ void action::modify::insert_letter(int letter)
   buffer.insert_letter(pointed_row, cursor.getX(), letter);
   cursor.move_right();
 
-  action_history.push({ ActionType::INSERT, static_cast<int>(pointed_row), 
-                          cursor.getX(), static_cast<char>(letter), "" });
+  action_history.push({ ActionType::INSERT, static_cast<int>(pointed_row),
+                        cursor.getX(), static_cast<char>(letter), "" });
 }
 
 void action::modify::new_line()
@@ -78,14 +78,17 @@ void action::modify::delete_letter()
   }
   else if (cursor.getX() > 0)
   {
-     action::movement::move_left();
+    action::movement::move_left();
     buffer.delete_letter(pointed_row, cursor.getX());
   }
 }
 
 void action::modify::normal_delete_letter()
 {
-  if(buffer[pointed_row].length() == 0)return;
+  if (buffer[pointed_row].length() == 0)
+  {
+    return;
+  }
 
   status = Status::unsaved;
 
@@ -94,7 +97,7 @@ void action::modify::normal_delete_letter()
     action::movement::move_left();
   }
   buffer.delete_letter(pointed_row, cursor.getX());
-  
+
 }
 
 void action::modify::tab()
@@ -203,7 +206,7 @@ void action::modify::replace()
 void action::modify::delete_selection(int start_row, int end_row, int start_col, int end_col)
 {
   status = Status::unsaved;
-  
+
   copy_paste_buffer.clear();    // Clear the buffer before copying the highlighted text
 
   // Case 1: Highlight is within a single row
@@ -217,17 +220,17 @@ void action::modify::delete_selection(int start_row, int end_row, int start_col,
     copy_paste_buffer = buffer.slice_row(start_row, copy_start, copy_start + num_chars_to_copy);
 
     cursor.setX(copy_start);      // Set the cursor to the start of the highlighted text
-    
+
     return;
 
   }
   // Case 2: Highlight spans multiple rows
-  
+
   if (end_row < start_row)
   {
     std::swap(start_row, end_row);
     std::swap(start_col, end_col);
-  }   
+  }
 
   copy_paste_buffer = buffer.slice_row(start_row, start_col, buffer[start_row].length());
 
@@ -248,92 +251,118 @@ void action::modify::delete_selection(int start_row, int end_row, int start_col,
 }
 
 
-static void reverse_insert(int row, int col){
-    // Set the cursor to the position of the last action
-    cursor.set(col + 1, row);
-    pointed_row = row;
+static void reverse_insert(int row, int col)
+{
+  // Set the cursor to the position of the last action
+  cursor.set(col + 1, row);
+  pointed_row = row;
 
-    // Maintain the current selected word at the center of the screen
-    if (pointed_row > max_row / 2)
-    {
-        starting_row = pointed_row - max_row / 2;
-    }
-    else
-    {
-        starting_row = 0;
-    }
+  // Maintain the current selected word at the center of the screen
+  if (pointed_row > max_row / 2)
+  {
+    starting_row = pointed_row - max_row / 2;
+  }
+  else
+  {
+    starting_row = 0;
+  }
 }
 
-void action::modify::delete_word_backyard(){
-  if(cursor.getX() == 0)return;
-  
+void action::modify::delete_word_backyard()
+{
+  if (cursor.getX() == 0)
+  {
+    return;
+  }
+
   status = Status::unsaved;
 
   char curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
 
-  //erase all spaces
-  while(curr_char_pointed == ' '){
+  // erase all spaces
+  while (curr_char_pointed == ' ')
+  {
     action::modify::delete_letter();
-    if(cursor.getX() == 0)return;
+    if (cursor.getX() == 0)
+    {
+      return;
+    }
     curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
   }
-  
-  while(curr_char_pointed != ' ' && cursor.getX() > 0){
+
+  while (curr_char_pointed != ' ' && cursor.getX() > 0)
+  {
     action::modify::delete_letter();
     curr_char_pointed = buffer[pointed_row][cursor.getX() - 1];
   }
 }
 
-void action::modify::delete_word(){
+void action::modify::delete_word()
+{
   int row_length = buffer[pointed_row].length();
-  if (cursor.getX() == row_length)return;
+  if (cursor.getX() == row_length)
+  {
+    return;
+  }
 
   status = Status::unsaved;
   char curr_char_pointed = buffer[pointed_row][cursor.getX() + 1];
 
-  //erase all chars
-  while(curr_char_pointed != ' '){
+  // erase all chars
+  while (curr_char_pointed != ' ')
+  {
     action::modify::normal_delete_letter();
     row_length--;
-    if(cursor.getX() == row_length)return;
+    if (cursor.getX() == row_length)
+    {
+      return;
+    }
     curr_char_pointed = buffer[pointed_row][cursor.getX() + 1];
   }
 
-  while(curr_char_pointed == ' ' && cursor.getX() < row_length){
+  while (curr_char_pointed == ' ' && cursor.getX() < row_length)
+  {
     action::modify::normal_delete_letter();
     curr_char_pointed = buffer[pointed_row][cursor.getX() + 1];
   }
 }
 
-void action::modify::undo(){
+void action::modify::undo()
+{
 
-  if(!action::action_history.empty()){
+  if (!action::action_history.empty())
+  {
     status = Status::unsaved;
     Action last_action = action::action_history.top();
     action::action_history.pop();
 
-    switch (last_action.type) {
-      case ActionType::INSERT:
+    switch (last_action.type)
+    {
+    case ActionType::INSERT:
+    {
+      reverse_insert(last_action.row, last_action.col);
+
+      while (!action::action_history.empty() &&
+             action::action_history.top().type == ActionType::INSERT)
+      {
+        // Retrieve the last action
+        Action last_action = action::action_history.top();
+
         reverse_insert(last_action.row, last_action.col);
-        while (!action::action_history.empty() && 
-              action::action_history.top().type == ActionType::INSERT)
-        {
-            // Retrieve the last action
-            Action last_action = action::action_history.top();
 
-            reverse_insert(last_action.row, last_action.col);
+        // Undo the insert action by deleting the letter
+        action::modify::delete_letter();
 
-            // Undo the insert action by deleting the letter
-            action::modify::delete_letter();
+        // Pop the action from the history stack
+        action::action_history.pop();
+      }
 
-            // Pop the action from the history stack
-            action::action_history.pop();
-        }
-
-        break;
-      default:
-        break;
+      break;
+    }
+    default:
+    {
+      break;
+    }
     }
   }
 }
-
