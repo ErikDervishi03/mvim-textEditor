@@ -50,7 +50,7 @@ void action::visual::highlight(int start_row, int end_row, int start_col, int en
     // Highlight the current row
     mvchgat(curr_row - starting_row, 
             std::min(curr_start_col, curr_end_col), 
-            highlight_length, A_NORMAL, 1, NULL);
+            highlight_length, A_NORMAL, highlightedTextColor, NULL);
   }
 }
 

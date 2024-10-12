@@ -1,14 +1,12 @@
-#include <iostream>
-#include <cstring>  // Include for std::strcmp
-#include "../include/ide.hpp"  // Include your Ide class header
+#include "../include/mvimStarter.hpp"  // Include your mvimStarter class header
 
 int main(int argc, char* argv[])
 {
 
   if (argc == 1)
   {
-    Ide ide;
-    ide.run();
+    mvimStarter mvimStarter;
+    mvimStarter.run();
     return 0;
   }
 
@@ -29,13 +27,13 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Create an instance of Ide, passing the filename and benchmark flag
-  Ide ide(filename, benchmark);
+  // Create an instance of mvimStarter, passing the filename and benchmark flag
+  mvimStarter mvimStarter(filename, benchmark);
 
-  // Run the IDE (this will only happen if not in benchmark mode)
+  // Run the mvimStarter (this will only happen if not in benchmark mode)
   if (!benchmark)
   {
-    ide.run();
+    mvimStarter.run();
   }
 
   return 0;    // Exit the program successfully

@@ -1,7 +1,7 @@
-#include "../include/ide.hpp"
+#include "../include/mvimStarter.hpp"
 
 // Define constants and global variables
-const char * ide_name = R"(
+const char * mvim_logo = R"(
                       _             
                      (_)            
   _ __ ___   __   __  _   _ __ ____   
@@ -13,16 +13,14 @@ const char * ide_name = R"(
 )";
 
 // Constructor implementations
-Ide::Ide() : screen(Screen::getScreen()), benchmark(false) {
+mvimStarter::mvimStarter() : screen(Screen::getScreen()), benchmark(false) {
     initialize_ncurses();  // Initialize ncurses and colors
     pointed_file = "";  
     status = Status::saved;
     setDefaults();
-    visual_start_row = visual_end_row = pointed_row;
-    visual_start_col = visual_end_col = cursor.getX();
 }
 
-Ide::Ide(std::string filename, bool benchmark) 
+mvimStarter::mvimStarter(std::string filename, bool benchmark) 
     : screen(Screen::getScreen()), benchmark(benchmark) {
     if (benchmark) {
         startBenchmark(filename);
@@ -40,14 +38,11 @@ Ide::Ide(std::string filename, bool benchmark)
 
     refresh();
     status = Status::saved;
-    visual_start_row = visual_end_row = pointed_row;
-    visual_start_col = visual_end_col = cursor.getX();
-    
 }
 
-// Run the IDE main loop
-void Ide::run() {
-    show_initial_screen();  // Show initial screen if no file is loaded
+// Run the mvimStarter main loop
+void mvimStarter::run() {
+    homeScreen();  // Show initial screen if no file is loaded
 
     cursor.restore(span);
     while (true) {
@@ -88,13 +83,8 @@ void Ide::run() {
     }
 }
 
-// Draw command box at the bottom of the screen
-void Ide::draw_command_box() {
-    screen.draw_rectangle(screen.get_height() - 3, 0, screen.get_height() - 1, screen.get_width() - 1);
-}
-
 // Show the initial welcome screen
-void Ide::show_initial_screen() {
+void mvimStarter::homeScreen() {
     if (pointed_file.empty()) {
         curs_set(0);
 
@@ -107,7 +97,7 @@ void Ide::show_initial_screen() {
         int start_y = (screen_height - text_height) / 2;
 
         // Print the welcome message
-        screen.print_multiline_string(start_y, start_x, ide_name);
+        screen.print_multiline_string(start_y, start_x, mvim_logo);
 
         int input = getch();  // Wait for user input
         _command.execute(input);
@@ -117,7 +107,7 @@ void Ide::show_initial_screen() {
     }
 }
 
-// Utility function to print a message directly to the terminal (outside of ncurses mode)
+// Utility function to print a message directly to the terminal (outsmvimStarter of ncurses mode)
 static void print_to_terminal(int message) {
     endwin();  // End ncurses mode
     std::cout << message << std::endl;  // Print message to terminal
@@ -125,7 +115,7 @@ static void print_to_terminal(int message) {
 }
 
 // Helper function to initialize ncurses and color pairs
-void Ide::initialize_ncurses() {
+void mvimStarter::initialize_ncurses() {
     screen.start();
     start_color();
     init_pair(1, COLOR_WHITE, COLOR_RED);
@@ -134,33 +124,39 @@ void Ide::initialize_ncurses() {
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
 }
 
-void Ide::setKeyWordColor(color pColor){
+void mvimStarter::setKeyWordColor(color pColor){
     keyWordColor = pColor;
 }
 
-void Ide::setCommentColor(color pColor){
+void mvimStarter::setCommentColor(color pColor){
     commentsColor = pColor;
 }
 
-void Ide::setNumberRowsColor(color pColor){
+void mvimStarter::setNumberRowsColor(color pColor){
     numberRowsColor = pColor;
 }
 
-void Ide::setHighlightedTextColor(color pColor){
+void mvimStarter::setHighlightedTextColor(color pColor){
     highlightedTextColor = pColor;
 }
-void Ide::setBracketsColor(color pColor){
+void mvimStarter::setBracketsColor(color pColor){
     bracketsColor = pColor;
 }
 
-void Ide::setDefaults(){
-    setKeyWordColor(2);
-    setCommentColor(4);
-    setNumberRowsColor(3);
-    setBracketsColor(3);
+void mvimStarter::setColorSchema(struct colorSchema pColorSchema){
+    setKeyWordColor(pColorSchema.keyWord);
+    setCommentColor(pColorSchema.comments);
+    setNumberRowsColor(pColorSchema.numberRows);
+    setBracketsColor(pColorSchema.brackets);
+    setHighlightedTextColor(pColorSchema.highlightedText);
 }
 
-void Ide::startBenchmark(std::string filename){
+void mvimStarter::setDefaults(){
+    setColorSchema({2, 3, 4, 1,3});
+}
+
+
+void mvimStarter::startBenchmark(std::string filename){
     auto start_time = std::chrono::high_resolution_clock::now();  // Start timing
 
     action::file::read(filename);  // Load file content
@@ -168,6 +164,6 @@ void Ide::startBenchmark(std::string filename){
     std::chrono::duration<double, std::milli> load_time = end_time - start_time;  // Get load time in milliseconds
 
     std::cout << "Time taken to load the file: " << load_time.count() << " ms" << std::endl;
-    std::cout << "Benchmarking mode: Exiting IDE after loading." << std::endl;
+    std::cout << "Benchmarking mode: Exiting mvimStarter after loading." << std::endl;
     exit(0);  // Exit the program after showing benchmark results
 }

@@ -14,15 +14,22 @@
 #include <iostream> // For printing output
 
 
-// Ide class definition
-class Ide {
+// mvimStarter class definition
+class mvimStarter {
 private:
+    struct colorSchema{
+        color keyWord;
+        color numberRows;
+        color comments;
+        color highlightedText;
+        color brackets;
+    }; 
+
     Screen& screen;       // Screen instance
     Command _command;     // Command processor
     bool benchmark;       // Flag to indicate if benchmarking is enabled
 
-    void draw_command_box();
-    void show_initial_screen();
+    void homeScreen();
     void initialize_ncurses();  // Helper function to initialize ncurses and colors
     void setKeyWordColor(color pColor);
     void setCommentColor(color pColor);
@@ -30,14 +37,15 @@ private:
     void setHighlightedTextColor(color pColor);
     void setBracketsColor(color pColor);
     void setDefaults();
+    void setColorSchema(colorSchema pColorSchema);
 
     void startBenchmark(std::string filename);
 public:
     // Constructors
-    Ide();
-    Ide(std::string filename, bool benchmark = false);
+    mvimStarter();
+    mvimStarter(std::string filename, bool benchmark = false);
 
-    // Run the IDE main loop
+    // Run the mvimStarter main loop
     void run();
 };
 
