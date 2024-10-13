@@ -290,7 +290,7 @@ namespace action
      * @param end_col The ending column of the highlight.
      * @param color_scheme The color scheme to apply for highlighting.
      */
-    void highlight_row_selected(int row, int start_col, int end_col, int color_scheme);
+    void highlight_row_selected(int row, int start_col, int end_col, color color_scheme);
 
     /**
      * @brief Copies the highlighted text based on the visual selection.

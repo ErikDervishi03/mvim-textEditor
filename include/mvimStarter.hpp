@@ -13,6 +13,9 @@
 #include <chrono>  // For high-resolution timing
 #include <iostream> // For printing output
 
+#define nColor 8
+#define get_pair(bg, fr) ((nColor * bg) + fr)
+#define get_pair_default(fr) (get_pair(backgroundColor,fr))
 
 // mvimStarter class definition
 class mvimStarter {
@@ -22,8 +25,10 @@ private:
         color numberRows;
         color comments;
         color highlightedText;
+        color highlightedBg;
         color brackets;
         color preprocessorColor;
+        color backgroundColor;
     }; 
 
     Screen& screen;       // Screen instance
@@ -38,10 +43,14 @@ private:
     void setHighlightedTextColor(color pColor);
     void setBracketsColor(color pColor);
     void setPreprocessorColor(color pColor);
+    void setBackgroundColor(color pColor);
+    void setHighlightedBgColor(color pColor);
     void setDefaults();
     void setColorSchema(colorSchema pColorSchema);
+    void setColorSchemaByName(const std::string& schemaName);
 
     void startBenchmark(std::string filename);
+
 public:
     // Constructors
     mvimStarter();

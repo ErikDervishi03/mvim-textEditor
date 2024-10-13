@@ -31,11 +31,13 @@ extern int visual_end_row;
 extern int visual_end_col;
 extern std::string copy_paste_buffer;
 
-/*Ide colors*/
-typedef int color;
+/*mvim colors*/
+typedef short color;
 extern color keyWordColor;
 extern color numberRowsColor;
 extern color commentsColor;
 extern color highlightedTextColor;
 extern color bracketsColor;
 extern color preprocessorColor;
+extern color backgroundColor;
+extern color highlightedBgColor;

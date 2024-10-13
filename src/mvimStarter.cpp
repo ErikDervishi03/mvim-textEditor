@@ -1,5 +1,6 @@
 #include "../include/mvimStarter.hpp"
 #include <curses.h>
+#include <ncurses.h>
 
 // Define constants and global variables
 const char* mvim_logo =
@@ -134,13 +135,20 @@ static void print_to_terminal(int message)
 // Helper function to initialize ncurses and color pairs
 void mvimStarter::initialize_ncurses()
 {
-  screen.start();
-  start_color();
-  init_pair(1, COLOR_WHITE, COLOR_RED);
-  init_pair(2, COLOR_BLUE, COLOR_BLACK);
-  init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-  init_pair(4, COLOR_CYAN, COLOR_BLACK);
-  init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+    screen.start();
+    start_color();
+
+    // Colori di sfondo da utilizzare
+    int colors[] = {COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE};
+
+    // Definire le coppie di colori: ogni foreground con ogni background
+    int pair_id = 0;
+    for (int bg : colors) {
+        for (int fg : colors) {
+            init_pair(pair_id, fg, bg);
+            pair_id++;
+        }
+    }
 }
 
 void mvimStarter::setKeyWordColor(color pColor)
@@ -173,19 +181,90 @@ void mvimStarter::setPreprocessorColor(color pColor)
   preprocessorColor = pColor;
 }
 
+void mvimStarter::setBackgroundColor(color pColor)
+{
+  wbkgd(stdscr, pColor);
+}
+
 void mvimStarter::setColorSchema(struct colorSchema pColorSchema)
 {
-  setKeyWordColor(pColorSchema.keyWord);
-  setCommentColor(pColorSchema.comments);
-  setNumberRowsColor(pColorSchema.numberRows);
-  setBracketsColor(pColorSchema.brackets);
-  setHighlightedTextColor(pColorSchema.highlightedText);
-  setPreprocessorColor(pColorSchema.preprocessorColor);
+  setBackgroundColor(pColorSchema.backgroundColor);
+
+  setKeyWordColor(get_pair_default(pColorSchema.keyWord));
+  setCommentColor(get_pair_default(pColorSchema.comments));
+  setNumberRowsColor(get_pair_default(pColorSchema.numberRows));
+  setBracketsColor(get_pair_default(pColorSchema.brackets));
+  setHighlightedTextColor(get_pair(highlightedBgColor, pColorSchema.highlightedText));
+  setPreprocessorColor(get_pair_default(pColorSchema.preprocessorColor));
 }
+
+void mvimStarter::setColorSchemaByName(const std::string& schemaName)
+{
+    if (schemaName == "default")
+    {
+        setColorSchema(
+        {
+            COLOR_BLUE,              // keyWord
+            COLOR_YELLOW,         // numberRows
+            COLOR_CYAN,             // comments
+            COLOR_WHITE,     // highlightedText
+            COLOR_RED,         // highlightedBg
+            COLOR_YELLOW,           // brackets
+            COLOR_MAGENTA, // preprocessorColor
+            COLOR_WHITE      // backgroundColor
+        });
+    }
+    else if (schemaName == "dark")
+    {
+        setColorSchema(
+        {
+            COLOR_CYAN,      // keyWord
+            COLOR_GREEN,     // numberRows
+            COLOR_YELLOW,    // comments
+            COLOR_WHITE,     // highlightedText
+            COLOR_BLACK,     // highlightedBg
+            COLOR_MAGENTA,   // brackets
+            COLOR_RED        // preprocessorColor
+        });
+    }
+    else if (schemaName == "light")
+    {
+        setColorSchema(
+        {
+            COLOR_BLACK,     // keyWord
+            COLOR_WHITE,     // numberRows
+            COLOR_BLUE,      // comments
+            COLOR_YELLOW,    // highlightedText
+            COLOR_CYAN,      // highlightedBg
+            COLOR_GREEN,     // brackets
+            COLOR_RED        // preprocessorColor
+        });
+    }
+    else if (schemaName == "pastel")
+    {
+        setColorSchema(
+        {
+            COLOR_MAGENTA,   // keyWord
+            COLOR_CYAN,      // numberRows
+            COLOR_YELLOW,    // comments
+            COLOR_WHITE,     // highlightedText
+            COLOR_GREEN,     // highlightedBg
+            COLOR_BLUE,      // brackets
+            COLOR_RED        // preprocessorColor
+        });
+    }
+    else
+    {
+        // Optional: Handle unknown color schema
+        std::cerr << "Unknown color scheme: " << schemaName << std::endl;
+    }
+}
+
+
 
 void mvimStarter::setDefaults()
 {
-  setColorSchema({ 2, 3, 4, 1, 3, 5 });
+  setColorSchemaByName("default");
 }
 
 
