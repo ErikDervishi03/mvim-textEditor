@@ -1,4 +1,5 @@
 #include "../include/screen.hpp"
+#include <ncurses.h>
 
 Screen::~Screen()
 {
@@ -56,7 +57,9 @@ void Screen::print_buffer()
     attron(COLOR_PAIR(numberRowsColor));
     mvprintw(i, 0, "%zu", i + starting_row + 1);
     attroff(COLOR_PAIR(numberRowsColor));
+    attron(COLOR_PAIR(textColor));
     mvprintw(i, span + 1, "%s", buffer[i + starting_row].c_str());
+    attroff(COLOR_PAIR(textColor));
   }
 }
 
@@ -65,7 +68,7 @@ void Screen::print_multiline_string(int start_y, int start_x, const char* str)
 {
   int current_y = start_y;    // Coordinata Y attuale per la stampa
   int current_x = start_x;    // Coordinata X attuale per la stampa
-
+  attron(COLOR_PAIR(textColor));
   // Itera la stringa carattere per carattere
   for (int i = 0; str[i] != '\0'; i++)
   {
@@ -79,4 +82,5 @@ void Screen::print_multiline_string(int start_y, int start_x, const char* str)
       mvaddch(current_y, current_x++, str[i]);       // Stampa il carattere e incrementa X
     }
   }
+  attroff(COLOR_PAIR(textColor));
 }

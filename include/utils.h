@@ -17,3 +17,8 @@
 #include <fcntl.h> 
 #include <stack>
 #include <set>
+#include <chrono>
+
+#define nColor 8
+#define get_pair(bg, fr) ((nColor * bg) + fr)
+#define get_pair_default(fr) (get_pair(bgColor,fr))

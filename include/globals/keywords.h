@@ -12,7 +12,7 @@ static const char* types_old[] = {
     "static","struct", "switch", 
     "typedef", "union", "unsigned", 
     "volatile", "while", "namespace",
-    "inline",
+    "inline", "bool",
     nullptr  
 };
 

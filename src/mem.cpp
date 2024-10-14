@@ -22,5 +22,7 @@ color commentsColor;
 color highlightedTextColor;
 color bracketsColor;
 color preprocessorColor;
-color backgroundColor;
+color bgColor;
 color highlightedBgColor;
+color textColor;
+color cursorColor;

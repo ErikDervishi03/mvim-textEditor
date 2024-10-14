@@ -317,7 +317,7 @@ namespace action
      * @brief Highlights all occurrences of the word within the visible rows.
      * The function iterates through the found occurrences and highlights the word in the visible rows.
      */
-    void highlight_visible_occurrences();
+    void highlight_searched_word();
 
     /**
      * @brief Moves the cursor to the next occurrence of the word in the buffer.

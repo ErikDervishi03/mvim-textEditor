@@ -24,7 +24,7 @@ void action::find::find_all_occurrence(char* word)
   }
 }
 
-void action::find::highlight_visible_occurrences()
+void action::find::highlight_searched_word()
 {
   // Get visible start and end rows
   int visible_start_row = starting_row;

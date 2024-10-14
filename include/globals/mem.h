@@ -39,5 +39,7 @@ extern color commentsColor;
 extern color highlightedTextColor;
 extern color bracketsColor;
 extern color preprocessorColor;
-extern color backgroundColor;
+extern color bgColor;
 extern color highlightedBgColor;
+extern color textColor;
+extern color cursorColor;
