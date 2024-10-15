@@ -1,5 +1,6 @@
 #include "../include/mvimStarter.hpp"
 
+
 // Define constants and global variables
 const char* mvim_logo =
   R"(
@@ -21,6 +22,7 @@ mvimStarter::mvimStarter() :
   pointed_file = "";
   status = Status::saved;
   setDefaults();
+  mvimService.enableService("highlighting", action::visual::highlight_keywords);
 }
 
 mvimStarter::mvimStarter(std::string filename, bool benchmark)
@@ -39,7 +41,6 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
   cursor.restore(span);    // Restore cursor position
   action::file::read(filename);    // Load file content
   screen.update();    // Update screen
-  action::visual::highlight_keywords();    // Highlight keywords
 
   refresh();
   status = Status::saved;
@@ -53,6 +54,20 @@ static void print_to_terminal(int message)
   refresh();    // Re-enter ncurses mode
 }
 
+void mvimStarter::updateVar()
+{
+  // If in visual mode, highlight the selection
+  if (mode == visual)
+  {
+    visual_end_row = pointed_row;
+    visual_end_col = cursor.getX() + span + 1;
+  }
+  else
+  {
+    visual_start_row = pointed_row;
+    visual_start_col = cursor.getX() + span + 1;
+  }
+}
 
 // Run the mvimStarter main loop
 void mvimStarter::run()
@@ -77,27 +92,9 @@ void mvimStarter::run()
 
       bkgd(COLOR_PAIR(get_pair(bgColor, cursorColor)));
 
-      // Highlight keywords after printing the buffer
-      action::visual::highlight_keywords();
+      updateVar();
 
-      // If in visual mode, highlight the selection
-      if (mode == visual)
-      {
-        visual_end_row = pointed_row;
-        visual_end_col = cursor.getX() + span + 1;
-        action::visual::highlight_selected();          // Highlight selection in visual mode
-      }
-      else
-      {
-        visual_start_row = pointed_row;
-        visual_start_col = cursor.getX() + span + 1;
-      }
-
-      // If in find mode, highlight found occurrences
-      if (mode == find)
-      {
-        action::find::highlight_searched_word();          // Highlight found occurrences
-      }
+      mvimService.run();
 
       // Restore cursor position after all operations
       cursor.restore(span);
@@ -138,20 +135,23 @@ void mvimStarter::homeScreen()
 // Helper function to initialize ncurses and color pairs
 void mvimStarter::initialize_ncurses()
 {
-    screen.start();
-    start_color();
+  screen.start();
+  start_color();
 
-    // Colori di sfondo da utilizzare
-    int colors[] = {COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE};
+  // Colori di sfondo da utilizzare
+  int colors[] = { COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN,
+                   COLOR_WHITE };
 
-    // Definire le coppie di colori: ogni foreground con ogni background
-    int pair_id = 0;
-    for (int bg : colors) {
-        for (int fg : colors) {
-            init_pair(pair_id, fg, bg);
-            pair_id++;
-        }
+  // Definire le coppie di colori: ogni foreground con ogni background
+  int pair_id = 0;
+  for (int bg : colors)
+  {
+    for (int fg : colors)
+    {
+      init_pair(pair_id, fg, bg);
+      pair_id++;
     }
+  }
 }
 
 void mvimStarter::setKeyWordColor(color pColor)
@@ -189,15 +189,18 @@ void mvimStarter::setHighlightedBgColor(color pColor)
   highlightedBgColor = pColor;
 }
 
-void mvimStarter::setBgColor(color pColor){
+void mvimStarter::setBgColor(color pColor)
+{
   bgColor = pColor;
 }
 
-void mvimStarter::setTextColor(color pColor){
+void mvimStarter::setTextColor(color pColor)
+{
   textColor = pColor;
 }
 
-void mvimStarter::setCursorColor(color pColor){
+void mvimStarter::setCursorColor(color pColor)
+{
   cursorColor = pColor;
 }
 
@@ -218,66 +221,66 @@ void mvimStarter::setColorSchema(struct colorSchema pColorSchema)
 
 void mvimStarter::setColorSchemaByName(const std::string& schemaName)
 {
-    if (schemaName == "default")
+  if (schemaName == "default")
+  {
+    setColorSchema(
     {
-        setColorSchema(
-        {
-            COLOR_BLUE,              // keyWord
-            COLOR_YELLOW,         // numberRows
-            COLOR_CYAN,             // comments
-            COLOR_WHITE,     // highlightedText
-            COLOR_RED,         // highlightedBg
-            COLOR_YELLOW,           // brackets
-            COLOR_MAGENTA, // preprocessorColor
-            COLOR_WHITE,    // backgroundColor
-            COLOR_BLACK,            // textColor
-            COLOR_GREEN,        //cursor
-        });
-    }
-    else if (schemaName == "dark")
+      COLOR_BLUE,                    // keyWord
+      COLOR_YELLOW,               // numberRows
+      COLOR_CYAN,                   // comments
+      COLOR_WHITE,           // highlightedText
+      COLOR_RED,               // highlightedBg
+      COLOR_YELLOW,                 // brackets
+      COLOR_MAGENTA,       // preprocessorColor
+      COLOR_BLACK,          // backgroundColor
+      COLOR_WHITE,                  // textColor
+      COLOR_WHITE,              // cursor
+    });
+  }
+  else if (schemaName == "dark")
+  {
+    setColorSchema(
     {
-        setColorSchema(
-        {
-            COLOR_CYAN,         // keyWord
-            COLOR_GREEN,     // numberRows
-            COLOR_YELLOW,      // comments
-            COLOR_BLACK,// highlightedText
-            COLOR_RED,  // highlightedBg
-            COLOR_MAGENTA,     // brackets
-            COLOR_RED // preprocessorColor
-        });
-    }
-    else if (schemaName == "light")
+      COLOR_CYAN,               // keyWord
+      COLOR_GREEN,           // numberRows
+      COLOR_YELLOW,            // comments
+      COLOR_BLACK,      // highlightedText
+      COLOR_RED,        // highlightedBg
+      COLOR_MAGENTA,           // brackets
+      COLOR_RED       // preprocessorColor
+    });
+  }
+  else if (schemaName == "light")
+  {
+    setColorSchema(
     {
-        setColorSchema(
-        {
-            COLOR_BLACK,         // keyWord
-            COLOR_WHITE,      // numberRows
-            COLOR_BLUE,         // comments
-            COLOR_YELLOW,// highlightedText
-            COLOR_CYAN,    // highlightedBg
-            COLOR_GREEN,        // brackets
-            COLOR_RED  // preprocessorColor
-        });
-    }
-    else if (schemaName == "pastel")
+      COLOR_BLACK,               // keyWord
+      COLOR_WHITE,            // numberRows
+      COLOR_BLUE,               // comments
+      COLOR_YELLOW,      // highlightedText
+      COLOR_CYAN,          // highlightedBg
+      COLOR_GREEN,              // brackets
+      COLOR_RED        // preprocessorColor
+    });
+  }
+  else if (schemaName == "pastel")
+  {
+    setColorSchema(
     {
-        setColorSchema(
-        {
-            COLOR_MAGENTA,   // keyWord
-            COLOR_CYAN,      // numberRows
-            COLOR_YELLOW,    // comments
-            COLOR_WHITE,     // highlightedText
-            COLOR_GREEN,     // highlightedBg
-            COLOR_BLUE,      // brackets
-            COLOR_RED        // preprocessorColor
-        });
-    }
-    else
-    {
-        // Optional: Handle unknown color schema
-        std::cerr << "Unknown color scheme: " << schemaName << std::endl;
-    }
+      COLOR_MAGENTA,         // keyWord
+      COLOR_CYAN,            // numberRows
+      COLOR_YELLOW,          // comments
+      COLOR_WHITE,           // highlightedText
+      COLOR_GREEN,           // highlightedBg
+      COLOR_BLUE,            // brackets
+      COLOR_RED              // preprocessorColor
+    });
+  }
+  else
+  {
+    // Optional: Handle unknown color schema
+    std::cerr << "Unknown color scheme: " << schemaName << std::endl;
+  }
 }
 
 

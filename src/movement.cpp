@@ -24,11 +24,11 @@ void action::movement::move_up()
 
 void action::movement::move_down()
 {
-  if (pointed_row < buffer.get_number_rows() - 1)
+  if (pointed_row < buffer.getSize() - 1)
   {
     std::string next_row = buffer.get_string_row(pointed_row + 1);
     if (cursor.getY() < max_row - SCROLL_START_THRESHOLD - 1 ||
-        pointed_row >= buffer.get_number_rows() - SCROLL_START_THRESHOLD - 1)
+        pointed_row >= buffer.getSize() - SCROLL_START_THRESHOLD - 1)
     {
 
       cursor.move_down();
@@ -38,7 +38,7 @@ void action::movement::move_down()
       cursor.setX(next_row.length());
     }
     if (pointed_row - starting_row == max_row - SCROLL_START_THRESHOLD - 1 &&
-        pointed_row < buffer.get_number_rows() - SCROLL_START_THRESHOLD - 1)
+        pointed_row < buffer.getSize() - SCROLL_START_THRESHOLD - 1)
     {
 
       starting_row++;
@@ -80,7 +80,7 @@ void action::movement::go_down_creating_newline()
   buffer.new_row("", pointed_row + 1);
 
   if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
-      !buffer.is_void_row(max_row) && pointed_row < buffer.get_number_rows())
+      !buffer.is_void_row(max_row) && pointed_row < buffer.getSize())
   {
 
     starting_row++;
@@ -152,7 +152,7 @@ void action::movement::move_to_next_word()
 
     if (cursor.getX() >= row_length)
     {
-      if (pointed_row < buffer.get_number_rows() - 1)
+      if (pointed_row < buffer.getSize() - 1)
       {
         action::movement::move_down();
         cursor.setX(0);
@@ -168,7 +168,7 @@ void action::movement::move_to_next_word()
 
     if (cursor.getX() >= row_length)
     {
-      if (pointed_row < buffer.get_number_rows() - 1)
+      if (pointed_row < buffer.getSize() - 1)
       {
         action::movement::move_down();
         cursor.setX(0);
@@ -185,9 +185,9 @@ void action::movement::move_to_next_word()
 void action::movement::move_to_end_of_file()
 {
   // point to the last row
-  pointed_row = buffer.get_number_rows() - 1;
+  pointed_row = buffer.getSize() - 1;
 
-  starting_row = std::max((int) (buffer.get_number_rows() - max_row), 0);
+  starting_row = std::max((int) (buffer.getSize() - max_row), 0);
   cursor.set(buffer.get_string_row(pointed_row).length(),
              pointed_row - starting_row);
 }

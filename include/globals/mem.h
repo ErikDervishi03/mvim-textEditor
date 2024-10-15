@@ -1,11 +1,13 @@
 #pragma once
 
+#include "../utils.h"
 #include "../cursor.hpp"
 #include "../buffer.hpp"
 #include "mode.h"
 #include "status.h"
 #include <memory>
-
+#include <functional>
+#include <map>
 /*
 
   mem.h
@@ -43,3 +45,9 @@ extern color bgColor;
 extern color highlightedBgColor;
 extern color textColor;
 extern color cursorColor;
+
+/*
+   need to map keys for the specific mode
+ */
+typedef std::function<void ()> _action;
+typedef std::map<int, _action> keymap;

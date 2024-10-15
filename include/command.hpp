@@ -4,11 +4,6 @@
 #include <ncurses.h>
 #define ctrl(x) ((x) & 0x1f)
 #define isPrintable(c) (isalpha(c) || isdigit(c) || isSpecialChar(c))
-/*
-   need to map keys for the specific mode
- */
-typedef std::function<void ()> _action;
-typedef std::map<int, _action> keymap;
 
 
 class Command
@@ -134,7 +129,7 @@ public:
 
       if (key == ctrl('w'))
       {
-        action::modify::delete_word();
+        action::modify::delete_word_backyard();
       }
       else if (isPrintable(key))
       {

@@ -33,7 +33,7 @@ void action::file::save()
 
     action::system::restore();
 
-    for (int i = 0; i < buffer.get_number_rows(); i++)
+    for (int i = 0; i < buffer.getSize(); i++)
     {
       myfile << buffer.get_buffer()[i] << "\n";
     }
@@ -96,6 +96,9 @@ void action::file::read(std::string file_name)
     status = Status::saved;
 
     pointed_file = file_name;
+    pointed_row = 0;
+    starting_row = 0;
+    cursor.set(0, 0);
 
     buffer.clear();
     std::string line;

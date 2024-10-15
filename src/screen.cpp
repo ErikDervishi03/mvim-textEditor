@@ -52,7 +52,7 @@ void Screen::draw_rectangle(int y1, int x1, int y2, int x2)
 
 void Screen::print_buffer()
 {
-  for (int i = 0; (i + starting_row) < buffer.get_number_rows() && i < max_row; i++)
+  for (int i = 0; (i + starting_row) < buffer.getSize() && i < max_row; i++)
   {
     attron(COLOR_PAIR(numberRowsColor));
     mvprintw(i, 0, "%zu", i + starting_row + 1);

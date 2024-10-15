@@ -6,7 +6,7 @@ void action::find::find_all_occurrence(char* word)
 
   int word_len = strlen(word);
 
-  for (int row = 0; row < buffer.get_number_rows(); ++row)
+  for (int row = 0; row < buffer.getSize(); ++row)
   {
     std::string& buffer_row = buffer[row];        // Get the row content
 
@@ -26,9 +26,13 @@ void action::find::find_all_occurrence(char* word)
 
 void action::find::highlight_searched_word()
 {
+  if (mode != Mode::find)
+  {
+    return;
+  }
   // Get visible start and end rows
   int visible_start_row = starting_row;
-  int visible_end_row = std::min((int) (starting_row + max_row), buffer.get_number_rows() - 1);
+  int visible_end_row = std::min((int) (starting_row + max_row), buffer.getSize() - 1);
 
   for (const auto& occ : found_occurrences)
   {

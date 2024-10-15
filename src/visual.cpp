@@ -56,6 +56,11 @@ void action::visual::highlight(int start_row, int end_row, int start_col, int en
 
 void action::visual::highlight_selected()
 {
+  if (mode != Mode::visual)
+  {
+    return;
+  }
+
   highlight(visual_start_row, visual_end_row,
             visual_start_col, visual_end_col);
 }
@@ -117,7 +122,7 @@ void action::visual::highlight_row_selected(int row, int start_col, int end_col,
 void action::visual::highlight_keywords()
 {
   int visible_start_row = starting_row;
-  int visible_end_row = std::min((int) (starting_row + max_row), buffer.get_number_rows() - 1);
+  int visible_end_row = std::min((int) (starting_row + max_row), buffer.getSize() - 1);
 
   // Loop through each visible row
   for (int row = visible_start_row; row <= visible_end_row; ++row)
@@ -210,7 +215,7 @@ void action::visual::highlight_keywords()
       while (next_row <= visible_end_row && buffer[next_row].find("*/") == std::string::npos)
       {
         action::visual::highlight_row_selected(next_row, span + 1,
-                                             buffer[next_row].size() + span + 1, commentsColor);
+                                               buffer[next_row].size() + span + 1, commentsColor);
         next_row++;
       }
 

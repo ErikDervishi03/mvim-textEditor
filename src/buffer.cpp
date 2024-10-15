@@ -92,7 +92,7 @@ std::string Buffer::get_string_row(int row) const
   return this->buffer.at(row);
 }
 
-int Buffer::get_number_rows() const
+int Buffer::getSize() const
 {
   return size;
 }

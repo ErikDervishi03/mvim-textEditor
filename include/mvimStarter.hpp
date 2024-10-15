@@ -2,6 +2,7 @@
 
 // Include necessary headers
 #include "action.hpp"
+#include "service.hpp"
 #include "globals/mem.h"
 #include "globals/mode.h"
 #include "utils.h"
@@ -28,6 +29,7 @@ private:
 
     Screen& screen;       // Screen instance
     Command _command;     // Command processor
+    service mvimService;
     bool benchmark;       // Flag to indicate if benchmarking is enabled
 
     void homeScreen();
@@ -45,6 +47,8 @@ private:
     void setDefaults();
     void setColorSchema(colorSchema pColorSchema);
     void setColorSchemaByName(const std::string& schemaName);
+
+    void updateVar();
 
     void startBenchmark(std::string filename);
 

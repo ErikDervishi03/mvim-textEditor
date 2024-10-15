@@ -117,7 +117,7 @@ public:
    * @brief Gets the current number of rows in the buffer.
    * @return The number of rows.
    */
-  int get_number_rows() const;
+  int getSize() const;
 
   /**
    * @brief Retrieves the entire buffer as a vector of strings.

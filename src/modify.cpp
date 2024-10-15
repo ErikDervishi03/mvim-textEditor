@@ -11,7 +11,7 @@ void action::modify::insert_letter(int letter)
     buffer.new_row("", pointed_row + 1);
     if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
         !buffer.is_void_row(max_row) &&
-        pointed_row < buffer.get_number_rows())
+        pointed_row < buffer.getSize())
     {
 
       starting_row++;
@@ -49,7 +49,7 @@ void action::modify::new_line()
   }
 
   if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
-      !buffer.is_void_row(max_row) && pointed_row < buffer.get_number_rows())
+      !buffer.is_void_row(max_row) && pointed_row < buffer.getSize())
   {
 
     starting_row++;
