@@ -4,7 +4,7 @@ void action::movement::move_up()
 {
   if (!(starting_row == 0 && pointed_row == 0))
   {
-    std::string prev_row = buffer.get_string_row(pointed_row - 1);
+    std::string prev_row = buffer[pointed_row - 1];
     if (cursor.getY() > SCROLL_START_THRESHOLD || starting_row == 0)
     {
       cursor.move_up();

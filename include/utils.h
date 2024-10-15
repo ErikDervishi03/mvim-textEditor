@@ -1,24 +1,22 @@
 #pragma once
 
-#include <menu.h>
-#include "globals/mem.h"
+
 #include "globals/consts.h"
 #include "globals/keywords.h"
-#include <ncurses.h>
-#include <memory>
-#include <string.h>
-#include <iostream>
-#include <map>
-#include <functional>
-#include <fstream>
-#include <filesystem>
-#include <form.h>
-#include <algorithm>
-#include <fcntl.h> 
-#include <stack>
-#include <set>
-#include <chrono>
+#include "cursor.hpp"
+#include "buffer.hpp"
+#include "globals/mode.h"
+#include "globals/status.h"
 
-#define nColor 8
-#define get_pair(bg, fr) ((nColor * bg) + fr)
-#define get_pair_default(fr) (get_pair(bgColor,fr))
+#include <ncurses.h>
+#include <iostream> // std::cerr
+#include <map> // for Keymap
+#include <functional> // for storing functions or lambdas
+#include <fstream> // equired if you're working with file streams
+#include <filesystem> // used in file.cpp
+#include <stack> // used for command history
+#include <set> // used for storing keywords
+#include <chrono> // benchmark
+#include <cstring> 
+#include <unistd.h> // used for access function
+#include <vector>

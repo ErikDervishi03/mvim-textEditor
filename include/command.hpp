@@ -1,7 +1,6 @@
 #pragma once
 #include "action.hpp"
-#include "globals/mode.h"
-#include <ncurses.h>
+
 #define ctrl(x) ((x) & 0x1f)
 #define isPrintable(c) (isalpha(c) || isdigit(c) || isSpecialChar(c))
 

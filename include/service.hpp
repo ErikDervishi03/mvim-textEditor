@@ -1,7 +1,4 @@
 #include "action.hpp"
-#include <vector>
-#include <string>
-#include <functional>
 
 class service {
 public:

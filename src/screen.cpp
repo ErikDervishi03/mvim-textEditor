@@ -1,5 +1,4 @@
 #include "../include/screen.hpp"
-#include <ncurses.h>
 
 Screen::~Screen()
 {

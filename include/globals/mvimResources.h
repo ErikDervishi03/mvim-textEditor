@@ -1,13 +1,7 @@
 #pragma once
 
 #include "../utils.h"
-#include "../cursor.hpp"
-#include "../buffer.hpp"
-#include "mode.h"
-#include "status.h"
-#include <memory>
-#include <functional>
-#include <map>
+
 /*
 
   mem.h

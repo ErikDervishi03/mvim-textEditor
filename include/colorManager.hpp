@@ -1,5 +1,8 @@
-#include "globals/mem.h"
-#include "ncurses.h"
+#include "globals/mvimResources.h"
+
+#define nColor 8
+#define get_pair(bg, fr) ((nColor * bg) + fr)
+#define get_pair_default(fr) (get_pair(bgColor,fr))
 
 class ColorManager
 {

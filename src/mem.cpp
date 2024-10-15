@@ -1,4 +1,4 @@
-#include "../include/utils.h"
+#include "../include/globals/mvimResources.h"
 
 Cursor cursor;
 Buffer buffer;

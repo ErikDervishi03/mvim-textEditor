@@ -1,11 +1,5 @@
 #pragma once
-#include "cursor.hpp"
-#include "globals/mem.h"
-#include "utils.h"
-#include <cstring>
-#include <iostream>
-#include <unistd.h>
-#include <ncurses.h>
+#include "globals/mvimResources.h"
 
 namespace action
 {
