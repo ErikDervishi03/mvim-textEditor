@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
       // The first non-option argument should be the filename
       filename = argv[i];
     }
-    else if (std::strcmp(argv[i], "-b") == 0)
+    else if (std::string(argv[i]) == "-b")
     {
       benchmark = true;        // Enable benchmarking
     }

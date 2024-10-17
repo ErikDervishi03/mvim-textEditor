@@ -33,6 +33,8 @@ namespace action
 
   namespace movement
   {
+    void move2X(int x);
+    
     /**
      * @brief Move the cursor up one row.
      */
@@ -231,7 +233,7 @@ namespace action
      * @param label The label for the input form.
      * @return The input string.
      */
-    char* text_form(const char* label);
+    std::string text_form(const std::string& label);
 
     /**
      * @brief Switches the editor mode to "normal" mode.
@@ -257,6 +259,9 @@ namespace action
      * @brief Restores the previous state of the editor.
      */
     void restore();
+
+    // Utility function to print a message directly to the terminal (outsmvimStarter of ncurses mode)
+    void print_to_terminal(int message);
   };
 
   namespace visual
@@ -337,6 +342,6 @@ namespace action
      * positions of each occurrence in the `found_occurrences` vector.
      * @param word The word to search for in the buffer.
      */
-    void find_all_occurrence(char* word);
+    void find_all_occurrence(const std::string& word);
   };
 };

@@ -2,11 +2,11 @@
 
 void action::visual::highlight(int start_row, int end_row, int start_col, int end_col)
 {
-  int curr_row, curr_start_col, curr_end_col;;
+  int curr_row, curr_start_col, curr_end_col;
 
   // Ensure the highlighting respects the visible range
   int visible_start_row = std::max(start_row, (int) starting_row);
-  int visible_end_row = std::min(end_row, (int) (max_row + starting_row));
+  int visible_end_row = std::min(end_row, (int)(max_row + starting_row));
 
   int row_to_highlight = abs(visible_end_row - visible_start_row);
 
@@ -61,14 +61,12 @@ void action::visual::highlight_selected()
     return;
   }
 
-  highlight(visual_start_row, visual_end_row,
-            visual_start_col, visual_end_col);
+  highlight(visual_start_row, visual_end_row, visual_start_col, visual_end_col);
 }
 
 // Function to copy the highlighted text based on visual mode selection
 void action::visual::copy_highlighted()
 {
-
   copy_paste_buffer = "";
 
   int start_row = visual_start_row;
@@ -79,12 +77,10 @@ void action::visual::copy_highlighted()
   // Case 1: Highlight is within a single row
   if (start_row == end_row)
   {
-    // the copying process must occur from left to right so we start from the column that is furthest to the left
     int copy_start = std::min(start_col, end_col);
-    int char_to_copy = std::min(abs(end_col - start_col) + 1, (int) buffer[start_row].length());    // number of characters to copy, at least 1
+    int char_to_copy = std::min(abs(end_col - start_col) + 1, (int)buffer[start_row].length()); // number of characters to copy, at least 1
 
     copy_paste_buffer = buffer[start_row].substr(copy_start, char_to_copy);
-
     action::system::change2normal();
     return;
   }
@@ -94,7 +90,7 @@ void action::visual::copy_highlighted()
   {
     std::swap(start_row, end_row);
     std::swap(start_col, end_col);
-  }   // swap the rows if the end row is before the start row
+  }
 
   copy_paste_buffer = buffer[start_row].substr(start_col);
 
@@ -122,7 +118,7 @@ void action::visual::highlight_row_selected(int row, int start_col, int end_col,
 void action::visual::highlight_keywords()
 {
   int visible_start_row = starting_row;
-  int visible_end_row = std::min((int) (starting_row + max_row), buffer.getSize() - 1);
+  int visible_end_row = std::min((int)(starting_row + max_row), buffer.getSize() - 1);
 
   // Loop through each visible row
   for (int row = visible_start_row; row <= visible_end_row; ++row)
@@ -132,8 +128,8 @@ void action::visual::highlight_keywords()
     // Check and highlight keywords from the list types_old
     for (int i = 0; types_old[i] != nullptr; ++i)
     {
-      const char* keyword = types_old[i];
-      size_t keyword_len = strlen(keyword);
+      std::string keyword = types_old[i];
+      size_t keyword_len = keyword.length();
       size_t found_pos = buffer_row.find(keyword);
 
       while (found_pos != std::string::npos)
@@ -152,10 +148,11 @@ void action::visual::highlight_keywords()
         found_pos = buffer_row.find(keyword, found_pos + keyword_len);
       }
     }
+
     for (int j = 0; preprocessor_directives[j] != nullptr; ++j)
     {
-      const char* directive = preprocessor_directives[j];
-      size_t directive_len = strlen(directive);
+      std::string directive = preprocessor_directives[j];
+      size_t directive_len = directive.length();
       size_t found_pos = buffer_row.find(directive);
 
       while (found_pos != std::string::npos)
@@ -173,7 +170,7 @@ void action::visual::highlight_keywords()
     // Check and highlight brackets
     for (int j = 0; brackets[j] != nullptr; ++j)
     {
-      const char* bracket = brackets[j];
+      std::string bracket = brackets[j];
       size_t found_pos = buffer_row.find(bracket);
 
       while (found_pos != std::string::npos)
@@ -229,7 +226,6 @@ void action::visual::highlight_keywords()
     }
   }
 }
-
 
 // Function to delete and copy the highlighted text based on visual mode selection
 void action::visual::delete_highlighted()

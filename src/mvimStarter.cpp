@@ -1,4 +1,5 @@
 #include "../include/mvimStarter.hpp"
+#include <ostream>
 
 
 // Define constants and global variables
@@ -46,16 +47,10 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
   status = Status::saved;
 }
 
-// Utility function to print a message directly to the terminal (outsmvimStarter of ncurses mode)
-static void print_to_terminal(int message)
-{
-  endwin();    // End ncurses mode
-  std::cout << message << std::endl;    // Print message to terminal
-  refresh();    // Re-enter ncurses mode
-}
-
 void mvimStarter::updateVar()
 {
+  getmaxyx(stdscr, max_row, max_col);
+  max_col = max_col- span - 1;
   // If in visual mode, highlight the selection
   if (mode == visual)
   {
@@ -98,6 +93,10 @@ void mvimStarter::run()
 
       // Restore cursor position after all operations
       cursor.restore(span);
+      
+        endwin();    // End ncurses mode
+        std::cout << pointed_col << " " << starting_col << " " <<cursor.getX() << " " << max_col << std::endl;
+        refresh();    // Re-enter ncurses mode
 
       // Refresh screen to display results
       refresh();

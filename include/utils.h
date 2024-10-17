@@ -17,6 +17,5 @@
 #include <stack> // used for command history
 #include <set> // used for storing keywords
 #include <chrono> // benchmark
-#include <cstring> 
 #include <unistd.h> // used for access function
-#include <vector>
+#include <cstring> // strchr in visual.cpp

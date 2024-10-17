@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utils.h"
+#include <cstddef>
 
 /*
 
@@ -11,34 +12,40 @@
 */
 
 /*system variables*/
-extern Cursor cursor;
-extern Buffer buffer;
-extern std::string command_buffer;
-extern size_t max_row;
-extern size_t max_col;
-extern size_t pointed_row;
-extern size_t starting_row;
-extern Mode mode;
-extern std::string pointed_file;
-extern Status status;
-extern int visual_start_row;
-extern int visual_start_col;
-extern int visual_end_row;
-extern int visual_end_col;
-extern std::string copy_paste_buffer;
+inline Cursor cursor;
+inline Buffer buffer;
+inline Mode mode;
+inline Status status;
+
+inline size_t max_row;
+inline size_t max_col;
+inline size_t pointed_row;
+inline size_t starting_row;
+inline size_t pointed_col;
+inline size_t starting_col;
+
+inline std::string pointed_file;
+inline std::string command_buffer;
+inline std::string copy_paste_buffer;
+
+inline int visual_start_row;
+inline int visual_start_col;
+inline int visual_end_row;
+inline int visual_end_col;
+
 
 /*mvim colors*/
 typedef short color;
-extern color keyWordColor;
-extern color numberRowsColor;
-extern color commentsColor;
-extern color highlightedTextColor;
-extern color bracketsColor;
-extern color preprocessorColor;
-extern color bgColor;
-extern color highlightedBgColor;
-extern color textColor;
-extern color cursorColor;
+inline color keyWordColor;
+inline color numberRowsColor;
+inline color commentsColor;
+inline color highlightedTextColor;
+inline color bracketsColor;
+inline color preprocessorColor;
+inline color bgColor;
+inline color highlightedBgColor;
+inline color textColor;
+inline color cursorColor;
 
 /*
    need to map keys for the specific mode

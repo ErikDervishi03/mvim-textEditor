@@ -14,8 +14,14 @@ void Screen::start()
   keypad(stdscr, TRUE);
   noecho();
   getmaxyx(stdscr, max_row, max_col);
+
+  max_col = max_col- span - 1;
+
   starting_row = 0;
   pointed_row = 0;
+  starting_col = 0;
+  pointed_col = 0;
+
   cursor.set(0, 0);
 
   update();
@@ -56,9 +62,16 @@ void Screen::print_buffer()
     attron(COLOR_PAIR(numberRowsColor));
     mvprintw(i, 0, "%zu", i + starting_row + 1);
     attroff(COLOR_PAIR(numberRowsColor));
-    attron(COLOR_PAIR(textColor));
-    mvprintw(i, span + 1, "%s", buffer[i + starting_row].c_str());
-    attroff(COLOR_PAIR(textColor));
+    
+    std::string curr_row = buffer[i + starting_row];
+
+    // if curr_row.length() <= starting_col the string is not visible
+    if(curr_row.length() > starting_col){ 
+      std::string row2print = curr_row.substr(starting_col, max_col);
+      attron(COLOR_PAIR(textColor));
+      mvprintw(i, span + 1, "%s", row2print.c_str());
+      attroff(COLOR_PAIR(textColor));
+    } 
   }
 }
 
