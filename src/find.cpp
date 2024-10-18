@@ -43,7 +43,10 @@ void action::find::highlight_searched_word()
         if (row >= visible_start_row && row <= visible_end_row)
         {
             // Highlight the found word in the visible row
-            action::visual::highlight(row, row, col + span + 1, col + current_searched_word_length + span + 1);
+            action::visual::highlight(row, 
+                                      row, 
+                                      (col + span + 1) - starting_col,
+                                      (col + current_searched_word_length + span + 1) - starting_col);
         }
     }
 }
@@ -67,8 +70,8 @@ void action::find::go_to_previous_occurrence()
     {
         starting_row = 0;
     }
-
-    cursor.set(col, row - starting_row);
+    movement::move2X(col);
+    cursor.setY(row - starting_row);
 }
 
 void action::find::go_to_next_occurrence()
@@ -91,7 +94,8 @@ void action::find::go_to_next_occurrence()
         starting_row = 0;
     }
 
-    cursor.set(col, row - starting_row);
+    movement::move2X(col);
+    cursor.setY(row - starting_row);
 }
 
 void action::find::find()

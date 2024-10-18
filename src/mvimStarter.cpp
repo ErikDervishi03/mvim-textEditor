@@ -55,12 +55,12 @@ void mvimStarter::updateVar()
   if (mode == visual)
   {
     visual_end_row = pointed_row;
-    visual_end_col = cursor.getX() + span + 1;
+    visual_end_col = pointed_col + span + 1;
   }
   else
   {
     visual_start_row = pointed_row;
-    visual_start_col = cursor.getX() + span + 1;
+    visual_start_col = pointed_col + span + 1;
   }
 }
 
