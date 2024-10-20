@@ -3,6 +3,7 @@
 
 #define ctrl(x) ((x) & 0x1f)
 #define isPrintable(c) (isalpha(c) || isdigit(c) || isSpecialChar(c))
+#define isOpenBracket(c) (c == '{' || c == '[' || c == '(')
 
 
 class Command
@@ -80,11 +81,12 @@ public:
     visualMap['g'] = action::movement::move_to_end_of_file;
     visualMap['G'] = action::movement::move_to_beginning_of_file;
     visualMap['w'] = action::movement::move_to_next_word;
-    visualMap['d'] = action::visual::delete_highlighted;
+    visualMap['d'] = visualMap[KEY_BACKSPACE] = action::visual::delete_highlighted;
 
     visualMap['y'] = action::visual::copy_highlighted;
 
     visualMap[ESC] = action::system::change2normal;
+
 
     /*find*/
     findMap['n'] = action::find::go_to_next_occurrence;
@@ -148,7 +150,12 @@ public:
     }
 
     case visual:
-    {
+    { 
+      if(isOpenBracket(key)){
+        action::visual::insert_brackets(key, getClosingBracketOf(key));
+        return;
+      }
+
       if (visualMap.find(key) != visualMap.end())
       {
         visualMap[key]();
@@ -201,6 +208,22 @@ public:
       break;
     }
     }
+  }
+
+  // Overload bind to take an array of characters
+  void bind(const std::vector<int>& keys, std::function<void()> action, Mode mode_)
+  {
+      for (int key : keys)
+      {
+          bind(key, action, mode_);  // Call the original bind function for each key
+      }
+  }
+
+  static int getClosingBracketOf(int bracket){
+    if (bracket == '{') return '}';
+    if(bracket == '[') return ']';
+    if(bracket == '(') return ')';
+    else return '?';
   }
 
 

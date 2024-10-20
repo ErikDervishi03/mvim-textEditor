@@ -5,9 +5,10 @@ public:
     // Constructor to initialize the modes
     service() {
         // Initialize default services
-        modes.emplace_back("visual", true, []() { action::visual::highlight_selected(); });
+        
         modes.emplace_back("find", true, []() { action::find::highlight_searched_word(); });
         modes.emplace_back("highlighting", true, []() { action::visual::highlight_keywords(); }); 
+        modes.emplace_back("visual", true, []() { action::visual::highlight_selected(); });
     }
 
     // Enables a mode and sets the associated action

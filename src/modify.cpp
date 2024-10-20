@@ -235,6 +235,16 @@ void action::modify::delete_selection(int start_row, int end_row, int start_col,
 
   pointed_row = start_row;
 
+  // Maintain the current selected word at the center of the screen
+  if (pointed_row > max_row / 2)
+  {
+    starting_row = pointed_row - max_row / 2;
+  }
+  else
+  {
+    starting_row = 0;
+  }
+
   action::movement::move2X(start_col);
 
   cursor.setY(start_row - starting_row);
