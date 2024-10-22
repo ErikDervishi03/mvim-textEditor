@@ -4,7 +4,7 @@
 #include "globals/consts.h"
 #include "globals/keywords.h"
 #include "cursor.hpp"
-#include "buffer.hpp"
+#include "textBuffer.hpp"
 #include "globals/mode.h"
 #include "globals/status.h"
 

@@ -13,7 +13,7 @@
 
 /*system variables*/
 inline Cursor cursor;
-inline Buffer buffer;
+inline textBuffer buffer;
 inline Mode mode;
 inline Status status;
 

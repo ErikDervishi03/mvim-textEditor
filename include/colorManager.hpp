@@ -6,7 +6,7 @@
 
 class ColorManager
 {
-private:
+public:
   struct colorSchema
   {
     color keyWord;
@@ -21,7 +21,6 @@ private:
     color cursor;
   };
 
-public:
   // Constructor that uses the base class constructor
   ColorManager()
   {

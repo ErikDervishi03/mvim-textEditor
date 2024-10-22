@@ -10,6 +10,10 @@
 // mvimStarter class definition
 class mvimStarter {
 private:
+    struct mvimOptions{
+        bool relativeNumbers;
+    };
+
     Screen& screen;       // Screen instance
     Command _command;     // Command processor
     service mvimService;
@@ -24,6 +28,8 @@ private:
     void updateVar();
 
     void startBenchmark(std::string filename);
+
+
 
 public:
     // Constructors

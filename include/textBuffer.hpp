@@ -18,7 +18,7 @@
  * a line of text. The class also maintains the size of the buffer to facilitate
  * operations that depend on the number of rows present.
  */
-class Buffer
+class textBuffer
 {
 private:
   std::vector<std::string> buffer;   ///< The internal storage for the lines of text.
@@ -28,7 +28,7 @@ public:
   /**
    * @brief Constructs a new Buffer instance and initializes it with one empty row.
    */
-  Buffer();
+  textBuffer();
 
   /**
    * @brief Access a specific row in the buffer.
