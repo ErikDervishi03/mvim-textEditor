@@ -11,6 +11,11 @@ If you find a bug or want to discuss the best way to add a new feature, please
 ## Demo
 [![asciicast](https://asciinema.org/a/2cxeDudipJMdx0PSHeL8FVybe.svg)](https://asciinema.org/a/2cxeDudipJMdx0PSHeL8FVybe)
 
+## Customizable ColorSchemes
+You can easily customize the color schemes in mvim to suit your preferences:
+
+![Color Schemes](screenshot/present.jpg)
+
 ## Quick Start
 mvim has the following dependencies:
 - [GCC](https://gcc.gnu.org/)
