@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <ncurses.h>
 #include <map>
 #include <string>
@@ -7,8 +8,22 @@
 // Alias for window names to accept both string and integer types
 using WindowName = std::variant<std::string, int>;
 
+/**
+ * @class WindowManager
+ * @brief Manages ncurses windows, including creation, destruction, and resizing.
+ *
+ * This class provides an interface for managing multiple windows in an ncurses
+ * environment. Windows can be created, resized, and destroyed. The class
+ * automatically adjusts the size of windows to fit the screen.
+ */
 class WindowManager {
 public:
+    /**
+     * @brief Constructor that initializes the ncurses environment.
+     *
+     * Initializes the ncurses mode, disables line buffering, enables keypad mode, and
+     * suppresses input echo. Refreshes the standard screen to ensure it's ready for use.
+     */
     WindowManager() {
         initscr();             // Initialize ncurses mode
         cbreak();              // Disable line buffering
@@ -17,6 +32,12 @@ public:
         refresh();             // Refresh the standard screen
     }
 
+    /**
+     * @brief Destructor that cleans up ncurses windows and ends ncurses mode.
+     *
+     * Deletes all windows stored in the internal map and ends the ncurses mode to restore
+     * the terminal to its normal state.
+     */
     ~WindowManager() {
         for (auto& pair : windows) {
             delwin(pair.second);
@@ -24,7 +45,12 @@ public:
         endwin();  // End ncurses mode
     }
 
-    // Helper function to convert WindowName to string (for map key)
+    /**
+     * @brief Converts a WindowName (variant) to a string representation.
+     * 
+     * @param name The WindowName (either a string or an integer).
+     * @return A string representation of the WindowName.
+     */
     std::string to_string(const WindowName& name) {
         if (std::holds_alternative<std::string>(name)) {
             return std::get<std::string>(name);
@@ -33,86 +59,12 @@ public:
         }
     }
 
-    // Create a new window, auto-resizes based on number of windows
-    void create_window(const WindowName& name) {
-        std::string key = to_string(name);
-        if (windows.find(key) != windows.end()) {
-            std::cerr << "Window with name '" << key << "' already exists." << std::endl;
-            return;
-        }
-
-        // Create a temporary window before setting its position and size
-        WINDOW* win = newwin(1, 1, 0, 0);  // Temporary size
-        if (win == nullptr) {
-            std::cerr << "Failed to create window." << std::endl;
-            return;
-        }
-
-        windows[key] = win;  // Add the window to the map
-        resize_windows();    // Resize all windows
-    }
-
-    // Destroy a window by its name and resize the remaining windows
-    void destroy_window(const WindowName& name) {
-        std::string key = to_string(name);
-        auto it = windows.find(key);
-        if (it == windows.end()) {
-            std::cerr << "Window with name '" << key << "' does not exist." << std::endl;
-            return;
-        }
-        delwin(it->second);   // Delete the window
-        windows.erase(it);    // Remove it from the map
-        resize_windows();     // Resize the remaining windows
-    }
-
-    void resize_windows() {
-        int num_windows = windows.size();
-        if (num_windows == 0) return;
-
-        int height, width;
-        getmaxyx(stdscr, height, width);  // Get screen dimensions
-
-        // Clear the entire screen before resizing
-        clear();  // Clears stdscr
-        refresh();  // Refresh to apply the clearing
-
-        int win_width = (width - num_windows + 1) / num_windows;  // Adjust window width for borders
-
-        int i = 0;
-        for (auto& pair : windows) {
-            int starty = 0;
-            int startx = i * (win_width + 1);  // Calculate start position considering the border
-            wclear(pair.second);
-            wresize(pair.second, height, win_width);  // Resize window
-            mvwin(pair.second, starty, startx);       // Move window to correct position
-            box(pair.second, 0, 0);                   // Add a border around the window
-            wrefresh(pair.second);                    // Refresh the window to show it
-            i++;
-        }
-    }
-
-    // Kill a window by its name
-    void kill_window(const WindowName& name) {
-        destroy_window(name);  // Alias for destroy_window
-    }
-
-    // Display a message inside a window
-    void display_message(const WindowName& name, const std::string& message) {
-        std::string key = to_string(name);
-        auto it = windows.find(key);
-        if (it == windows.end()) {
-            std::cerr << "Window with name '" << key << "' does not exist." << std::endl;
-            return;
-        }
-
-        WINDOW* win = it->second;
-        wclear(win);  // Clear the window
-        box(win, 0, 0);  // Re-draw the border
-        mvwprintw(win, 1, 1, "%s", message.c_str());  // Display the message
-        wrefresh(win);  // Refresh the window to show the message
-    }
-
-    // Return a window pointer given a window's name
+    /**
+     * @brief Returns a pointer to the ncurses window corresponding to the given name.
+     *
+     * @param name The name of the window, either as a string or integer.
+     * @return A pointer to the ncurses window, or nullptr if the window doesn't exist.
+     */
     WINDOW* get_window(const WindowName& name) {
         std::string key = to_string(name);
         auto it = windows.find(key);
@@ -122,65 +74,103 @@ public:
         return nullptr;  // Return nullptr if window doesn't exist
     }
 
-    // Toggle the window border given the name
-    void toggle_border(const WindowName& name, bool enable) {
-        WINDOW* win = get_window(name);
-        if (win == nullptr) {
-            std::cerr << "Window with name '" << to_string(name) << "' does not exist." << std::endl;
-            return;
+    /**
+     * @brief Creates a new ncurses window and resizes all existing windows to fit the screen.
+     *
+     * If a window with the same name already exists, the method returns EXIT_FAILURE
+     * without creating a new window. The new window is initially created with a temporary
+     * size and is then resized along with all other windows.
+     * 
+     * @param name The name of the window, which can be specified as either a string 
+     *             or an integer. This name is used as a key in the internal window map.
+     * @return Returns EXIT_SUCCESS if the window was created successfully; 
+     *         otherwise, it returns EXIT_FAILURE if a window with the same name 
+     *         already exists or if window creation fails.
+     */
+    int create_window(const WindowName& name) {
+        std::string key = to_string(name);
+        if (windows.find(key) != windows.end()) {
+            return EXIT_FAILURE;
         }
-        toggle_border(win, enable);  // Call the other version with window pointer
+
+        // Create a temporary window before setting its position and size
+        WINDOW* win = newwin(1, 1, 0, 0);  // Temporary size
+        if (win == nullptr) {
+            return EXIT_FAILURE;
+        }
+
+        windows[key] = win;  // Add the window to the map
+        resize_windows();    // Resize all windows
+        return EXIT_SUCCESS;
     }
 
-    // Toggle the window border given a window pointer
-    void toggle_border(WINDOW* win, bool enable) {
-        if (win == nullptr) {
-            std::cerr << "Invalid window pointer." << std::endl;
-            return;
-        }
 
-        if (enable) {
-            box(win, 0, 0);  // Add border
-        } else {
-            wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');  // Remove border
-        }
-        wrefresh(win);  // Refresh the window to show the change
+    /**
+     * @brief Alias for destroy_window.
+     *
+     * Destroys the window with the given name and resizes the remaining windows.
+     * 
+     * @param name The name of the window, either as a string or integer.
+     * @return EXIT_SUCCESS if the window was successfully destroyed, otherwise EXIT_FAILURE.
+     */
+    int kill_window(const WindowName& name) {
+        return destroy_window(name);  // Alias for destroy_window
     }
 
 private:
     std::map<std::string, WINDOW*> windows;  // Map of window names to ncurses windows
+
+    /**
+     * @brief Resizes all windows to evenly distribute them across the screen.
+     *
+     * The function calculates the width of each window and positions them
+     * side-by-side, ensuring that the entire screen is used.
+     */
+    void resize_windows() {
+        int num_windows = windows.size();
+        if (num_windows == 0) return;
+
+        int maxHeight, maxWidth;
+        getmaxyx(stdscr, maxHeight, maxWidth);  // Get screen dimensions
+
+        // Clear the entire screen before resizing
+        clear();  // Clears stdscr
+        refresh();  // Refresh to apply the clearing
+
+        int win_width = (maxWidth - num_windows + 1) / num_windows;  // Adjust window width for borders
+
+        int i = 0;
+        for (auto& pair : windows) {
+            int starty = 0;
+            int startx = i * (win_width + 1);  // Calculate start position considering the border
+            wclear(pair.second);
+            wresize(pair.second, maxHeight, win_width);  // Resize window
+            mvwin(pair.second, starty, startx);       // Move window to correct position
+            if (i < windows.size() - 1)
+                wborder(pair.second, ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ');
+            wrefresh(pair.second);                    // Refresh the window to show it
+            i++;
+        }
+    }
+
+    /**
+     * @brief Destroys a window and resizes the remaining windows.
+     *
+     * If the window doesn't exist, it returns EXIT_FAILURE.
+     * 
+     * @param name The name of the window, either as a string or integer.
+     * @return EXIT_SUCCESS if the window was successfully destroyed, otherwise EXIT_FAILURE.
+     */
+    int destroy_window(const WindowName& name) {
+        std::string key = to_string(name);
+        auto it = windows.find(key);
+        if (it == windows.end()) {
+            return EXIT_FAILURE;
+        }
+
+        delwin(it->second);   // Delete the window
+        windows.erase(it);    // Remove it from the map
+        resize_windows();     // Resize the remaining windows
+        return EXIT_SUCCESS;
+    }
 };
-
-/*
-    ====example====
-    
-int main() {
-    WindowManager wm;
-
-    // Create windows using both string and integer names
-    wm.create_window("left");
-    wm.create_window(2);
-
-    // Display some messages
-    wm.display_message("left", "Left window");
-    wm.display_message(2, "Window 2");
-
-    // Wait for user input
-    getch();
-
-    // Kill a window
-    wm.kill_window("left");
-
-    // Wait for user input before exiting
-    getch();
-
-    // Create new windows
-    wm.create_window(3);
-    wm.create_window("right");
-
-    // Wait for user input before exiting
-    getch();
-
-    return 0;
-}
-*/
