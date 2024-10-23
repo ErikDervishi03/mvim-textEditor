@@ -1,8 +1,8 @@
 #include <string>
-#include "../include/action.hpp"
+#include "../include/editor.hpp"
 
 // Function to prompt user for confirmation before exiting unsaved changes
-bool action::system::confirm_exit()
+bool editor::system::confirm_exit()
 {
   curs_set(0);
   int height, width;
@@ -78,12 +78,12 @@ bool action::system::confirm_exit()
 }
 
 // Function to exit the IDE
-void action::system::exit_ide()
+void editor::system::exit_ide()
 {
   // If the status is unsaved, prompt for confirmation
   if (status == Status::unsaved)
   {
-    bool confirmed = action::system::confirm_exit();
+    bool confirmed = editor::system::confirm_exit();
     if (!confirmed)
     {
       // If the user selects "No", return to the editor
@@ -96,7 +96,7 @@ void action::system::exit_ide()
   exit(0);      // Terminate the program
 }
 
-void action::system::helpMenu()
+void editor::system::helpMenu()
 {
   initscr();                  // Start ncurses mode
   cbreak();                   // Disable line buffering
@@ -161,7 +161,7 @@ static void centerText(WINDOW* win, int starty, int width, const std::string& st
   mvwprintw(win, starty, x, "%s", str.c_str());
 }
 
-std::string action::system::text_form(const std::string& label)
+std::string editor::system::text_form(const std::string& label)
 {
   initscr();
   cbreak();
@@ -225,32 +225,32 @@ std::string action::system::text_form(const std::string& label)
   return input;
 }
 
-void action::system::change2command()
+void editor::system::change2command()
 {
   mode = Mode::command;
   cursor.set(1, getmaxy(stdscr) - 2);
   cursor.restore(0);
 }
-void action::system::change2normal()
+void editor::system::change2normal()
 {
   mode = Mode::normal;
 }
-void action::system::change2insert()
+void editor::system::change2insert()
 {
   mode = Mode::insert;
 }
 
-void action::system::change2visual()
+void editor::system::change2visual()
 {
   mode = Mode::visual;
 }
 
-void action::system::change2find()
+void editor::system::change2find()
 {
   mode = Mode::find;
 }
 
-void action::system::restore()
+void editor::system::restore()
 {
   starting_row = 0;
   pointed_row = 0;
@@ -264,7 +264,7 @@ void action::system::restore()
 }
 
 // Utility function to print a message directly to the terminal (outsmvimStarter of ncurses mode)
-void action::system::print_to_terminal(int message)
+void editor::system::print_to_terminal(int message)
 {
   endwin();    // End ncurses mode
   std::cout << "dio cane";

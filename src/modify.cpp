@@ -1,6 +1,6 @@
-#include "../include/action.hpp"
+#include "../include/editor.hpp"
 
-void action::modify::insert_letter(int letter)
+void editor::modify::insert_letter(int letter)
 {
   status = Status::unsaved;
 
@@ -18,7 +18,7 @@ void action::modify::insert_letter(int letter)
 
 }
 
-void action::modify::new_line()
+void editor::modify::new_line()
 {
   status = Status::unsaved;
   buffer.new_row("", pointed_row + 1);
@@ -50,20 +50,20 @@ void action::modify::new_line()
     cursor.move_down();
   }
 
-  action::movement::move2X(0);
+  editor::movement::move2X(0);
   pointed_row++;
 }
 
 
-void action::modify::delete_letter()
+void editor::modify::delete_letter()
 {
 
   status = Status::unsaved;
 
   if (pointed_col == 0 && (cursor.getY() > 0 || starting_row > 0))
   {
-    action::movement::move_up();
-    action::movement::move2X(buffer[pointed_row].length());
+    editor::movement::move_up();
+    editor::movement::move2X(buffer[pointed_row].length());
     buffer.merge_rows(pointed_row, pointed_row+1);
   }
   else if (pointed_col > 0) // normal deleting
@@ -76,7 +76,7 @@ void action::modify::delete_letter()
   }
 }
 
-void action::modify::normal_delete_letter()
+void editor::modify::normal_delete_letter()
 {
   if (buffer[pointed_row].length() == 0)
   {
@@ -87,24 +87,24 @@ void action::modify::normal_delete_letter()
 
   if (buffer[pointed_row].length() == pointed_col)
   {
-    action::movement::move_left();
+    editor::movement::move_left();
   }
   buffer.delete_letter(pointed_row, pointed_col);
 
 }
 
-void action::modify::tab()
+void editor::modify::tab()
 {
   status = Status::unsaved;
 
   for (int i = 0; i < tab_size; i++)
   {
     buffer.insert_letter(pointed_row, pointed_col, ' ');
-    action::movement::move_right();
+    editor::movement::move_right();
   }
 }
 
-void action::modify::delete_row()
+void editor::modify::delete_row()
 {
   status = Status::unsaved;
 
@@ -119,20 +119,20 @@ void action::modify::delete_row()
   if (buffer.is_void())
   {
     // Se il buffer è vuoto, reinizializzalo con una riga vuota e reimposta il cursore
-    action::movement::move2X(0);             // Reimposta il cursore all'inizio della riga
+    editor::movement::move2X(0);             // Reimposta il cursore all'inizio della riga
     cursor.setY(0);
     pointed_row = 0;             // Reimposta la riga puntata a 0
     starting_row = 0;            // Reimposta lo scrolling
   }
   else
   {
-    action::movement::move_up();
-    action::movement::move2X(buffer[pointed_row].length());       // Posiziona alla fine della riga precedentess
+    editor::movement::move_up();
+    editor::movement::move2X(buffer[pointed_row].length());       // Posiziona alla fine della riga precedentess
   }
 }
 
 
-void action::modify::paste()
+void editor::modify::paste()
 {
   if (copy_paste_buffer.length() > 0)
   {
@@ -144,20 +144,20 @@ void action::modify::paste()
       if (c == '\n')
       {
         // Inserisci newline e sposta alla riga successiva
-        action::modify::new_line();
+        editor::modify::new_line();
       }
       else
       {
         // Inserisci il carattere e sposta la posizione
-        action::modify::insert_letter(c);
+        editor::modify::insert_letter(c);
       }
     }
   }
 }
 
-void action::modify::replace()
+void editor::modify::replace()
 {
-  std::string replace_term = action::system::text_form("Replace with: ");
+  std::string replace_term = editor::system::text_form("Replace with: ");
   if (replace_term.empty()) {
       return;
   }
@@ -188,10 +188,10 @@ void action::modify::replace()
     }
   }
 
-  action::system::change2normal();
+  editor::system::change2normal();
 }
 
-void action::modify::delete_selection(int start_row, int end_row, int start_col, int end_col)
+void editor::modify::delete_selection(int start_row, int end_row, int start_col, int end_col)
 {
   status = Status::unsaved;
 
@@ -207,7 +207,7 @@ void action::modify::delete_selection(int start_row, int end_row, int start_col,
     // Copy and delete the text
     copy_paste_buffer = buffer.slice_row(start_row, copy_start, copy_start + num_chars_to_copy);
 
-    action::movement::move2X(copy_start);      // Set the cursor to the start of the highlighted text
+    editor::movement::move2X(copy_start);      // Set the cursor to the start of the highlighted text
 
     return;
 
@@ -245,7 +245,7 @@ void action::modify::delete_selection(int start_row, int end_row, int start_col,
     starting_row = 0;
   }
 
-  action::movement::move2X(start_col);
+  editor::movement::move2X(start_col);
 
   cursor.setY(start_row - starting_row);
 }
@@ -253,9 +253,9 @@ void action::modify::delete_selection(int start_row, int end_row, int start_col,
 
 static void reverse_insert(int row, int col)
 {
-  // Set the cursor to the position of the last action
+  // Set the cursor to the position of the last editor
   cursor.setY(row);
-  action::movement::move2X(col + 1);
+  editor::movement::move2X(col + 1);
   pointed_row = row;
 
   // Maintain the current selected word at the center of the screen
@@ -269,7 +269,7 @@ static void reverse_insert(int row, int col)
   }
 }
 
-void action::modify::delete_word_backyard()
+void editor::modify::delete_word_backyard()
 {
   if (pointed_col == 0)
   {
@@ -283,7 +283,7 @@ void action::modify::delete_word_backyard()
   // erase all spaces
   while (curr_char_pointed == ' ')
   {
-    action::modify::delete_letter();
+    editor::modify::delete_letter();
     if (pointed_col == 0)
     {
       return;
@@ -293,12 +293,12 @@ void action::modify::delete_word_backyard()
 
   while (curr_char_pointed != ' ' && pointed_col > 0)
   {
-    action::modify::delete_letter();
+    editor::modify::delete_letter();
     curr_char_pointed = buffer[pointed_row][pointed_col - 1];
   }
 }
 
-void action::modify::delete_word()
+void editor::modify::delete_word()
 {
   int row_length = buffer[pointed_row].length();
   if (pointed_col == row_length)
@@ -312,7 +312,7 @@ void action::modify::delete_word()
   // erase all chars
   while (curr_char_pointed != ' ')
   {
-    action::modify::normal_delete_letter();
+    editor::modify::normal_delete_letter();
     row_length--;
     if (pointed_col == row_length)
     {
@@ -323,19 +323,19 @@ void action::modify::delete_word()
 
   while (curr_char_pointed == ' ' && pointed_col < row_length)
   {
-    action::modify::normal_delete_letter();
+    editor::modify::normal_delete_letter();
     curr_char_pointed = buffer[pointed_row][pointed_col + 1];
   }
 }
 
-void action::modify::undo()
+void editor::modify::undo()
 {
 
-  if (!action::action_history.empty())
+  if (!editor::action_history.empty())
   {
     status = Status::unsaved;
-    Action last_action = action::action_history.top();
-    action::action_history.pop();
+    Action last_action = editor::action_history.top();
+    editor::action_history.pop();
 
     switch (last_action.type)
     {
@@ -343,19 +343,19 @@ void action::modify::undo()
     {
       reverse_insert(last_action.row, last_action.col);
 
-      while (!action::action_history.empty() &&
-             action::action_history.top().type == ActionType::INSERT)
+      while (!editor::action_history.empty() &&
+             editor::action_history.top().type == ActionType::INSERT)
       {
-        // Retrieve the last action
-        Action last_action = action::action_history.top();
+        // Retrieve the last editor
+        Action action_editor = editor::action_history.top();
 
-        reverse_insert(last_action.row, last_action.col);
+        reverse_insert(action_editor.row, action_editor.col);
 
-        // Undo the insert action by deleting the letter
-        action::modify::delete_letter();
+        // Undo the insert editor by deleting the letter
+        editor::modify::delete_letter();
 
-        // Pop the action from the history stack
-        action::action_history.pop();
+        // Pop the editor from the history stack
+        editor::action_history.pop();
       }
 
       break;

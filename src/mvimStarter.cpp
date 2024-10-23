@@ -23,7 +23,7 @@ mvimStarter::mvimStarter() :
   pointed_file = "";
   status = Status::saved;
   setDefaults();
-  mvimService.enableService("highlighting", action::visual::highlight_keywords);
+  mvimService.enableService("highlighting", editor::visual::highlight_keywords);
 }
 
 mvimStarter::mvimStarter(std::string filename, bool benchmark)
@@ -40,7 +40,7 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
 
   pointed_file = filename;
   cursor.restore(span);    // Restore cursor position
-  action::file::read(filename);    // Load file content
+  editor::file::read(filename);    // Load file content
   screen.update();    // Update screen
   mvimService.run();
   refresh();
@@ -164,7 +164,7 @@ void mvimStarter::startBenchmark(std::string filename)
 {
   auto start_time = std::chrono::high_resolution_clock::now();    // Start timing
 
-  action::file::read(filename);    // Load file content
+  editor::file::read(filename);    // Load file content
   auto end_time = std::chrono::high_resolution_clock::now();    // End timing
   std::chrono::duration<double, std::milli> load_time = end_time - start_time;    // Get load time in milliseconds
 

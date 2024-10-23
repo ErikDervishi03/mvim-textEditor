@@ -1,4 +1,4 @@
-#include "../include/action.hpp"
+#include "../include/editor.hpp"
 
 namespace fs = std::filesystem;
 
@@ -12,12 +12,12 @@ namespace fs = std::filesystem;
 
 
 // Save function
-void action::file::save()
+void editor::file::save()
 {
 
   if (pointed_file.empty())
   {
-    pointed_file = action::system::text_form("Insert file name:");        // Prompt for filename if not set
+    pointed_file = editor::system::text_form("Insert file name:");        // Prompt for filename if not set
   }
 
   // Only save if a filename was entered
@@ -31,7 +31,7 @@ void action::file::save()
       return;
     }
 
-    action::system::restore();
+    editor::system::restore();
 
     for (int i = 0; i < buffer.getSize(); i++)
     {
@@ -70,13 +70,13 @@ bool is_readable(std::string file_name)
 }
 
 // Read function
-void action::file::read(std::string file_name)
+void editor::file::read(std::string file_name)
 {
 
   // If the status is unsaved, prompt for confirmation
   if (status == Status::unsaved)
   {
-    bool confirmed = action::system::confirm_exit();
+    bool confirmed = editor::system::confirm_exit();
     if (!confirmed)
     {
       // If the user selects "No", return to the editor
@@ -117,7 +117,7 @@ void action::file::read(std::string file_name)
 }
 
 
-void action::file::file_selection_menu()
+void editor::file::file_selection_menu()
 {
   initscr();
   cbreak();
@@ -210,8 +210,8 @@ void action::file::file_selection_menu()
         }
         else
         {
-          // It's a file, call the `read` function of `action::file`
-          action::file::read(chosen_path.c_str());
+          // It's a file, call the `read` function of `editor::file`
+          editor::file::read(chosen_path.c_str());
           exit_menu = true;                // Exit menu after opening the file
         }
       }

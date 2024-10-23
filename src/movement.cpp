@@ -1,6 +1,6 @@
-#include "../include/action.hpp"
+#include "../include/editor.hpp"
 
-void action::movement::move2X(int x){
+void editor::movement::move2X(int x){
   pointed_col = x;
 
   // if this condition is true means that the new position is out of the 
@@ -16,7 +16,7 @@ void action::movement::move2X(int x){
   cursor.setX(pointed_col - starting_col);
 }
 
-void action::movement::move_up()
+void editor::movement::move_up()
 {
   if (!(starting_row == 0 && pointed_row == 0))
   {
@@ -38,7 +38,7 @@ void action::movement::move_up()
   }
 }
 
-void action::movement::move_down()
+void editor::movement::move_down()
 {
   if (pointed_row < buffer.getSize() - 1)
   {
@@ -65,7 +65,7 @@ void action::movement::move_down()
   }
 }
 
-void action::movement::move_left()
+void editor::movement::move_left()
 {
   if (pointed_col == 0 && cursor.getY() > 0)
   {
@@ -92,7 +92,7 @@ void action::movement::move_left()
   }
 }
 
-void action::movement::move_right()
+void editor::movement::move_right()
 {
   if ((cursor.getX() <= (buffer[pointed_row].length() - 1 - starting_col)) &&
       !buffer[pointed_row].empty())
@@ -104,7 +104,7 @@ void action::movement::move_right()
   }
 }
 
-void action::movement::go_down_creating_newline()
+void editor::movement::go_down_creating_newline()
 {
   // Create a new line below the current pointed_row
   buffer.new_row("", pointed_row + 1);
@@ -124,10 +124,10 @@ void action::movement::go_down_creating_newline()
   move2X(0);
   pointed_row++;
 
-  action::system::change2insert();
+  editor::system::change2insert();
 }
 
-void action::movement::go_up_creating_newline()
+void editor::movement::go_up_creating_newline()
 {
   if (pointed_row > 0)
   {
@@ -139,10 +139,10 @@ void action::movement::go_up_creating_newline()
     buffer.swap_rows(pointed_row, pointed_row + 1);
   }
   move2X(0);
-  action::system::change2insert();
+  editor::system::change2insert();
 }
 
-void action::movement::move_to_end_of_line()
+void editor::movement::move_to_end_of_line()
 {
   const int currRowLen = buffer[pointed_row].length();
 
@@ -151,7 +151,7 @@ void action::movement::move_to_end_of_line()
   cursor.setY(pointed_row - starting_row);
 }
 
-void action::movement::move_to_beginning_of_line()
+void editor::movement::move_to_beginning_of_line()
 {
   std::string current_row = buffer[pointed_row];
   int row_length = current_row.length();
@@ -172,7 +172,7 @@ void action::movement::move_to_beginning_of_line()
   }
 }
 
-void action::movement::move_to_next_word()
+void editor::movement::move_to_next_word()
 {
   std::string current_row = buffer[pointed_row];
   int row_length = current_row.length();
@@ -180,13 +180,13 @@ void action::movement::move_to_next_word()
   // if we are in the middle of a word we go at the end of it
   while (current_row[pointed_col] != ' ')
   {
-    action::movement::move_right();
+    editor::movement::move_right();
 
     if (pointed_col >= row_length)
     {
       if (pointed_row < buffer.getSize() - 1)
       {
-        action::movement::move_down();
+        editor::movement::move_down();
         move2X(0);
       }
       return;
@@ -196,13 +196,13 @@ void action::movement::move_to_next_word()
   // lets go ahead until we find the next word
   while (current_row[pointed_col] == ' ')
   {
-    action::movement::move_right();
+    editor::movement::move_right();
 
     if (pointed_col >= row_length)
     {
       if (pointed_row < buffer.getSize() - 1)
       {
-        action::movement::move_down();
+        editor::movement::move_down();
         move2X(0);
       }
       return;
@@ -214,7 +214,7 @@ void action::movement::move_to_next_word()
   }
 }
 
-void action::movement::move_to_end_of_file()
+void editor::movement::move_to_end_of_file()
 {
   // point to the last row
   pointed_row = buffer.getSize() - 1;
@@ -224,7 +224,7 @@ void action::movement::move_to_end_of_file()
   cursor.setY(pointed_row - starting_row);
 }
 
-void action::movement::move_to_beginning_of_file()
+void editor::movement::move_to_beginning_of_file()
 {
   starting_row = pointed_row = 0;
   starting_col = pointed_col = 0;

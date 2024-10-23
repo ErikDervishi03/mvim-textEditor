@@ -1,4 +1,4 @@
-#include "action.hpp"
+#include "editor.hpp"
 
 class service {
 public:
@@ -6,17 +6,17 @@ public:
     service() {
         // Initialize default services
         
-        modes.emplace_back("find", true, []() { action::find::highlight_searched_word(); });
-        modes.emplace_back("highlighting", true, []() { action::visual::highlight_keywords(); }); 
-        modes.emplace_back("visual", true, []() { action::visual::highlight_selected(); });
+        modes.emplace_back("find", true, []() { editor::find::highlight_searched_word(); });
+        modes.emplace_back("highlighting", true, []() { editor::visual::highlight_keywords(); }); 
+        modes.emplace_back("visual", true, []() { editor::visual::highlight_selected(); });
     }
 
-    // Enables a mode and sets the associated action
-    void enableService(const std::string& mode, std::function<void()> action) {
+    // Enables a mode and sets the associated editor
+    void enableService(const std::string& mode, std::function<void()> editor) {
         for (auto& m : modes) {
             if (m.name == mode) {
                 m.enabled = true;  // Enable the mode
-                m.action = action;  // Set the action to execute
+                m.editor = editor;  // Set the editor to execute
                 return;
             }
         }
@@ -52,11 +52,11 @@ public:
         }
     }
 
-    // Executes all actions of the active modes
+    // Executes all editors of the active modes
     void run() {
         for (const auto& m : modes) {
-            if (m.enabled && m.action) {
-                m.action();  // Execute the associated action
+            if (m.enabled && m.editor) {
+                m.editor();  // Execute the associated editor
             }
         }
     }
@@ -66,11 +66,11 @@ private:
     struct ServiceMode {
         std::string name;                      // Name of the mode
         bool enabled;                          // Status of the mode (active or not)
-        std::function<void()> action;         // Action to execute when the mode is active
+        std::function<void()> editor;         // editor to execute when the mode is active
 
         // Constructor to initialize the fields
-        ServiceMode(const std::string& modeName, bool isEnabled = false, std::function<void()> modeAction = nullptr)
-            : name(modeName), enabled(isEnabled), action(modeAction) {}
+        ServiceMode(const std::string& modeName, bool isEnabled = false, std::function<void()> modeeditor = nullptr)
+            : name(modeName), enabled(isEnabled), editor(modeeditor) {}
     };
 
     std::vector<ServiceMode> modes;  // Vector of modes

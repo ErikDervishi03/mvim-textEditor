@@ -1,6 +1,6 @@
-#include "../include/action.hpp"
+#include "../include/editor.hpp"
 
-void action::find::find_all_occurrence(const std::string& word)
+void editor::find::find_all_occurrence(const std::string& word)
 {
     found_occurrences.clear();      // Clear any previous search results
 
@@ -24,7 +24,7 @@ void action::find::find_all_occurrence(const std::string& word)
     }
 }
 
-void action::find::highlight_searched_word()
+void editor::find::highlight_searched_word()
 {
     if (mode != Mode::find)
     {
@@ -43,7 +43,7 @@ void action::find::highlight_searched_word()
         if (row >= visible_start_row && row <= visible_end_row)
         {
             // Highlight the found word in the visible row
-            action::visual::highlight(row, 
+            editor::visual::highlight(row, 
                                       row, 
                                       (col + span + 1) - starting_col,
                                       (col + current_searched_word_length + span + 1) - starting_col);
@@ -51,7 +51,7 @@ void action::find::highlight_searched_word()
     }
 }
 
-void action::find::go_to_previous_occurrence()
+void editor::find::go_to_previous_occurrence()
 {
     // Move to the previous occurrence
     current_occurrence_index = (current_occurrence_index - 1 + found_occurrences.size()) % found_occurrences.size();
@@ -74,7 +74,7 @@ void action::find::go_to_previous_occurrence()
     cursor.setY(row - starting_row);
 }
 
-void action::find::go_to_next_occurrence()
+void editor::find::go_to_next_occurrence()
 {
     // Move to the next occurrence
     current_occurrence_index = (current_occurrence_index + 1) % found_occurrences.size();
@@ -98,9 +98,9 @@ void action::find::go_to_next_occurrence()
     cursor.setY(row - starting_row);
 }
 
-void action::find::find()
+void editor::find::find()
 {
-    std::string search_term = action::system::text_form("Search term: ");
+    std::string search_term = editor::system::text_form("Search term: ");
     if (search_term.empty())
     {
         return;
@@ -116,6 +116,6 @@ void action::find::find()
     {
         // Highlight occurrences in the visible rows
         go_to_next_occurrence();
-        action::system::change2find();
+        editor::system::change2find();
     }
 }

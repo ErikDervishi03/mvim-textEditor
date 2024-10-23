@@ -1,7 +1,7 @@
 #pragma once
 #include "globals/mvimResources.h"
 
-namespace action
+namespace editor
 {
   enum ActionType
   {
