@@ -23,6 +23,7 @@ class textBuffer
 private:
   std::vector<std::string> buffer;   ///< The internal storage for the lines of text.
   int size;   ///< The current number of rows in the buffer.
+  int nonEmptyRowCount;
 
 public:
   /**

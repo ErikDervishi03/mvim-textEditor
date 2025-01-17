@@ -168,10 +168,46 @@ public:
         return get_active_buffer();  // Return the new active buffer
     }
 
+    /**
+    * @brief Deletes a buffer by index, or the active buffer if no index is provided.
+    * 
+    * Uses WindowManager's kill_window function to destroy the window associated with the buffer.
+    * Throws an out_of_range exception if the index is invalid.
+    * Adjusts the active buffer index if needed and decrements the buffer count.
+    * 
+    * @param index Optional index of the buffer to delete. Defaults to the active buffer.
+    */
+    void delete_buffer(int index = -1) {
+        if (index == -1) {
+            index = active_buffer_index;
+        }
+        
+        if (index < 0 || index >= buffer_count) {
+            throw std::out_of_range("Buffer index out of range");
+        }
+
+        // Attempt to kill the window associated with the buffer
+        if (windowManager.kill_window(buffers[index].name) == EXIT_FAILURE) {
+            throw std::runtime_error("Failed to destroy window for buffer: " + buffers[index].name);
+        }
+
+        // Shift buffers to remove the specified one
+        for (int i = index; i < buffer_count - 1; ++i) {
+            buffers[i] = buffers[i + 1];
+        }
+
+        buffer_count--;
+
+        // Adjust active buffer index
+        if (active_buffer_index >= buffer_count) {
+            active_buffer_index = buffer_count - 1;  // Set to last buffer if out of range
+        }
+    }
+
 
 private:
     WindowManager windowManager;                          ///< Window manager for creating and managing windows.
-    std::array<BufferStructure, MAX_BUFFERS> buffers;    ///< Array of buffers managed by this BufferManager.
+    std::array<BufferStructure, MAX_BUFFERS> buffers;     ///< Array of buffers managed by this BufferManager.
     int active_buffer_index;                              ///< Index of the currently active buffer.
     int buffer_count;                                     ///< Current count of buffers created.
 };

@@ -76,7 +76,6 @@ void editor::movement::move_left()
     move2X(currRowLen);
 
     cursor.setY(pointed_row - starting_row);
-    system::print_to_terminal(cursor.getX());
     
   }
   else if (pointed_col > 0)

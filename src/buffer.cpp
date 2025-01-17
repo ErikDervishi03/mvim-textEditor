@@ -1,11 +1,9 @@
 #include "../include/textBuffer.hpp"
 
 
-textBuffer::textBuffer()
+textBuffer::textBuffer() : buffer(1, ""), size(1), nonEmptyRowCount(0) 
 {
-  this->buffer.reserve(10000);
-  this->buffer.emplace_back("");
-  size = 1;
+    buffer.reserve(10000); // Reserve initial space for efficiency
 }
 
 std::string& textBuffer::operator [] (int row)
