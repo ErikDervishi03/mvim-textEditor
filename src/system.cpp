@@ -315,26 +315,30 @@ void editor::system::new_buffer() {
     auto& bufferManager = BufferManager::instance();
 
     try {
-        // Generate a name based on the next buffer index
+        // Sincronizza le variabili di sistema nel buffer attivo prima di creare un nuovo buffer
+        bufferManager.syncBufferFromSystemVars();
+
+        // Genera un nome basato sull'indice del prossimo buffer
         int bufferIndex = bufferManager.getBufferCount();
         std::string bufferName = "Buffer_" + std::to_string(bufferIndex);
 
-        // Attempt to create the new buffer
+        // Crea il nuovo buffer
         bufferManager.create_buffer(bufferName);
 
-        // Set the new buffer as active
+        // Imposta il nuovo buffer come attivo
         bufferManager.set_active_buffer(bufferIndex);
 
-        // Synchronize system variables with the new buffer
+        // Sincronizza le variabili di sistema con il nuovo buffer
         bufferManager.syncSystemVarsFromBuffer();
 
-        // Clear and refresh the display for the new buffer
+        // Pulisce e aggiorna la finestra per il nuovo buffer
         wclear(pointed_window);
         wrefresh(pointed_window);
 
     } catch (const std::exception& e) {
-        // If creating a buffer fails, do nothing
+        // Gestisce eventuali errori nella creazione del buffer
         return;
     }
 }
+
 

@@ -1,5 +1,4 @@
 #include "globals/mvimResources.h"
-
 /**
  * @class Screen
  * @brief A singleton class to manage the screen interface for the text editor.
@@ -91,4 +90,8 @@ public:
      * @param str The string to print.
      */
     void print_multiline_string(int start_y, int start_x, const char *str);
+
+    void print_buffer(WINDOW* window);
+
+    void print_buffer(  std::vector<std::string> buffer, WINDOW* window, size_t starting_row, size_t starting_col, size_t max_col);
 };

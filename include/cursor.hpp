@@ -22,6 +22,8 @@ private:
    */
   void update_cursor();
 
+  WINDOW* pointed_window;
+
 public:
   /**
    * @brief Constructs a new Cursor instance at the initial position (0, 0).
@@ -85,4 +87,6 @@ public:
    * @param span An optional parameter to adjust the x position. Default is 0.
    */
   void restore(int span = 0);
+
+  void pointToWindow(WINDOW* window);
 };

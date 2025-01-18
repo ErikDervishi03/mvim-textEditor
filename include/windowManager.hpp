@@ -2,7 +2,6 @@
 #include <ncurses.h>
 #include <map>
 #include <string>
-#include <iostream>
 #include <variant>  
 
 // Alias for window names to accept both string and integer types
@@ -74,6 +73,10 @@ public:
         return nullptr;  // Return nullptr if window doesn't exist
     }
 
+    const std::map<std::string, WINDOW*>& get_windows() const {
+        return windows;
+    }
+
     /**
      * @brief Creates a new ncurses window and resizes all existing windows to fit the screen.
      *
@@ -95,6 +98,7 @@ public:
 
         // Create a temporary window before setting its position and size
         WINDOW* win = newwin(1, 1, 0, 0);  // Temporary size
+        keypad(win, TRUE);
         if (win == nullptr) {
             return EXIT_FAILURE;
         }

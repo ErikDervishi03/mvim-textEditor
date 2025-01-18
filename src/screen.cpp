@@ -14,18 +14,6 @@ void Screen::start()
   initscr();
   keypad(stdscr, TRUE);
   noecho();
-  getmaxyx(stdscr, max_row, max_col);
-
-  max_col = max_col- span - 1;
-
-  starting_row = 0;
-  pointed_row = 0;
-  starting_col = 0;
-  pointed_col = 0;
-
-  pointed_window = stdscr;
-
-  cursor.set(0, 0);
 
   update();
 }
@@ -78,6 +66,25 @@ void Screen::print_buffer()
   }
 }
 
+void Screen::print_buffer(WINDOW* window)
+{
+  for (int i = 0; (i + starting_row) < buffer.getSize() && i < max_row; i++)
+  {
+    wattron(window, COLOR_PAIR(numberRowsColor));
+    mvwprintw(window, i, 0, "%zu", i + starting_row + 1);
+    wattroff(window, COLOR_PAIR(numberRowsColor));
+    
+    std::string curr_row = buffer[i + starting_row];
+
+    // if curr_row.length() <= starting_col the string is not visible
+    if(curr_row.length() > starting_col){ 
+      std::string row2print = curr_row.substr(starting_col, max_col);
+      wattron(window, COLOR_PAIR(textColor));
+      mvwprintw(window, i, span + 1, "%s", row2print.c_str());
+      wattroff(window, COLOR_PAIR(textColor));
+    } 
+  }
+}
 
 void Screen::print_multiline_string(int start_y, int start_x, const char* str)
 {
@@ -99,3 +106,33 @@ void Screen::print_multiline_string(int start_y, int start_x, const char* str)
   }
   wattroff(pointed_window, COLOR_PAIR(textColor));
 }
+
+void Screen::print_buffer(
+  std::vector<std::string> buffer,
+  WINDOW* window,
+  size_t starting_row,
+  size_t starting_col,
+  size_t max_col
+  )
+{
+
+    for (int i = 0; (i + starting_row) < buffer.size() && i < max_row; i++)
+    {
+        wattron(window, COLOR_PAIR(numberRowsColor));
+        mvwprintw(window, i, 0, "%zu", i + starting_row + 1);
+        wattroff(window, COLOR_PAIR(numberRowsColor));
+
+        std::string curr_row = buffer[i + starting_row];
+
+        // Se la riga corrente è troppo corta, non è visibile
+        if(curr_row.length() > starting_col) { 
+            std::string row2print = curr_row.substr(starting_col, max_col);
+            wattron(window, COLOR_PAIR(textColor));
+            mvwprintw(window, i, span + 1, "%s", row2print.c_str());
+            wattroff(window, COLOR_PAIR(textColor));
+        }
+    }
+}
+
+
+

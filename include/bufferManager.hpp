@@ -62,11 +62,13 @@ public:
 
         BufferStructure& buffer = buffers[buffer_count];
         windowManager.create_window(name);
-        buffer.window = stdscr; // da cambiare con windowManager.get_window(name);
+        buffer.window = windowManager.get_window(name);
         buffer.name = name;
 
         // Initialize buffer fields to defaults
         buffer.cursor = Cursor();//default x=0 y=0
+        cursor.set(0, 0);
+
         buffer.tBuffer = textBuffer();
         buffer.mode = Mode::insert;
         buffer.status = Status::unsaved;
@@ -78,15 +80,15 @@ public:
         buffer.starting_row = 0;
         buffer.pointed_col = 0;
         buffer.starting_col = 0;
-        buffer.visual_start_row = 0;
-        buffer.visual_start_col = 0;
-        buffer.visual_end_row = 0;
-        buffer.visual_end_col = 0;
-        buffer.pointed_file.clear();
         buffer.command_buffer.clear();
         buffer.copy_paste_buffer.clear();
 
         buffer_count++;
+    }
+
+    // A method that returns a reference to the window map
+    const std::map<std::string, WINDOW*>& get_bufferWindows() const {
+        return windowManager.get_windows();
     }
 
 
@@ -260,6 +262,8 @@ public:
         copy_paste_buffer = activeBuffer.copy_paste_buffer;
 
         pointed_window = activeBuffer.window;
+
+        cursor.pointToWindow(pointed_window);
     }
 
     // Synchronize the active buffer from system variables
@@ -289,6 +293,8 @@ public:
         activeBuffer.copy_paste_buffer = copy_paste_buffer;
 
         activeBuffer.window = pointed_window;
+
+        activeBuffer.cursor.pointToWindow(pointed_window);
     }
 
 

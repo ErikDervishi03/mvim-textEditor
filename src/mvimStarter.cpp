@@ -20,7 +20,7 @@ mvimStarter::mvimStarter() :
   screen(Screen::getScreen()), benchmark(false)
 {
   BufferManager::instance().create_buffer("main");
-  BufferManager::instance().create_buffer("secondary");
+  BufferManager::instance().syncSystemVarsFromBuffer();
   initialize_ncurses();    // Initialize ncurses and colors
   pointed_file = "";
   status = Status::saved;
@@ -38,7 +38,7 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
   }
 
   BufferManager::instance().create_buffer("main");
-  BufferManager::instance().create_buffer("secondary");
+  BufferManager::instance().syncSystemVarsFromBuffer();
   initialize_ncurses();    // Initialize ncurses and colors
   setDefaults();
 
@@ -75,30 +75,61 @@ void mvimStarter::run()
   homeScreen();    // Show initial screen if no file is loaded
 
   cursor.restore(span);
-
+  
   while (true)
   {
     int input = wgetch(pointed_window);
     if (input != ERR)
     {
-      werase(pointed_window);        // Clear the screen
+      // Clear the pointed window
+      werase(pointed_window);  // Clear the screen of the pointed window
 
       // Execute command based on input (modify the buffer if necessary)
       _command.execute(input);
 
-      // Print the updated buffer
+      // Print the updated buffer (assuming `screen.print_buffer()` works for the window context)
       screen.update();
 
+      // Update background color for the current window
       bkgd(COLOR_PAIR(get_pair(bgColor, cursorColor)));
 
+      // Update any other variables
       updateVar();
 
+      // Run the service (if necessary)
       mvimService.run();
 
       // Restore cursor position after all operations
       cursor.restore(span);
-      
-      wrefresh(pointed_window);  
+
+      // Clear, print, and refresh all windows managed by the WindowManager
+      const auto& windows = BufferManager::instance().get_bufferWindows();
+      for (const auto& pair : windows) {
+          WINDOW* window = pair.second;
+          if(window == pointed_window)continue;
+          // Clear each window
+          werase(window);
+
+          // Print the buffer for each window (ensure you use the correct printing method)
+          // Assicurati che pair.first contenga il nome corretto del buffer
+          BufferManager::BufferStructure* buffer = BufferManager::instance().get_buffer_by_name(pair.first);
+          if (buffer != nullptr) {
+                  screen.print_buffer(
+                  buffer->tBuffer.get_buffer(),  // Contenuto del buffer
+                  window,                        // La finestra da stampare
+                  buffer->starting_row,          // Riga iniziale
+                  buffer->starting_col,          // Colonna iniziale
+                  buffer->max_col                // Numero massimo di colonne visibili
+              );
+          }
+
+          // Refresh each window to update the content
+          wrefresh(window);
+      }
+
+      // Refresh the pointed window (if necessary)
+      wrefresh(pointed_window);
+
     }
   }
 }

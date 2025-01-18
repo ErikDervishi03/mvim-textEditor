@@ -1,4 +1,5 @@
 #include "../include/cursor.hpp"
+#include <ncurses.h>
 
 Cursor::Cursor() :
   x(0), y(0)
@@ -57,10 +58,16 @@ void Cursor::setY(int y)
 
 void Cursor::update_cursor()
 {
-  move(y, x);
+    // Move the cursor within the pointed window
+    wmove(pointed_window, y, x);  // Move cursor to (y, x) in pointed_window
 }
 
 void Cursor::restore(int span)
 {
-  move(y, x + span + 1);
+    // Restore the cursor position within the pointed window
+    wmove(pointed_window, y, x + span + 1);  // Restore at (y, x + span + 1) in pointed_window
+}
+
+void Cursor::pointToWindow(WINDOW* window){
+    pointed_window = window;
 }

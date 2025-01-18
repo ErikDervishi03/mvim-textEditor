@@ -38,6 +38,11 @@ public:
    */
   std::string& operator [] (int row);
 
+
+   std::vector<std::string> getBuffer() const {
+    return this->buffer;  // Accesso al membro 'buffer'
+  }
+
   /**
    * @brief Inserts a new row at the specified position.
    * @param row The content of the new row.
