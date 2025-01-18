@@ -23,13 +23,9 @@ private:
     void homeScreen();
     void initialize_ncurses();  // Helper function to initialize ncurses and colors
     void setDefaults();
-
-
     void updateVar();
 
     void startBenchmark(std::string filename);
-
-
 
 public:
     // Constructors

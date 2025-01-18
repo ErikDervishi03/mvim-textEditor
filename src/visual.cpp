@@ -60,7 +60,7 @@ void editor::visual::highlight(int start_row, int end_row, int start_col, int en
     int highlight_length = std::max(abs(curr_end_col - curr_start_col), 1);
 
     // Highlight the current row
-    mvchgat(curr_row - starting_row,
+    mvwchgat(pointed_window,curr_row - starting_row,
             std::min(curr_start_col, curr_end_col),
             highlight_length, A_NORMAL, highlightedTextColor, NULL);
   }
@@ -85,7 +85,7 @@ void editor::visual::highlight_block(int from, int to){
 void editor::visual::highlight_row_portion(int row, int start_col, int end_col, color color_scheme)
 {
   int highlight_length = std::max(abs(end_col - start_col), 1);
-  mvchgat(row - starting_row,
+  mvwchgat(pointed_window, row - starting_row,
           std::min(start_col, end_col),
           highlight_length, A_NORMAL,
           color_scheme, NULL);
