@@ -1,6 +1,6 @@
 #include "../include/mvimStarter.hpp"
 #include <ostream>
-
+#include "../include/bufferManager.hpp"
 
 // Define constants and global variables
 const char* mvim_logo =
@@ -19,6 +19,8 @@ const char* mvim_logo =
 mvimStarter::mvimStarter() :
   screen(Screen::getScreen()), benchmark(false)
 {
+  BufferManager::instance().create_buffer("main");
+  BufferManager::instance().create_buffer("secondary");
   initialize_ncurses();    // Initialize ncurses and colors
   pointed_file = "";
   status = Status::saved;
@@ -35,6 +37,8 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
     return;
   }
 
+  BufferManager::instance().create_buffer("main");
+  BufferManager::instance().create_buffer("secondary");
   initialize_ncurses();    // Initialize ncurses and colors
   setDefaults();
 
@@ -43,13 +47,13 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
   editor::file::read(filename);    // Load file content
   screen.update();    // Update screen
   mvimService.run();
-  refresh();
+  wrefresh(pointed_window);
   status = Status::saved;
 }
 
 void mvimStarter::updateVar()
 {
-  getmaxyx(stdscr, max_row, max_col);
+  getmaxyx(pointed_window, max_row, max_col);
   max_col = max_col- span - 1;
   // If in visual mode, highlight the selection
   if (mode == visual)
@@ -74,10 +78,10 @@ void mvimStarter::run()
 
   while (true)
   {
-    int input = getch();
+    int input = wgetch(pointed_window);
     if (input != ERR)
     {
-      erase();        // Clear the screen
+      werase(pointed_window);        // Clear the screen
 
       // Execute command based on input (modify the buffer if necessary)
       _command.execute(input);
@@ -94,12 +98,7 @@ void mvimStarter::run()
       // Restore cursor position after all operations
       cursor.restore(span);
       
-        endwin();    // End ncurses mode
-        std::cout << pointed_col << " " << starting_col << " " <<cursor.getX() << " " << max_col << std::endl;
-        refresh();    // Re-enter ncurses mode
-
-      // Refresh screen to display results
-      refresh();
+      wrefresh(pointed_window);  
     }
   }
 }
@@ -122,9 +121,9 @@ void mvimStarter::homeScreen()
     // Print the welcome message
     screen.print_multiline_string(start_y, start_x, mvim_logo);
 
-    int input = getch();      // Wait for user input
+    int input = wgetch(pointed_window);      // Wait for user input
     _command.execute(input);
-    erase();
+    werase(pointed_window);
     screen.update();      // Update screen
     curs_set(1);      // Restore cursor visibility
   }

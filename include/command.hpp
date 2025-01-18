@@ -59,11 +59,14 @@ public:
     normalMap['s'] = editor::file::save;
 
     normalMap['q'] = editor::system::exit_ide;
-    normalMap['m'] = editor::system::helpMenu;
+    //normalMap['m'] = editor::system::helpMenu;
 
     normalMap['i'] = editor::system::change2insert;
-
     normalMap['v'] = editor::system::change2visual;
+
+    normalMap['N'] = editor::system::new_buffer;
+    normalMap['n'] = editor::system::switch_to_next_buffer;
+    normalMap['m'] = editor::system::switch_to_previous_buffer;
 
     normalMap['f'] = editor::find::find;
 

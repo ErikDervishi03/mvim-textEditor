@@ -1,5 +1,6 @@
 #include <string>
 #include "../include/editor.hpp"
+#include "../include/bufferManager.hpp"
 
 // Function to prompt user for confirmation before exiting unsaved changes
 bool editor::system::confirm_exit()
@@ -78,23 +79,36 @@ bool editor::system::confirm_exit()
 }
 
 // Function to exit the IDE
-void editor::system::exit_ide()
-{
-  // If the status is unsaved, prompt for confirmation
-  if (status == Status::unsaved)
-  {
-    bool confirmed = editor::system::confirm_exit();
-    if (!confirmed)
-    {
-      // If the user selects "No", return to the editor
-      return;
-    }
-  }
+void editor::system::exit_ide() {
+    auto& bufferManager = BufferManager::instance();
 
-  // Exit the IDE (end ncurses session and terminate the program)
-  endwin();     // End ncurses mode
-  exit(0);      // Terminate the program
+    // If the status is unsaved, prompt for confirmation
+    if (status == Status::unsaved) {
+        bool confirmed = editor::system::confirm_exit();
+        if (!confirmed) {
+            return; // If the user selects "No", return to the editor
+        }
+    }
+
+    int bufferCount = bufferManager.getBufferCount();
+
+    // Delete the currently active buffer
+    bufferManager.delete_buffer();
+
+    // If buffers remain, switch to the first one
+    if (bufferCount > 1) {
+        bufferManager.set_active_buffer(0); // Set the first buffer as active
+        bufferManager.syncSystemVarsFromBuffer();
+        wclear(pointed_window);
+        wrefresh(pointed_window);
+    } else {
+        // If no buffers remain, exit the program
+        endwin(); // End ncurses mode
+        exit(0);  // Terminate the program
+    }
 }
+
+
 
 void editor::system::helpMenu()
 {
@@ -270,3 +284,57 @@ void editor::system::print_to_terminal(int message)
   std::cout << "dio cane";
   refresh();    // Re-enter ncurses mode
 }
+
+void editor::system::switch_to_next_buffer() {
+    BufferManager::instance().syncBufferFromSystemVars();
+    // Passa al buffer successivo nel BufferManager
+    BufferManager::instance().next();
+
+    // Sincronizza le variabili di sistema con il nuovo buffer attivo
+    BufferManager::instance().syncSystemVarsFromBuffer();
+
+    // Aggiorna lo schermo con il nuovo buffer
+    wclear(pointed_window);
+    wrefresh(pointed_window);
+}
+
+void editor::system::switch_to_previous_buffer() {
+    BufferManager::instance().syncBufferFromSystemVars();
+    // Passa al buffer precedente nel BufferManager
+    BufferManager::instance().previous();
+
+    // Sincronizza le variabili di sistema con il nuovo buffer attivo
+    BufferManager::instance().syncSystemVarsFromBuffer();
+
+    // Aggiorna lo schermo con il nuovo buffer
+    wclear(pointed_window);
+    wrefresh(pointed_window);
+}
+
+void editor::system::new_buffer() {
+    auto& bufferManager = BufferManager::instance();
+
+    try {
+        // Generate a name based on the next buffer index
+        int bufferIndex = bufferManager.getBufferCount();
+        std::string bufferName = "Buffer_" + std::to_string(bufferIndex);
+
+        // Attempt to create the new buffer
+        bufferManager.create_buffer(bufferName);
+
+        // Set the new buffer as active
+        bufferManager.set_active_buffer(bufferIndex);
+
+        // Synchronize system variables with the new buffer
+        bufferManager.syncSystemVarsFromBuffer();
+
+        // Clear and refresh the display for the new buffer
+        wclear(pointed_window);
+        wrefresh(pointed_window);
+
+    } catch (const std::exception& e) {
+        // If creating a buffer fails, do nothing
+        return;
+    }
+}
+

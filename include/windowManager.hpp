@@ -117,6 +117,10 @@ public:
         return destroy_window(name);  // Alias for destroy_window
     }
 
+    std::map<std::string, WINDOW*> get_windows(){
+        return windows;
+    }
+
 private:
     std::map<std::string, WINDOW*> windows;  // Map of window names to ncurses windows
 

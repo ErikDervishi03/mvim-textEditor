@@ -2,6 +2,7 @@
 
 #include "../utils.h"
 #include <cstddef>
+#include <ncurses.h>
 
 /*
 
@@ -10,7 +11,6 @@
   All file can access the resources of the text editor through this file.
 
 */
-
 /*system variables*/
 inline Cursor cursor;
 inline textBuffer buffer;
@@ -33,6 +33,7 @@ inline int visual_start_col;
 inline int visual_end_row;
 inline int visual_end_col;
 
+inline WINDOW* pointed_window;
 
 /*mvim colors*/
 typedef short color;

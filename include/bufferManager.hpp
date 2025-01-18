@@ -1,9 +1,11 @@
 #include "globals/mode.h"
 #include "globals/status.h"
+#include "globals/mvimResources.h"
 #include "cursor.hpp"
 #include "textBuffer.hpp"
 #include "windowManager.hpp"
 #include <array>
+#include <ncurses.h>
 #include <stdexcept>
 
 // Maximum number of buffers
@@ -37,11 +39,10 @@ public:
         std::string name;         ///< Name of the buffer for identification.
     };
 
-    /// Default constructor initializing the active buffer index and count.
-    BufferManager() : active_buffer_index(0), buffer_count(0) {}
-
-    /// Default destructor.
-    ~BufferManager() {}
+    static BufferManager& instance() {
+        static BufferManager instance; // Created once, shared globally
+        return instance;
+    }
 
     int getBufferCount() {
         return buffer_count;
@@ -58,12 +59,36 @@ public:
         if (buffer_count >= MAX_BUFFERS) {
             throw std::runtime_error("Max buffer limit reached.");
         }
-        // Create the window using WindowManager
+
+        BufferStructure& buffer = buffers[buffer_count];
         windowManager.create_window(name);
-        buffers[buffer_count].window = windowManager.get_window(name);
-        buffers[buffer_count].name = name;            // Store the name in the buffer structure
+        buffer.window = stdscr; // da cambiare con windowManager.get_window(name);
+        buffer.name = name;
+
+        // Initialize buffer fields to defaults
+        buffer.cursor = Cursor();//default x=0 y=0
+        buffer.tBuffer = textBuffer();
+        buffer.mode = Mode::insert;
+        buffer.status = Status::unsaved;
+
+        getmaxyx(buffer.window, max_row, max_col);
+        max_col = max_col- span - 1;
+
+        buffer.pointed_row = 0;
+        buffer.starting_row = 0;
+        buffer.pointed_col = 0;
+        buffer.starting_col = 0;
+        buffer.visual_start_row = 0;
+        buffer.visual_start_col = 0;
+        buffer.visual_end_row = 0;
+        buffer.visual_end_col = 0;
+        buffer.pointed_file.clear();
+        buffer.command_buffer.clear();
+        buffer.copy_paste_buffer.clear();
+
         buffer_count++;
     }
+
 
     /**
      * @brief Sets the active buffer by index.
@@ -87,6 +112,10 @@ public:
      */
     BufferStructure& get_active_buffer() {
         return buffers[active_buffer_index];
+    }
+
+    int get_active_buffer_index(){
+        return active_buffer_index;
     }
 
     /**
@@ -204,10 +233,73 @@ public:
         }
     }
 
+    // Synchronize system variables from the active buffer
+    void syncSystemVarsFromBuffer() {
+        auto& activeBuffer = get_active_buffer();
+
+        // Sync system variables from the active buffer
+        cursor = activeBuffer.cursor;
+        buffer = activeBuffer.tBuffer;
+        mode = activeBuffer.mode;
+        status = activeBuffer.status;
+
+        max_row = activeBuffer.max_row;
+        max_col = activeBuffer.max_col;
+        pointed_row = activeBuffer.pointed_row;
+        starting_row = activeBuffer.starting_row;
+        pointed_col = activeBuffer.pointed_col;
+        starting_col = activeBuffer.starting_col;
+
+        visual_start_row = activeBuffer.visual_start_row;
+        visual_start_col = activeBuffer.visual_start_col;
+        visual_end_row = activeBuffer.visual_end_row;
+        visual_end_col = activeBuffer.visual_end_col;
+
+        pointed_file = activeBuffer.pointed_file;
+        command_buffer = activeBuffer.command_buffer;
+        copy_paste_buffer = activeBuffer.copy_paste_buffer;
+
+        pointed_window = activeBuffer.window;
+    }
+
+    // Synchronize the active buffer from system variables
+    void syncBufferFromSystemVars() {
+        auto& activeBuffer = get_active_buffer();
+
+        // Sync the active buffer from system variables
+        activeBuffer.cursor = cursor;
+        activeBuffer.tBuffer = buffer;
+        activeBuffer.mode = mode;
+        activeBuffer.status = status;
+
+        activeBuffer.max_row = max_row;
+        activeBuffer.max_col = max_col;
+        activeBuffer.pointed_row = pointed_row;
+        activeBuffer.starting_row = starting_row;
+        activeBuffer.pointed_col = pointed_col;
+        activeBuffer.starting_col = starting_col;
+
+        activeBuffer.visual_start_row = visual_start_row;
+        activeBuffer.visual_start_col = visual_start_col;
+        activeBuffer.visual_end_row = visual_end_row;
+        activeBuffer.visual_end_col = visual_end_col;
+
+        activeBuffer.pointed_file = pointed_file;
+        activeBuffer.command_buffer = command_buffer;
+        activeBuffer.copy_paste_buffer = copy_paste_buffer;
+
+        activeBuffer.window = pointed_window;
+    }
+
+
 
 private:
     WindowManager windowManager;                          ///< Window manager for creating and managing windows.
     std::array<BufferStructure, MAX_BUFFERS> buffers;     ///< Array of buffers managed by this BufferManager.
     int active_buffer_index;                              ///< Index of the currently active buffer.
     int buffer_count;                                     ///< Current count of buffers created.
+
+    BufferManager() = default; // Private constructor
+    BufferManager(const BufferManager&) = delete;
+    BufferManager& operator=(const BufferManager&) = delete;
 };

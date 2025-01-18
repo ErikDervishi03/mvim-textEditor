@@ -1,9 +1,6 @@
 #pragma once
 #include <ncurses.h>
 
-#pragma once
-#include <ncurses.h>
-
 /**
  * @class Cursor
  * @brief A class to represent and manipulate the cursor position in a text editor interface.

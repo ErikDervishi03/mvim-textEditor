@@ -1,4 +1,5 @@
 #include "../include/screen.hpp"
+#include <ncurses.h>
 
 Screen::~Screen()
 {
@@ -22,6 +23,8 @@ void Screen::start()
   starting_col = 0;
   pointed_col = 0;
 
+  pointed_window = stdscr;
+
   cursor.set(0, 0);
 
   update();
@@ -34,12 +37,12 @@ void Screen::update()
 
 int Screen::get_width()
 {
-  return getmaxx(stdscr);
+  return getmaxx(pointed_window);
 }
 
 int Screen::get_height()
 {
-  return getmaxy(stdscr);
+  return getmaxy(pointed_window);
 }
 
 void Screen::draw_rectangle(int y1, int x1, int y2, int x2)
@@ -59,18 +62,18 @@ void Screen::print_buffer()
 {
   for (int i = 0; (i + starting_row) < buffer.getSize() && i < max_row; i++)
   {
-    attron(COLOR_PAIR(numberRowsColor));
-    mvprintw(i, 0, "%zu", i + starting_row + 1);
-    attroff(COLOR_PAIR(numberRowsColor));
+    wattron(pointed_window, COLOR_PAIR(numberRowsColor));
+    mvwprintw(pointed_window, i, 0, "%zu", i + starting_row + 1);
+    wattroff(pointed_window, COLOR_PAIR(numberRowsColor));
     
     std::string curr_row = buffer[i + starting_row];
 
     // if curr_row.length() <= starting_col the string is not visible
     if(curr_row.length() > starting_col){ 
       std::string row2print = curr_row.substr(starting_col, max_col);
-      attron(COLOR_PAIR(textColor));
-      mvprintw(i, span + 1, "%s", row2print.c_str());
-      attroff(COLOR_PAIR(textColor));
+      wattron(pointed_window, COLOR_PAIR(textColor));
+      mvwprintw(pointed_window, i, span + 1, "%s", row2print.c_str());
+      wattroff(pointed_window, COLOR_PAIR(textColor));
     } 
   }
 }
@@ -80,7 +83,7 @@ void Screen::print_multiline_string(int start_y, int start_x, const char* str)
 {
   int current_y = start_y;    // Coordinata Y attuale per la stampa
   int current_x = start_x;    // Coordinata X attuale per la stampa
-  attron(COLOR_PAIR(textColor));
+  wattron(pointed_window, COLOR_PAIR(textColor));
   // Itera la stringa carattere per carattere
   for (int i = 0; str[i] != '\0'; i++)
   {
@@ -91,8 +94,8 @@ void Screen::print_multiline_string(int start_y, int start_x, const char* str)
     }
     else
     {
-      mvaddch(current_y, current_x++, str[i]);       // Stampa il carattere e incrementa X
+      mvwaddch(pointed_window, current_y, current_x++, str[i]);       // Stampa il carattere e incrementa X
     }
   }
-  attroff(COLOR_PAIR(textColor));
+  wattroff(pointed_window, COLOR_PAIR(textColor));
 }

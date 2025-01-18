@@ -262,6 +262,13 @@ namespace editor
 
     // Utility function to print a message directly to the terminal (outsmvimStarter of ncurses mode)
     void print_to_terminal(int message);
+
+    void switch_to_next_buffer();
+
+    void switch_to_previous_buffer();
+
+    void new_buffer();
+
   };
 
   namespace visual
