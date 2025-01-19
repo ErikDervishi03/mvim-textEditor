@@ -202,3 +202,4 @@ void mvimStarter::startBenchmark(std::string filename)
   std::cout << "Benchmarking mode: Exiting mvimStarter after loading." << std::endl;
   exit(0);    // Exit the program after showing benchmark results
 }
+

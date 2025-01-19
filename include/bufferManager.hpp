@@ -66,15 +66,15 @@ public:
         buffer.name = name;
 
         // Initialize buffer fields to defaults
-        buffer.cursor = Cursor();//default x=0 y=0
+        buffer.cursor = Cursor(); // Default cursor (0, 0)
         cursor.set(0, 0);
 
         buffer.tBuffer = textBuffer();
         buffer.mode = Mode::insert;
         buffer.status = Status::unsaved;
 
-        getmaxyx(buffer.window, max_row, max_col);
-        max_col = max_col- span - 1;
+        getmaxyx(buffer.window, buffer.max_row, buffer.max_col);
+        buffer.max_col = buffer.max_col - span - 1;
 
         buffer.pointed_row = 0;
         buffer.starting_row = 0;
@@ -84,7 +84,10 @@ public:
         buffer.copy_paste_buffer.clear();
 
         buffer_count++;
+
+        update_all_buffers_dimensions();
     }
+
 
     // A method that returns a reference to the window map
     const std::map<std::string, WINDOW*>& get_bufferWindows() const {
@@ -308,4 +311,43 @@ private:
     BufferManager() = default; // Private constructor
     BufferManager(const BufferManager&) = delete;
     BufferManager& operator=(const BufferManager&) = delete;
+
+    void update_all_buffers_dimensions() {
+        for (int i = 0; i < buffer_count; ++i) {
+            BufferStructure& buffer = buffers[i];
+            if (buffer.window) {
+                // Aggiorna le dimensioni massime della finestra
+                getmaxyx(buffer.window, buffer.max_row, buffer.max_col);
+
+                // Adatta la dimensione massima per includere margini o altre regolazioni
+                buffer.max_col = buffer.max_col - span - 1;
+
+                // Se il cursore è fuori dalla vista orizzontale, centra la viewport
+                if (buffer.pointed_col < buffer.starting_col || 
+                    buffer.pointed_col > buffer.starting_col + (buffer.max_col - 1)) {
+                    if (buffer.pointed_col > buffer.max_col / 2) {
+                        buffer.starting_col = buffer.pointed_col - buffer.max_col / 2;
+                    } else {
+                        buffer.starting_col = 0;
+                    }
+                }
+
+                // Assicura che il cursore sia corretto rispetto alla nuova posizione della viewport
+                buffer.cursor.setX(buffer.pointed_col - buffer.starting_col);
+
+                // Debug: stampa lo stato aggiornato
+                endwin(); // Disabilita temporaneamente ncurses
+                std::cerr << "[DEBUG] Buffer updated: name=" << buffer.name
+                        << ", max_row=" << buffer.max_row << ", max_col=" << buffer.max_col
+                        << ", starting_row=" << buffer.starting_row << ", starting_col=" << buffer.starting_col
+                        << ", pointed_row=" << buffer.pointed_row << ", pointed_col=" << buffer.pointed_col
+                        << ", cursor_y=" << buffer.cursor.getY() << ", cursor_x=" << buffer.cursor.getX()
+                        << std::endl;
+                refresh(); // Riattiva ncurses
+            }
+        }
+    }
+
+
+
 };

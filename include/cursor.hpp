@@ -89,4 +89,6 @@ public:
   void restore(int span = 0);
 
   void pointToWindow(WINDOW* window);
+
+  bool is_out_of_bounds(int span) const;
 };
