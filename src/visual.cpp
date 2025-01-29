@@ -33,31 +33,30 @@ void editor::visual::highlight(int start_row, int end_row, int start_col, int en
     // Logic to determine start and end columns for each row
     if (end_row == start_row)
     {
-      // Single-row selection
-      curr_start_col = start_col;
-      curr_end_col = end_col;
+      curr_start_col = std::max(start_col - (int)starting_col, span+1);
+      curr_end_col = end_col - starting_col;
     }
     else if (i == 0)
     {
       // First row of the selection
-      curr_start_col = start_col;
-      curr_end_col = (end_row < start_row) ? span + 1 : row_length + span + 1;
+      curr_start_col = std::max(start_col - (int)starting_col,span+1);
+      curr_end_col = (end_row > start_row) ? std::min((int)max_col, row_length - (int)starting_col) + span + 1 : span + 1;
     }
     else if (i == row_to_highlight)
     {
       // Last row of the selection
-      curr_start_col = (end_row < start_row) ? row_length + span + 1 : span + 1;
-      curr_end_col = end_col;
+      curr_start_col = (end_row > start_row) ? span + 1 : std::min((int)max_col, row_length - (int)starting_col) + span + 1;
+      curr_end_col = end_col - starting_col;
     }
     else
     {
       // Intermediate rows
       curr_start_col = span + 1;
-      curr_end_col = row_length + span + 1;
+      curr_end_col = std::min((int)max_col, std::max(row_length - (int)starting_col, 0)) + span + 1;
     }
 
     // Ensure at least one character is highlighted
-    int highlight_length = std::max(abs(curr_end_col - curr_start_col), 1);
+    int highlight_length = (curr_end_col != curr_start_col) ? abs(curr_end_col - curr_start_col) + 1 : 1;
 
     // Highlight the current row
     mvwchgat(pointed_window,curr_row - starting_row,

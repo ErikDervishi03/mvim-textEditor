@@ -1,3 +1,4 @@
+#pragma once
 #include "globals/mode.h"
 #include "globals/status.h"
 #include "globals/mvimResources.h"
@@ -300,25 +301,13 @@ public:
         activeBuffer.cursor.pointToWindow(pointed_window);
     }
 
-
-
-private:
-    WindowManager windowManager;                          ///< Window manager for creating and managing windows.
-    std::array<BufferStructure, MAX_BUFFERS> buffers;     ///< Array of buffers managed by this BufferManager.
-    int active_buffer_index;                              ///< Index of the currently active buffer.
-    int buffer_count;                                     ///< Current count of buffers created.
-
-    BufferManager() = default; // Private constructor
-    BufferManager(const BufferManager&) = delete;
-    BufferManager& operator=(const BufferManager&) = delete;
-
     void update_all_buffers_dimensions() {
         for (int i = 0; i < buffer_count; ++i) {
             BufferStructure& buffer = buffers[i];
             if (buffer.window) {
                 // Aggiorna le dimensioni massime della finestra
                 getmaxyx(buffer.window, buffer.max_row, buffer.max_col);
-
+                wresize(buffer.window,  buffer.max_row, buffer.max_col);
                 // Adatta la dimensione massima per includere margini o altre regolazioni
                 buffer.max_col = buffer.max_col - span - 1;
 
@@ -348,6 +337,13 @@ private:
         }
     }
 
+private:
+    WindowManager& windowManager = WindowManager::getInstance();///< Window manager for creating and managing windows.
+    std::array<BufferStructure, MAX_BUFFERS> buffers;     ///< Array of buffers managed by this BufferManager.
+    int active_buffer_index;                              ///< Index of the currently active buffer.
+    int buffer_count;                                     ///< Current count of buffers created.
 
-
+    BufferManager() = default; // Private constructor
+    BufferManager(const BufferManager&) = delete;
+    BufferManager& operator=(const BufferManager&) = delete;
 };

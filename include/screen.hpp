@@ -1,4 +1,7 @@
+#pragma once
 #include "globals/mvimResources.h"
+#include "./bufferManager.hpp"
+
 /**
  * @class Screen
  * @brief A singleton class to manage the screen interface for the text editor.
@@ -9,15 +12,6 @@
  * the display of command and buffer information.
  */
 class Screen {
-public:
-    /**
-     * @brief Gets the singleton instance of the Screen class.
-     * @return A reference to the single instance of the Screen.
-     */
-    static Screen& getScreen() {
-        static Screen screen_;
-        return screen_;
-    }
 
 private:
     /**
@@ -25,8 +19,7 @@ private:
      */
     Screen();
 
-public:
-    /**
+        /**
      * @brief Deleted copy constructor to prevent copying.
      */
     Screen(const Screen&) = delete;
@@ -41,6 +34,15 @@ public:
      * @brief Destructor for the Screen class.
      */
     ~Screen();
+public:
+    /**
+     * @brief Gets the singleton instance of the Screen class.
+     * @return A reference to the single instance of the Screen.
+     */
+    static Screen& getScreen() {
+        static Screen screen_;
+        return screen_;
+    }
     
     /**
      * @brief Initializes the screen for use, setting up ncurses.
@@ -94,4 +96,6 @@ public:
     void print_buffer(WINDOW* window);
 
     void print_buffer(  std::vector<std::string> buffer, WINDOW* window, size_t starting_row, size_t starting_col, size_t max_col);
+
+    void refresh_all_buffers(); 
 };

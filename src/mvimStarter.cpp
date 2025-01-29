@@ -1,4 +1,5 @@
 #include "../include/mvimStarter.hpp"
+#include <ncurses.h>
 #include <ostream>
 #include "../include/bufferManager.hpp"
 
@@ -87,7 +88,7 @@ void mvimStarter::run()
       // Execute command based on input (modify the buffer if necessary)
       _command.execute(input);
 
-      // Print the updated buffer (assuming `screen.print_buffer()` works for the window context)
+      // Print the updated buffer
       screen.update();
 
       // Update background color for the current window
@@ -114,7 +115,7 @@ void mvimStarter::run()
           // Assicurati che pair.first contenga il nome corretto del buffer
           BufferManager::BufferStructure* buffer = BufferManager::instance().get_buffer_by_name(pair.first);
           if (buffer != nullptr) {
-                  screen.print_buffer(
+              screen.print_buffer(
                   buffer->tBuffer.get_buffer(),  // Contenuto del buffer
                   window,                        // La finestra da stampare
                   buffer->starting_row,          // Riga iniziale
@@ -202,4 +203,5 @@ void mvimStarter::startBenchmark(std::string filename)
   std::cout << "Benchmarking mode: Exiting mvimStarter after loading." << std::endl;
   exit(0);    // Exit the program after showing benchmark results
 }
+
 

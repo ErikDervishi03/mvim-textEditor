@@ -9,6 +9,7 @@ Screen::Screen()
 {
 }
 
+
 void Screen::start()
 {
   initscr();
@@ -135,4 +136,32 @@ void Screen::print_buffer(
 }
 
 
+void Screen::refresh_all_buffers() {
+    // Ottieni tutte le finestre dei buffer dal BufferManager
+    const auto& windows = BufferManager::instance().get_bufferWindows();
+    for (const auto& pair : windows) {
+        WINDOW* window = pair.second;
+        
+        // Evita di stampare nella finestra 'pointed_window'
+        if (window == pointed_window) continue;
 
+        // Pulisci ciascuna finestra
+        werase(window);
+
+        // Ottieni il buffer associato alla finestra corrente
+        BufferManager::BufferStructure* buffer = BufferManager::instance().get_buffer_by_name(pair.first);
+        if (buffer != nullptr) {
+            // Usa la funzione print_buffer per stampare il contenuto del buffer
+            print_buffer(
+                buffer->tBuffer.get_buffer(),  // Contenuto del buffer
+                window,                        // La finestra da stampare
+                buffer->starting_row,          // Riga iniziale
+                buffer->starting_col,          // Colonna iniziale
+                buffer->max_col                // Numero massimo di colonne visibili
+            );
+        }
+
+        // Rinfresca la finestra per aggiornare il contenuto
+        wrefresh(window);
+    }
+}

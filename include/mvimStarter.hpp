@@ -6,7 +6,6 @@
 #include "screen.hpp"
 #include "command.hpp"
 
-
 // mvimStarter class definition
 class mvimStarter {
 private:
