@@ -1,4 +1,5 @@
 #include "../include/editor.hpp"
+#include <ncurses.h>
 
 namespace fs = std::filesystem;
 
@@ -226,5 +227,6 @@ void editor::file::file_selection_menu()
   }
   curs_set(1);
   erase();
+  refresh();
   endwin();
 }

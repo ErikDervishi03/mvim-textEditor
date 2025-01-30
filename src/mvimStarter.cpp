@@ -82,58 +82,58 @@ void mvimStarter::run()
     int input = wgetch(pointed_window);
     if (input != ERR)
     {
-      // Clear the pointed window
-      werase(pointed_window);  // Clear the screen of the pointed window
+      // Cancella il contenuto della finestra attualmente puntata
+      werase(pointed_window);  
 
-      // Execute command based on input (modify the buffer if necessary)
+      // Esegue il comando dell'utente
       _command.execute(input);
 
-      // Print the updated buffer
+      // Aggiorna il contenuto dello schermo
       screen.update();
 
-      // Update background color for the current window
+      // Reimposta il colore di sfondo della finestra principale
       bkgd(COLOR_PAIR(get_pair(bgColor, cursorColor)));
 
-      // Update any other variables
+      // Aggiorna le variabili dello stato attuale
       updateVar();
 
-      // Run the service (if necessary)
+      // Esegue i servizi necessari
       mvimService.run();
 
-      // Restore cursor position after all operations
+      // Ripristina la posizione del cursore
       cursor.restore(span);
 
-      // Clear, print, and refresh all windows managed by the WindowManager
+      // Pulisce e aggiorna tutte le finestre gestite da BufferManager
       const auto& windows = BufferManager::instance().get_bufferWindows();
       for (const auto& pair : windows) {
           WINDOW* window = pair.second;
-          if(window == pointed_window)continue;
-          // Clear each window
+          if (window == pointed_window) continue;
+
+          // Cancella ogni finestra per evitare residui di testo
           werase(window);
 
-          // Print the buffer for each window (ensure you use the correct printing method)
-          // Assicurati che pair.first contenga il nome corretto del buffer
+          // Stampa il contenuto del buffer nella finestra
           BufferManager::BufferStructure* buffer = BufferManager::instance().get_buffer_by_name(pair.first);
           if (buffer != nullptr) {
               screen.print_buffer(
-                  buffer->tBuffer.get_buffer(),  // Contenuto del buffer
-                  window,                        // La finestra da stampare
-                  buffer->starting_row,          // Riga iniziale
-                  buffer->starting_col,          // Colonna iniziale
-                  buffer->max_col                // Numero massimo di colonne visibili
+                  buffer->tBuffer.get_buffer(),  
+                  window,                        
+                  buffer->starting_row,          
+                  buffer->starting_col,          
+                  buffer->max_col                
               );
           }
 
-          // Refresh each window to update the content
+          // Aggiorna la finestra per mostrare i nuovi contenuti
           wrefresh(window);
       }
 
-      // Refresh the pointed window (if necessary)
+      // Aggiorna la finestra attualmente puntata
       wrefresh(pointed_window);
-
     }
   }
 }
+
 
 // Show the initial welcome screen
 void mvimStarter::homeScreen()
