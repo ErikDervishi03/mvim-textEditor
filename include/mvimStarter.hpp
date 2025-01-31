@@ -26,6 +26,8 @@ private:
 
     void startBenchmark(std::string filename);
 
+    void print_bufferStructure(BufferManager::BufferStructure* buffer);
+
 public:
     // Constructors
     mvimStarter();

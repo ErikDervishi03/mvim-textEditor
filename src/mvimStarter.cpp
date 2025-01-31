@@ -104,33 +104,35 @@ void mvimStarter::run()
       cursor.restore(span);
 
       // Pulisce e aggiorna tutte le finestre gestite da BufferManager
-      const auto& windows = BufferManager::instance().get_bufferWindows();
-      for (const auto& pair : windows) {
-          WINDOW* window = pair.second;
-          if (window == pointed_window) continue;
+      const auto& buffers = BufferManager::instance().get_all_buffers();
+      for (const auto& buffer : buffers) {
+          if (buffer->window == pointed_window) continue;
 
           // Cancella ogni finestra per evitare residui di testo
-          werase(window);
+          werase(buffer->window);
 
           // Stampa il contenuto del buffer nella finestra
-          BufferManager::BufferStructure* buffer = BufferManager::instance().get_buffer_by_name(pair.first);
-          if (buffer != nullptr) {
-              screen.print_buffer(
-                  buffer->tBuffer.get_buffer(),  
-                  window,                        
-                  buffer->starting_row,          
-                  buffer->starting_col,          
-                  buffer->max_col                
-              );
-          }
+          print_bufferStructure(buffer);
 
           // Aggiorna la finestra per mostrare i nuovi contenuti
-          wrefresh(window);
+          wrefresh(buffer->window);
       }
 
       // Aggiorna la finestra attualmente puntata
       wrefresh(pointed_window);
     }
+  }
+}
+
+void mvimStarter::print_bufferStructure(BufferManager::BufferStructure* buffer){
+  if (buffer != nullptr) {
+    screen.print_buffer(
+        buffer->tBuffer.get_buffer(),  
+        buffer->window,                        
+        buffer->starting_row,          
+        buffer->starting_col,          
+        buffer->max_col                
+    );
   }
 }
 

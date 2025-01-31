@@ -89,6 +89,18 @@ public:
         update_all_buffers_dimensions();
     }
 
+    /**
+    * @brief Restituisce un vettore contenente tutti i buffer attualmente esistenti.
+    * 
+    * @return std::vector<BufferStructure*> Vettore di puntatori ai buffer attivi.
+    */
+    std::vector<BufferStructure*> get_all_buffers() {
+        std::vector<BufferStructure*> active_buffers;
+        for (int i = 0; i < buffer_count; ++i) {
+            active_buffers.push_back(&buffers[i]);
+        }
+        return active_buffers;
+    }
 
     // A method that returns a reference to the window map
     const std::map<std::string, WINDOW*>& get_bufferWindows() const {
