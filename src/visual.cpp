@@ -237,7 +237,7 @@ void editor::visual::delete_highlighted()
   editor::system::change2normal();
 }
 
-// Function to copy the highlighted text based on visual mode selection
+
 void editor::visual::copy_highlighted()
 {
   copy_paste_buffer = "";
@@ -247,38 +247,42 @@ void editor::visual::copy_highlighted()
   int start_col = visual_start_col - span - 1;
   int end_col = visual_end_col - span - 1;
 
-  // Case 1: Highlight is within a single row
   if (start_row == end_row)
   {
     int copy_start = std::min(start_col, end_col);
-    int char_to_copy = std::min(abs(end_col - start_col) + 1, 
-                                (int)buffer[start_row].length()); // number of characters to copy, at least 1
-
+    int char_to_copy = std::min(abs(end_col - start_col) + 1, (int)buffer[start_row].length());
     copy_paste_buffer = buffer[start_row].substr(copy_start, char_to_copy);
-    editor::system::change2normal();
-    return;
   }
-
-  // Case 2: Highlight spans multiple rows
-  if (end_row < start_row)
+  else
   {
-    std::swap(start_row, end_row);
-    std::swap(start_col, end_col);
+    if (end_row < start_row)
+    {
+      std::swap(start_row, end_row);
+      std::swap(start_col, end_col);
+    }
+
+    copy_paste_buffer = buffer[start_row].substr(start_col);
+
+    for (int i = 0; i < abs(start_row - end_row) - 1; ++i)
+    {
+      int curr_row = start_row + i + 1;
+      copy_paste_buffer += '\n' + buffer[curr_row];
+    }
+
+    copy_paste_buffer += '\n' + buffer[end_row].substr(0, end_col);
   }
 
-  copy_paste_buffer = buffer[start_row].substr(start_col);
+  // Copia negli appunti usando xclip
+  std::ofstream clipboard_file("/tmp/clipboard.txt");
+  clipboard_file << copy_paste_buffer;
+  clipboard_file.close();
 
-  // Copy the middle rows entirely
-  for (int i = 0; i < abs(start_row - end_row) - 1; ++i)
-  {
-    int curr_row = start_row + i + 1;
-    copy_paste_buffer += '\n' + buffer[curr_row];
-  }
-
-  copy_paste_buffer += '\n' + buffer[end_row].substr(0, end_col);
+  std::system("cat /tmp/clipboard.txt | xclip -selection clipboard");
 
   editor::system::change2normal();
 }
+
+
 
 void editor::visual::insert_brackets(char opening_bracket, char closing_bracket) {
     buffer.insert_letter(visual_start_row, visual_start_col - span, opening_bracket);

@@ -1,5 +1,6 @@
 #pragma once
 #include "globals/mvimResources.h"
+#include <cstdio>
 
 namespace editor
 {

@@ -93,6 +93,7 @@ private:
         cbreak();
         keypad(stdscr, TRUE);
         noecho();
+        raw();
         refresh();
     }
 
