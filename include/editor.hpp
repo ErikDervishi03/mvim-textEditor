@@ -269,6 +269,8 @@ namespace editor
 
     void new_buffer();
 
+    void resize();
+
   };
 
   namespace visual

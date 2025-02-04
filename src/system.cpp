@@ -1,3 +1,4 @@
+#include <ncurses.h>
 #include <string>
 #include "../include/editor.hpp"
 #include "../include/bufferManager.hpp"
@@ -281,7 +282,7 @@ void editor::system::restore()
 void editor::system::print_to_terminal(int message)
 {
   endwin();    // End ncurses mode
-  std::cout << "dio cane";
+  std::cout << "";
   refresh();    // Re-enter ncurses mode
 }
 
@@ -341,4 +342,14 @@ void editor::system::new_buffer() {
     }
 }
 
+void editor::system::resize(){
+  BufferManager::instance().update_all_buffers_dimensions();
+  BufferManager::instance().getWindowManager().resize_windows();
 
+  // Ensure the stdscr meets the minimum size requirement
+  int height, width;
+  getmaxyx(stdscr, height, width);
+  if (height < 50 || width < 50) {
+      resizeterm(std::max(50, height), std::max(50, width));
+  }
+}

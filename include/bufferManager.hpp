@@ -349,6 +349,10 @@ public:
         }
     }
 
+    WindowManager& getWindowManager(){
+        return windowManager;
+    }
+
 private:
     WindowManager& windowManager = WindowManager::getInstance();///< Window manager for creating and managing windows.
     std::array<BufferStructure, MAX_BUFFERS> buffers;     ///< Array of buffers managed by this BufferManager.

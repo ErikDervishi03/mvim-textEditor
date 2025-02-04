@@ -55,6 +55,32 @@ public:
 
     int kill_window(const WindowName& name) {
         return destroy_window(name);  // Alias for destroy_window
+    }   
+
+
+    // Helper methods
+    void resize_windows() {
+        int num_windows = windows.size();
+        if (num_windows == 0) return;
+
+        int maxHeight, maxWidth;
+        getmaxyx(stdscr, maxHeight, maxWidth);
+
+        clear();
+        refresh();
+
+        int win_width = (maxWidth - num_windows + 1) / num_windows;
+
+        int i = 0;
+        for (auto& pair : windows) {
+            int starty = 0;
+            int startx = i * (win_width + 1);
+            wclear(pair.second);
+            wresize(pair.second, maxHeight, win_width);
+            mvwin(pair.second, starty, startx);
+            wrefresh(pair.second);
+            i++;
+        }
     }
 
 private:
@@ -81,32 +107,6 @@ private:
     WindowManager(const WindowManager&) = delete;
     WindowManager& operator=(const WindowManager&) = delete;
 
-    // Helper methods
-    void resize_windows() {
-        int num_windows = windows.size();
-        if (num_windows == 0) return;
-
-        int maxHeight, maxWidth;
-        getmaxyx(stdscr, maxHeight, maxWidth);
-
-        clear();
-        refresh();
-
-        int win_width = (maxWidth - num_windows + 1) / num_windows;
-
-        int i = 0;
-        for (auto& pair : windows) {
-            int starty = 0;
-            int startx = i * (win_width + 1);
-            wclear(pair.second);
-            wresize(pair.second, maxHeight, win_width);
-            mvwin(pair.second, starty, startx);
-            if (i < windows.size() - 1)
-                wborder(pair.second, ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ');
-            wrefresh(pair.second);
-            i++;
-        }
-    }
 
     int destroy_window(const WindowName& name) {
         std::string key = to_string(name);

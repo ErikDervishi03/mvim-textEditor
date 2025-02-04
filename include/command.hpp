@@ -1,5 +1,6 @@
 #pragma once
 #include "editor.hpp"
+#include <ncurses.h>
 
 #define ctrl(x) ((x) & 0x1f)
 #define isPrintable(c) (isalpha(c) || isdigit(c) || isSpecialChar(c))
@@ -115,6 +116,10 @@ public:
 
   void execute(int key)
   {
+    if(key == KEY_RESIZE){
+      editor::system::resize();
+    }
+
     if (specialKeys.find(key) != specialKeys.end())
     {
       specialKeys[key]();
