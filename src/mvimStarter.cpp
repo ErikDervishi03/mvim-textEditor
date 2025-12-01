@@ -38,6 +38,7 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
     return;
   }
 
+
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
   initialize_ncurses();    // Initialize ncurses and colors
@@ -72,7 +73,7 @@ void mvimStarter::updateVar()
 // Run the mvimStarter main loop
 void mvimStarter::run()
 {
-  bkgd(COLOR_PAIR(get_pair(bgColor, cursorColor)));
+  wbkgd(pointed_window, COLOR_PAIR(get_pair(bgColor, cursorColor)));
   homeScreen();    // Show initial screen if no file is loaded
 
   cursor.restore(span);
@@ -92,7 +93,7 @@ void mvimStarter::run()
       screen.update();
 
       // Reimposta il colore di sfondo della finestra principale
-      bkgd(COLOR_PAIR(get_pair(bgColor, cursorColor)));
+      wbkgd(pointed_window, COLOR_PAIR(get_pair(bgColor, cursorColor)));
 
       // Aggiorna le variabili dello stato attuale
       updateVar();
