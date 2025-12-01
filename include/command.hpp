@@ -1,5 +1,6 @@
 #pragma once
 #include "editor.hpp"
+#include "configParser.hpp"
 #include <ncurses.h>
 
 #define ctrl(x) ((x) & 0x1f)
@@ -101,6 +102,9 @@ public:
 
     /*special keys*/
     specialKeys[ctrl('s')] = editor::file::save;
+
+    /* Load custom bindings from config file to override defaults */
+    ConfigParser::loadKeyBindings(*this, ".mvimrc");
   }
 
   static bool isSpecialChar(char c)
