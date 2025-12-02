@@ -1,4 +1,5 @@
 #include "../include/cursor.hpp"
+#include "../include/utils.h" // Needed for ErrorHandler
 #include <iostream>
 
 Cursor::Cursor() :
@@ -76,11 +77,12 @@ void Cursor::restore(int span) {
         // Termina temporaneamente ncurses per stampare l'errore sul terminale
         endwin();
 
-        // Stampa il messaggio di errore sul terminale
-        std::cerr << "Errore: il cursore è fuori dai confini! (" 
-                  << "target_y=" << target_y << ", target_x=" << target_x 
-                  << ", max_row=" << max_row << ", max_col=" << max_col << ")" 
-                  << std::endl;
+        std::string msg = "Errore: il cursore è fuori dai confini! (target_y=" + std::to_string(target_y) + 
+                          ", target_x=" + std::to_string(target_x) + 
+                          ", max_row=" + std::to_string(max_row) + 
+                          ", max_col=" + std::to_string(max_col) + ")";
+        
+        ErrorHandler::instance().report(ErrorLevel::FATAL, msg);
 
         // Ritorna alla modalità ncurses
         refresh();
@@ -104,9 +106,6 @@ bool Cursor::is_out_of_bounds(int span) const {
     // Verifica se il cursore è fuori dai limiti
     return target_y < 0 || target_y >= max_row || target_x < 0 || target_x >= max_col;
 }
-
-
-
 
 void Cursor::pointToWindow(WINDOW* window){
     pointed_window = window;

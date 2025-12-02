@@ -3,7 +3,6 @@
 #include "../include/editor.hpp"
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 #include <ncurses.h> // For KEY_ constants
 
@@ -119,7 +118,11 @@ void ConfigParser::loadKeyBindings(Command& command, const std::string& filename
             // Validate Section Name
             if (currentSection != "NORMAL" && currentSection != "INSERT" && 
                 currentSection != "VISUAL" && currentSection != "FIND") {
-                std::cerr << "[Config Error] Line " << lineNumber << ": Unknown section [" << currentSection << "]" << std::endl;
+                
+                std::string msg = "Config Error Line " + std::to_string(lineNumber) + 
+                                  ": Unknown section [" + currentSection + "]";
+                ErrorHandler::instance().report(ErrorLevel::WARNING, msg);
+                
                 // We don't change 'currentSection' to an invalid one to avoid binding subsequent keys to the wrong mode
                 currentSection = "INVALID";
             }
@@ -132,7 +135,9 @@ void ConfigParser::loadKeyBindings(Command& command, const std::string& filename
         // Parse key = action
         size_t delimiterPos = line.find('=');
         if (delimiterPos == std::string::npos) {
-            std::cerr << "[Config Error] Line " << lineNumber << ": Malformed line (missing '='): " << line << std::endl;
+            std::string msg = "Config Error Line " + std::to_string(lineNumber) + 
+                              ": Malformed line (missing '='): " + line;
+            ErrorHandler::instance().report(ErrorLevel::WARNING, msg);
             continue;
         }
 
@@ -140,18 +145,23 @@ void ConfigParser::loadKeyBindings(Command& command, const std::string& filename
         std::string actionStr = trim(line.substr(delimiterPos + 1));
 
         if (keyStr.empty() || actionStr.empty()) {
-            std::cerr << "[Config Error] Line " << lineNumber << ": Empty key or action" << std::endl;
+            std::string msg = "Config Error Line " + std::to_string(lineNumber) + ": Empty key or action";
+            ErrorHandler::instance().report(ErrorLevel::WARNING, msg);
             continue;
         }
 
         int keyCode = parseKey(keyStr);
         if (keyCode == ERR) {
-            std::cerr << "[Config Error] Line " << lineNumber << ": Unknown key identifier '" << keyStr << "'" << std::endl;
+            std::string msg = "Config Error Line " + std::to_string(lineNumber) + 
+                              ": Unknown key identifier '" + keyStr + "'";
+            ErrorHandler::instance().report(ErrorLevel::WARNING, msg);
             continue;
         }
 
         if (actions.find(actionStr) == actions.end()) {
-            std::cerr << "[Config Error] Line " << lineNumber << ": Unknown action '" << actionStr << "'" << std::endl;
+            std::string msg = "Config Error Line " + std::to_string(lineNumber) + 
+                              ": Unknown action '" + actionStr + "'";
+            ErrorHandler::instance().report(ErrorLevel::WARNING, msg);
             continue;
         }
 

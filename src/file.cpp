@@ -3,19 +3,9 @@
 
 namespace fs = std::filesystem;
 
-
-/**
- * Displays a form for inputting a filename.
- * The form consists of a simple window where the user can type a filename, with support for backspace and exiting via the ESC key.
- * Once the filename is entered and confirmed, it is stored in the global variable `pointed_file`.
- */
-
-
-
 // Save function
 void editor::file::save()
 {
-
   if (pointed_file.empty())
   {
     pointed_file = editor::system::text_form("Insert file name:");        // Prompt for filename if not set
@@ -28,7 +18,7 @@ void editor::file::save()
     std::ofstream myfile(pointed_file);
     if (!myfile.is_open())
     {
-      std::cerr << "Failed to open file for writing: " << pointed_file << "\n";
+      ErrorHandler::instance().report(ErrorLevel::ERROR, "Cannot open file: " + pointed_file);
       return;
     }
 
@@ -42,13 +32,12 @@ void editor::file::save()
   }
   else
   {
-    std::cerr << "No file name provided. Save aborted.\n";
+    ErrorHandler::instance().report(ErrorLevel::WARNING, "No file name provided. Save aborted.");
   }
 }
 
 bool is_readable(std::string file_name)
 {
-
   fs::perms file_perms = fs::status(file_name).permissions();
 
   if (fs::exists(file_name) &&
@@ -59,13 +48,11 @@ bool is_readable(std::string file_name)
       (file_perms& fs::perms::group_read) != fs::perms::none &&
       (file_perms& fs::perms::others_read) != fs::perms::none)
   {
-
     return true;
-
   }
   else
   {
-    std::cerr << "File is not readable or does not exist.\n";
+    ErrorHandler::instance().report(ErrorLevel::ERROR, "File is not readable or does not exist.");
     return false;
   }
 }
@@ -73,7 +60,6 @@ bool is_readable(std::string file_name)
 // Read function
 void editor::file::read(std::string file_name)
 {
-
   // If the status is unsaved, prompt for confirmation
   if (status == Status::unsaved)
   {
@@ -90,7 +76,7 @@ void editor::file::read(std::string file_name)
     std::ifstream myfile(file_name);
     if (!myfile.is_open())
     {
-      std::cerr << "Can't open: " << file_name << "\n";
+      ErrorHandler::instance().report(ErrorLevel::ERROR, "Can't open: " + file_name);
       return;
     }
 
@@ -116,7 +102,6 @@ void editor::file::read(std::string file_name)
     buffer.restore();
   }
 }
-
 
 void editor::file::file_selection_menu()
 {

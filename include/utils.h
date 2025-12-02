@@ -7,6 +7,7 @@
 #include "textBuffer.hpp"
 #include "globals/mode.h"
 #include "globals/status.h"
+#include "errorHandler.hpp"
 
 #include <ncurses.h>
 #include <iostream> // std::cerr
