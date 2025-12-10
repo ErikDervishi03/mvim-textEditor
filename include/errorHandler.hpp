@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <ncurses.h>
 #include <string>
 #include <cstdlib> // for exit()
 
@@ -27,7 +28,9 @@ public:
         }
 
         // Print to standard error
+        endwin(); 
         std::cerr << prefix << message << std::endl;
+        refresh();
 
         // If it's a fatal error, exit the program immediately
         if (level == ErrorLevel::FATAL) {
