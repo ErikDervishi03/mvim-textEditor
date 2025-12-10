@@ -22,6 +22,7 @@ mvimStarter::mvimStarter() :
 {
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
+  is_undoing = false;
   initialize_ncurses();    // Initialize ncurses and colors
   pointed_file = "";
   status = Status::saved;
@@ -41,6 +42,7 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
 
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
+  is_undoing = false;
   initialize_ncurses();    // Initialize ncurses and colors
   setDefaults();
 

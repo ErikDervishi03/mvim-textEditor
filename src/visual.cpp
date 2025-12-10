@@ -289,3 +289,21 @@ void editor::visual::insert_brackets(char opening_bracket, char closing_bracket)
     buffer.insert_letter(visual_end_row, visual_end_col - span - 1, closing_bracket);
     system::change2normal();
 }
+
+
+void editor::visual::select_all()
+{
+  // 1. Move to the beginning of the file
+  editor::movement::move_to_beginning_of_file();
+
+  // 2. Set the start of the visual selection manually
+  // We use 'span + 1' because that represents the first textual column in your layout
+  visual_start_row = pointed_row; 
+  visual_start_col = pointed_col + span + 1; 
+
+  // 3. Switch to Visual Mode
+  mode = Mode::visual;
+
+  // 4. Move to the end of the file to extend the selection
+  editor::movement::move_to_end_of_file();
+}

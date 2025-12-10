@@ -3,26 +3,15 @@
 
 namespace editor
 {
-  enum ActionType
-  {
-    INSERT,
-    DELETE,
-    MOVE_UP,
-    MOVE_DOWN,
-    MOVE_LEFT,
-    MOVE_RIGHT,
-    TAB,
-    DELETE_ROW,
-    PASTE
-  };
+  enum ActionType { INSERT_CHAR, DELETE_CHAR, INSERT_NEWLINE, DELETE_NEWLINE, DELETE_ROW, PASTE };
 
   struct Action
   {
     ActionType type;
     int row;
     int col;
-    char letter;              // For insert/delete actions
-    std::string copied_text;  // For copy/paste actions
+    char letter;              // For single char insert/delete
+    std::string text;         // For row deletion or paste
   };
 
   inline std::stack<Action> action_history;
@@ -154,6 +143,8 @@ namespace editor
      * and moves the cursor accordingly.
      */
     void paste();
+
+    void paste_in_visual();
 
     /**
      * @brief Replaces the current word searched with the word provided by the user.
@@ -326,6 +317,8 @@ namespace editor
     void highlight_block(int from, int to);
 
     void insert_brackets(char opening_bracket, char closing_bracket);
+
+    void select_all();
   };
 
   namespace find

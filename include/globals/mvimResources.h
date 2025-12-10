@@ -35,6 +35,8 @@ inline int visual_end_col;
 
 inline WINDOW* pointed_window;
 
+inline bool is_undoing;
+
 /*mvim colors*/
 typedef short color;
 inline color keyWordColor;

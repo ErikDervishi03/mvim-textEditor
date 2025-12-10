@@ -1,10 +1,10 @@
 #pragma once
 #include "editor.hpp"
-#include "configParser.hpp"
+#include "configParser.hpp" 
 #include <ncurses.h>
+#include <cctype> 
 
 #define ctrl(x) ((x) & 0x1f)
-#define isPrintable(c) (isalpha(c) || isdigit(c) || isSpecialChar(c))
 #define isOpenBracket(c) (c == '{' || c == '[' || c == '(')
 
 
@@ -17,11 +17,11 @@ private:
   keymap normalMap;
   keymap visualMap;
   keymap findMap;
-  keymap specialKeys; /*ctrl s, ctrl w ...*/
+  keymap specialKeys; 
+
 public:
   Command()
   {
-
     /*insert*/
     insertMap[KEY_UP] = editor::movement::move_up;
     insertMap[KEY_DOWN] = editor::movement::move_down;
@@ -61,7 +61,6 @@ public:
     normalMap['s'] = editor::file::save;
 
     normalMap['q'] = editor::system::exit_ide;
-    //normalMap['m'] = editor::system::helpMenu;
 
     normalMap['i'] = editor::system::change2insert;
     normalMap['v'] = editor::system::change2visual;
@@ -103,19 +102,7 @@ public:
     /*special keys*/
     specialKeys[ctrl('s')] = editor::file::save;
 
-    /* Load custom bindings from config file to override defaults */
-    ConfigParser::loadKeyBindings(*this, ".mvimrc");
-  }
-
-  static bool isSpecialChar(char c)
-  {
-    std::set<char> specialChars = { '[', ']', '%', '!', '@', '#',
-                                    '$', '^', '&', '*', '(', ')',
-                                    '{', '}', '<', '>', '/', '\\',
-                                    '|', '~', '-', '+', '=', '_',
-                                    ':', ' ' };
-
-    return specialChars.find(c) != specialChars.end();
+    ConfigParser::loadKeyBindings(*this, ".mvimrc"); 
   }
 
   void execute(int key)
@@ -144,7 +131,8 @@ public:
       {
         editor::modify::delete_word_backyard();
       }
-      else if (isPrintable(key))
+      // We check key < 256 to ensure it's a valid ASCII/extended char and not a function key like KEY_UP
+      else if (key < 256 && isprint(key)) 
       {
         editor::modify::insert_letter(key);
       }
@@ -186,11 +174,12 @@ public:
 
     default:
     {
-      // Optional: handle unknown mode
       break;
     }
     }
   }
+
+// include/command.hpp
 
   void bind(int key, std::function<void()> editor, Mode mode_)
   {
@@ -214,20 +203,30 @@ public:
       break;
     }
 
+    case visual:
+    {
+      visualMap[key] = editor;
+      break;
+    }
+
+    case find:
+    {
+      findMap[key] = editor;
+      break;
+    }
+
     default:
     {
-      // Optional: handle unknown mode
       break;
     }
     }
   }
 
-  // Overload bind to take an array of characters
   void bind(const std::vector<int>& keys, std::function<void()> editor, Mode mode_)
   {
       for (int key : keys)
       {
-          bind(key, editor, mode_);  // Call the original bind function for each key
+          bind(key, editor, mode_);
       }
   }
 

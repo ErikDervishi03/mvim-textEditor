@@ -1,7 +1,28 @@
 #include "../include/editor.hpp"
 
+// Helper function used in older versions, kept if needed for reference or other logic
+static void reverse_insert(int row, int col)
+{
+  cursor.setY(row);
+  editor::movement::move2X(col + 1);
+  pointed_row = row;
+
+  if (pointed_row > max_row / 2)
+  {
+    starting_row = pointed_row - max_row / 2;
+  }
+  else
+  {
+    starting_row = 0;
+  }
+}
+
 void editor::modify::insert_letter(int letter)
 {
+  if (!is_undoing) {
+    editor::action_history.push({ActionType::INSERT_CHAR, (int)pointed_row, (int)pointed_col, (char)letter, ""});
+  }
+  
   status = Status::unsaved;
 
   buffer.insert_letter(pointed_row, pointed_col, letter);
@@ -15,20 +36,18 @@ void editor::modify::insert_letter(int letter)
     cursor.move_right();
   }
   pointed_col++;
-
 }
 
 void editor::modify::new_line()
 {
+  if (!is_undoing) {
+    editor::action_history.push({ActionType::INSERT_NEWLINE, (int)pointed_row, (int)pointed_col, 0, ""});
+  }
+
   status = Status::unsaved;
   buffer.new_row("", pointed_row + 1);
 
-  
-  // here we are breaking down the line.
-  // All the text from the current cursor
-  // position to the end of the line go in
-  // the next line
-
+  // Break the line: move text from cursor to end of line to the next line
   const int curr_row_length = buffer[pointed_row].length();
   if (pointed_col != curr_row_length)
   {
@@ -42,7 +61,6 @@ void editor::modify::new_line()
   if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
       !buffer.is_void_row(max_row) && pointed_row < buffer.getSize())
   {
-
     starting_row++;
   }
   else if (cursor.getY() < max_row - 1)
@@ -57,11 +75,16 @@ void editor::modify::new_line()
 
 void editor::modify::delete_letter()
 {
-
   status = Status::unsaved;
 
   if (pointed_col == 0 && (cursor.getY() > 0 || starting_row > 0))
   {
+    // Merging rows (Backspacing at start of line)
+    if (!is_undoing) {
+       // We record the position at the end of the previous line where the merge happens
+       editor::action_history.push({ActionType::DELETE_NEWLINE, (int)pointed_row-1, (int)buffer[pointed_row-1].length(), 0, ""});
+    }
+
     editor::movement::move_up();
     editor::movement::move2X(buffer[pointed_row].length());
     buffer.merge_rows(pointed_row, pointed_row+1);
@@ -71,6 +94,11 @@ void editor::modify::delete_letter()
     if(starting_col + 1 == pointed_col && starting_col != 0) starting_col--;
     else cursor.move_left();
     pointed_col--;
+
+    char char_to_delete = buffer[pointed_row][pointed_col];
+    if (!is_undoing) {
+        editor::action_history.push({ActionType::DELETE_CHAR, (int)pointed_row, (int)pointed_col, char_to_delete, ""});
+    }
 
     buffer.delete_letter(pointed_row, pointed_col);
   }
@@ -89,8 +117,13 @@ void editor::modify::normal_delete_letter()
   {
     editor::movement::move_left();
   }
-  buffer.delete_letter(pointed_row, pointed_col);
 
+  char char_to_delete = buffer[pointed_row][pointed_col];
+  if (!is_undoing) {
+      editor::action_history.push({ActionType::DELETE_CHAR, (int)pointed_row, (int)pointed_col, char_to_delete, ""});
+  }
+
+  buffer.delete_letter(pointed_row, pointed_col);
 }
 
 void editor::modify::tab()
@@ -99,8 +132,8 @@ void editor::modify::tab()
 
   for (int i = 0; i < tab_size; i++)
   {
-    buffer.insert_letter(pointed_row, pointed_col, ' ');
-    editor::movement::move_right();
+    // Use insert_letter to ensure the action is recorded
+    editor::modify::insert_letter(' ');
   }
 }
 
@@ -111,6 +144,9 @@ void editor::modify::delete_row()
   // Verifica se il buffer non è vuoto
   if (!buffer.is_void())
   {
+    if (!is_undoing) {
+        editor::action_history.push({ActionType::DELETE_ROW, (int)pointed_row, 0, 0, buffer.get_string_row(pointed_row)});
+    }
     // Cancella la riga puntata
     buffer.del_row(pointed_row);
   }
@@ -153,6 +189,31 @@ void editor::modify::paste()
       }
     }
   }
+}
+
+void editor::modify::paste_in_visual()
+{
+  if (copy_paste_buffer.empty() || mode != Mode::visual)
+  {
+    return;
+  }
+  
+  status = Status::unsaved;
+
+  // Preserve the text you want to paste
+  std::string text_to_paste = copy_paste_buffer;
+
+  // Delete the current selection (this switches mode to Normal)
+  editor::visual::delete_highlighted();
+
+  // Restore the original clipboard content
+  copy_paste_buffer = text_to_paste;
+
+  // Paste the text
+  editor::modify::paste();
+
+  // Ensure we are in normal mode
+  editor::system::change2normal();
 }
 
 void editor::modify::replace()
@@ -250,25 +311,6 @@ void editor::modify::delete_selection(int start_row, int end_row, int start_col,
   cursor.setY(start_row - starting_row);
 }
 
-
-static void reverse_insert(int row, int col)
-{
-  // Set the cursor to the position of the last editor
-  cursor.setY(row);
-  editor::movement::move2X(col + 1);
-  pointed_row = row;
-
-  // Maintain the current selected word at the center of the screen
-  if (pointed_row > max_row / 2)
-  {
-    starting_row = pointed_row - max_row / 2;
-  }
-  else
-  {
-    starting_row = 0;
-  }
-}
-
 void editor::modify::delete_word_backyard()
 {
   if (pointed_col == 0)
@@ -328,36 +370,61 @@ void editor::modify::delete_word()
   }
 }
 
+//CURRENTLY UNSTABLE
 void editor::modify::undo()
 {
-
   if (!editor::action_history.empty())
   {
+    is_undoing = true;
     status = Status::unsaved;
     Action last_action = editor::action_history.top();
     editor::action_history.pop();
+    
+    // Restore Cursor Position to where the action occurred
+    pointed_row = last_action.row;
+    pointed_col = last_action.col;
+    
+    // Ensure viewport follows cursor
+    if (pointed_row > max_row / 2) starting_row = pointed_row - max_row / 2;
+    else starting_row = 0;
+    
+    editor::movement::move2X(last_action.col);
+    cursor.setY(pointed_row - starting_row);
 
     switch (last_action.type)
     {
-    case ActionType::INSERT:
+    case ActionType::INSERT_CHAR:
     {
-      reverse_insert(last_action.row, last_action.col);
-
-      while (!editor::action_history.empty() &&
-             editor::action_history.top().type == ActionType::INSERT)
-      {
-        // Retrieve the last editor
-        Action action_editor = editor::action_history.top();
-
-        reverse_insert(action_editor.row, action_editor.col);
-
-        // Undo the insert editor by deleting the letter
-        editor::modify::delete_letter();
-
-        // Pop the editor from the history stack
-        editor::action_history.pop();
-      }
-
+      // Inverse: Delete the character
+      buffer.delete_letter(last_action.row, last_action.col);
+      break;
+    }
+    case ActionType::DELETE_CHAR:
+    {
+      // Inverse: Re-insert the character
+      buffer.insert_letter(last_action.row, last_action.col, last_action.letter);
+      // Advance cursor to simulate restoration of the state before backspace
+      pointed_col++;
+      editor::movement::move2X(pointed_col);
+      break;
+    }
+    case ActionType::INSERT_NEWLINE:
+    {
+      // Inverse: The user split the line, so we merge them back
+      buffer.merge_rows(last_action.row, last_action.row + 1);
+      break;
+    }
+    case ActionType::DELETE_NEWLINE:
+    {
+      // Inverse: The user merged lines (backspace at start), so we split them back
+      // new_line() splits at current pointed_col
+      editor::modify::new_line();
+      break;
+    }
+    case ActionType::DELETE_ROW:
+    {
+      // Inverse: Restore the deleted row
+      buffer.new_row(last_action.text, last_action.row);
       break;
     }
     default:
@@ -365,5 +432,7 @@ void editor::modify::undo()
       break;
     }
     }
+    
+    is_undoing = false;
   }
 }
