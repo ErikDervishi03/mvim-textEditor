@@ -1,0 +1,8 @@
+name=Python
+extensions=.py .pyw
+single_line_comment=#
+multi_line_comment_start="""
+multi_line_comment_end="""
+brackets=()[]{}
+keywords=False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield
+preprocessor=import from

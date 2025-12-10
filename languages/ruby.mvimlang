@@ -1,0 +1,8 @@
+name=Ruby
+extensions=.rb .rbw .rake .gemspec
+single_line_comment=#
+multi_line_comment_start==begin
+multi_line_comment_end==end
+brackets=()[]{}
+keywords=alias and BEGIN begin break case class def defined? do else elsif END end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield
+preprocessor=require include extend

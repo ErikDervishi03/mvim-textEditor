@@ -1,5 +1,6 @@
 #include "../include/editor.hpp"
 #include <ncurses.h>
+#include "../include/syntax.hpp"
 
 namespace fs = std::filesystem;
 
@@ -28,6 +29,9 @@ void editor::file::save()
     {
       myfile << buffer.get_buffer()[i] << "\n";
     }
+
+    SyntaxHighlighter::instance().setLanguageFromFile(pointed_file);
+
     myfile.close();
   }
   else
@@ -94,6 +98,8 @@ void editor::file::read(std::string file_name)
     {
       buffer.push_back(line);
     }
+
+    SyntaxHighlighter::instance().setLanguageFromFile(file_name);
 
     myfile.close();
   }

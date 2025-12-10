@@ -1,0 +1,8 @@
+name=Swift
+extensions=.swift
+single_line_comment=//
+multi_line_comment_start=/*
+multi_line_comment_end=*/
+brackets=()[]{}
+keywords=associatedtype class deinit enum extension fileprivate func import init inout internal let open operator private protocol public rethrows static struct subscript typealias var break case continue default defer do else fallthrough for guard if in repeat return switch where while as Any catch false is nil super self Self throw throws true try
+preprocessor=#if #else #endif #selector

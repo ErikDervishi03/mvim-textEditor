@@ -1,0 +1,8 @@
+name=Go
+extensions=.go
+single_line_comment=//
+multi_line_comment_start=/*
+multi_line_comment_end=*/
+brackets=()[]{}
+keywords=break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var true false nil iota
+preprocessor=package import

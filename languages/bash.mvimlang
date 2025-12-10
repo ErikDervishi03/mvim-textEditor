@@ -1,0 +1,9 @@
+name=Bash
+extensions=.sh .bash .zsh
+single_line_comment=#
+# Bash technically doesn't have block comments like C, but this is a hack often used
+multi_line_comment_start=: '
+multi_line_comment_end='
+brackets=()[]{}
+keywords=if then else elif fi case esac for while until do done in function return exit echo read local export source alias bg bind break builtin caller cd command compgen complete continue dirs disown enable eval exec fc fg getopts hash help history jobs kill let logout popd printf pushd pwd set shift shopt suspend test times trap type ulimit umask unalias unset wait
+preprocessor=#!/bin/bash #!/bin/sh

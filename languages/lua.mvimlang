@@ -1,0 +1,8 @@
+name=Lua
+extensions=.lua
+single_line_comment=--
+multi_line_comment_start=--[[
+multi_line_comment_end=]]
+brackets=()[]{}
+keywords=and break do else elseif end false for function if in local nil not or repeat return then true until while
+preprocessor=require

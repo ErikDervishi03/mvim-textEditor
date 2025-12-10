@@ -1,0 +1,8 @@
+name=C
+extensions=.c .h
+single_line_comment=//
+multi_line_comment_start=/*
+multi_line_comment_end=*/
+brackets=()[]{}
+keywords=auto break case char const continue default do double else enum extern float for goto if int long register return short signed sizeof static struct switch typedef union unsigned void volatile while
+preprocessor=#include #define #undef #ifdef #ifndef #if #else #elif #endif #error #pragma

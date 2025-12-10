@@ -1,0 +1,8 @@
+name=Kotlin
+extensions=.kt .kts
+single_line_comment=//
+multi_line_comment_start=/*
+multi_line_comment_end=*/
+brackets=()[]{}
+keywords=as as? break class continue do else false for fun if in !in interface is !is null object package return super this throw true try typealias typeof val var when while by catch constructor delegate dynamic field file finally get import init param property receiver set setparam value where
+preprocessor=package import
