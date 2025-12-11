@@ -129,7 +129,7 @@ public:
    * @brief Retrieves the entire buffer as a vector of strings.
    * @return A vector containing all rows of the buffer.
    */
-  std::vector<std::string> get_buffer() const;
+  const std::vector<std::string>& get_buffer() const;
 
   /**
    * @brief Restores the buffer to its initial state with one empty row.

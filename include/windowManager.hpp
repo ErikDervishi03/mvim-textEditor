@@ -67,7 +67,7 @@ public:
         getmaxyx(stdscr, maxHeight, maxWidth);
 
         clear();
-        refresh();
+        // refresh(); // You can remove this early refresh as we will refresh at the end
 
         int win_width = (maxWidth - num_windows + 1) / num_windows;
 
@@ -75,12 +75,25 @@ public:
         for (auto& pair : windows) {
             int starty = 0;
             int startx = i * (win_width + 1);
+
+            // --- START CHANGE ---
+            // Draw a vertical line to the left of the window (if it's not the first one)
+            if (i > 0) {
+                // Draw '|' on the background (stdscr) in the gap column
+                mvvline(0, startx - 1, '|', maxHeight); 
+            }
+            // --- END CHANGE ---
+
             wclear(pair.second);
             wresize(pair.second, maxHeight, win_width);
             mvwin(pair.second, starty, startx);
             wrefresh(pair.second);
             i++;
         }
+        
+        // --- START CHANGE ---
+        refresh(); // Refresh stdscr to show the vertical lines
+        // --- END CHANGE ---
     }
 
 private:

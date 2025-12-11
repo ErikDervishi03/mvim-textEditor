@@ -76,9 +76,11 @@ bool editor::system::confirm_exit()
   // Cleanup the popup window
   delwin(popup_win);
   curs_set(1);
+
+  BufferManager::instance().getWindowManager().resize_windows();
+
   return confirm;
 }
-
 // Function to exit the IDE
 void editor::system::exit_ide() {
     auto& bufferManager = BufferManager::instance();
@@ -178,11 +180,6 @@ static void centerText(WINDOW* win, int starty, int width, const std::string& st
 
 std::string editor::system::text_form(const std::string& label)
 {
-  initscr();
-  cbreak();
-  noecho();
-  keypad(stdscr, TRUE);
-
   int height, width;
   getmaxyx(stdscr, height, width);
 
@@ -235,7 +232,9 @@ std::string editor::system::text_form(const std::string& label)
   }
 
   delwin(form_win);
-  endwin();
+  
+  // Refresh again to clear the popup artifacts and restore lines immediately
+  BufferManager::instance().getWindowManager().resize_windows();
 
   return input;
 }
@@ -276,14 +275,6 @@ void editor::system::restore()
   visual_start_col = visual_end_col = cursor.getX();
   current_occurrence_index = -1;
   found_occurrences.clear();
-}
-
-// Utility function to print a message directly to the terminal (outsmvimStarter of ncurses mode)
-void editor::system::print_to_terminal(int message)
-{
-  endwin();    // End ncurses mode
-  std::cout << "";
-  refresh();    // Re-enter ncurses mode
 }
 
 void editor::system::switch_to_next_buffer() {

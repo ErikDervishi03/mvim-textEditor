@@ -95,7 +95,7 @@ int textBuffer::getSize() const
   return size;
 }
 
-std::vector<std::string> textBuffer::get_buffer() const
+const std::vector<std::string>& textBuffer::get_buffer() const
 {
   return this->buffer;
 }
