@@ -1,0 +1,17 @@
+[INSERT]
+Ctrl-a = select_all
+
+[NORMAL]
+# "Select All" from Normal Mode
+Ctrl-a = select_all
+# Standard Paste
+p = paste
+Ctrl-v = paste
+
+[VISUAL]
+# "Select All" from Visual Mode (if you want to re-select)
+Ctrl-a = select_all
+# Paste with replacement
+p = paste_visual
+Ctrl-v = paste_visual
+

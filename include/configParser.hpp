@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <functional>
+#include <filesystem>
 
 // Forward declaration to avoid circular dependency issues
 class Command;

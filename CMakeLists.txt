@@ -47,3 +47,6 @@ install(TARGETS mvim DESTINATION /usr/local/bin)
 
 # Install the languages directory to /usr/local/share/mvim/languages
 install(DIRECTORY languages DESTINATION /usr/local/share/mvim)
+
+# Install the configuration file
+install(FILES .mvimrc DESTINATION /usr/local/share/mvim)

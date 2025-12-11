@@ -1,9 +1,7 @@
 #include "../include/configParser.hpp"
 #include "../include/command.hpp"
 #include "../include/editor.hpp"
-#include "../include/utils.h" // Needed for ErrorHandler
 #include <fstream>
-#include <iostream>
 #include <algorithm>
 #include <ncurses.h> 
 
@@ -92,7 +90,30 @@ std::map<std::string, std::function<void()>> ConfigParser::getActionMap() {
 }
 
 void ConfigParser::loadKeyBindings(Command& command, const std::string& filename) {
-    std::ifstream file(filename);
+    std::vector<std::string> searchPaths = {
+        filename,                                   // Current working directory (e.g., .mvimrc)
+        "/usr/local/share/mvim/" + filename,        // System install path
+        "/usr/share/mvim/" + filename               // Fallback system path
+    };
+
+    std::string configPath = "";
+
+    // Iterate to find the first existing file
+    for (const auto& path : searchPaths) {
+        if (std::filesystem::exists(path)) {
+            configPath = path;
+            break;
+        }
+    }
+
+    // If no file found, exit (or optionally log a warning)
+    if (configPath.empty()) {
+        ErrorHandler::instance().report(ErrorLevel::WARNING, "Configuration file not found.");
+        return;
+    }
+
+    std::ifstream file(configPath);
+
     if (!file.is_open()) return;
 
     std::string line;
