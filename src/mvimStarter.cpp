@@ -42,17 +42,20 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
 
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
-  is_undoing = false;
+  
   initialize_ncurses();    // Initialize ncurses and colors
   setDefaults();
 
+  is_undoing = false;
+  status = Status::saved;
   pointed_file = filename;
+
   cursor.restore(span);    // Restore cursor position
   editor::file::read(filename);    // Load file content
   screen.update();    // Update screen
   mvimService.run();
   wrefresh(pointed_window);
-  status = Status::saved;
+  
 }
 
 void mvimStarter::updateVar()
