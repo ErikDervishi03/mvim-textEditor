@@ -26,15 +26,31 @@ static std::string trim_val(const std::string& str) {
 void SyntaxHighlighter::loadLanguages() {
     languages.clear();
     
-    // Path to the languages directory (relative to executable)
-    // You might want to make this an absolute path or configurable in the future
-    std::string langPath = "languages"; 
+    // Define potential paths: local dev path first, then system install paths
+    std::vector<std::string> searchPaths = {
+        "languages",                        // Local relative path (for development)
+        "/usr/local/share/mvim/languages",  // Standard install path (as defined in CMake)
+        "/usr/share/mvim/languages"         // Fallback standard path
+    };
 
-    if (!fs::exists(langPath) || !fs::is_directory(langPath)) {
-        ErrorHandler::instance().report(ErrorLevel::WARNING, "Languages directory not found: " + langPath);
+    std::string langPath = "";
+    bool found = false;
+
+    // Iterate through paths to find a valid directory
+    for (const auto& path : searchPaths) {
+        if (fs::exists(path) && fs::is_directory(path)) {
+            langPath = path;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        ErrorHandler::instance().report(ErrorLevel::WARNING, "Languages directory not found in local or system paths.");
         return;
     }
 
+    // The rest of the function remains the same, using the found langPath
     for (const auto& entry : fs::directory_iterator(langPath)) {
         if (entry.path().extension() == ".mvimlang") {
             parseLanguageFile(entry.path());

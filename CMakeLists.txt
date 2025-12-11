@@ -44,3 +44,6 @@ target_link_libraries(mvim ${CURSES_LIBRARIES})
 
 # Install the executable globally
 install(TARGETS mvim DESTINATION /usr/local/bin)
+
+# Install the languages directory to /usr/local/share/mvim/languages
+install(DIRECTORY languages DESTINATION /usr/local/share/mvim)
