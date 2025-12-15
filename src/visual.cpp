@@ -10,7 +10,6 @@
   ((pos + len == buffer_row.size()) || isspace(buffer_row[pos + len]) || \
    strchr("(){}[]", buffer_row[pos + len]) || strchr("+-*/%=", buffer_row[pos + len]))
 
-// FIX: Changed > to >= to include the first column (fixes comment at col 0 issue)
 #define IS_VISIBLE_HORIZONTALLY(c) (c >= starting_col && c < starting_col+max_col)
 
 
