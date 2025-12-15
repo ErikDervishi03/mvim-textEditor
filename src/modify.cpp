@@ -174,6 +174,15 @@ void editor::modify::paste()
   {
     status = Status::unsaved;
 
+    // Record the full paste action for undo
+    if (!is_undoing) {
+      editor::action_history.push({ActionType::PASTE, (int)pointed_row, (int)pointed_col, 0, copy_paste_buffer});
+    }
+
+    // Preserve the original is_undoing state
+    bool was_undoing = is_undoing;
+    is_undoing = true;  // Prevent sub-actions (insert_letter/new_line) from cluttering history
+
     // Itera su ogni carattere della stringa
     for (char c : copy_paste_buffer)
     {
@@ -188,6 +197,7 @@ void editor::modify::paste()
         editor::modify::insert_letter(c);
       }
     }
+    is_undoing = was_undoing; // Restore state
   }
 }
 
@@ -232,6 +242,14 @@ void editor::modify::replace()
     int row = occ.first;
     int col = occ.second;
 
+    if (!is_undoing) {
+        // Synthesize undo actions: first delete old text, then insert new text.
+        // On undo: popping 'PASTE' deletes new text, popping 'DELETE_SELECTION' restores old.
+        editor::action_history.push({ActionType::DELETE_SELECTION, row, col, 0, 
+            buffer[row].substr(col, current_searched_word_length)});
+        editor::action_history.push({ActionType::PASTE, row, col, 0, replace_term});
+    }
+
     // Replace the word in the buffer at the found position
     buffer[row].replace(col, current_searched_word_length, replace_term);
 
@@ -268,6 +286,10 @@ void editor::modify::delete_selection(int start_row, int end_row, int start_col,
     // Copy and delete the text
     copy_paste_buffer = buffer.slice_row(start_row, copy_start, copy_start + num_chars_to_copy);
 
+    if (!is_undoing) {
+        editor::action_history.push({ActionType::DELETE_SELECTION, start_row, copy_start, 0, copy_paste_buffer});
+    }
+
     editor::movement::move2X(copy_start);      // Set the cursor to the start of the highlighted text
 
     return;
@@ -293,6 +315,10 @@ void editor::modify::delete_selection(int start_row, int end_row, int start_col,
   copy_paste_buffer += '\n' + buffer.slice_row(start_row + 1, 0, end_col);
 
   buffer.merge_rows(start_row, start_row + 1);
+
+  if (!is_undoing) {
+      editor::action_history.push({ActionType::DELETE_SELECTION, start_row, start_col, 0, copy_paste_buffer});
+  }
 
   pointed_row = start_row;
 
@@ -370,7 +396,6 @@ void editor::modify::delete_word()
   }
 }
 
-//CURRENTLY UNSTABLE
 void editor::modify::undo()
 {
   if (!editor::action_history.empty())
@@ -424,7 +449,56 @@ void editor::modify::undo()
     case ActionType::DELETE_ROW:
     {
       // Inverse: Restore the deleted row
-      buffer.new_row(last_action.text, last_action.row);
+      // Handle the case where the buffer was completely voided (1 empty row left)
+      if (buffer.is_void()) {
+         // Reconstruct the row at 0 instead of appending
+         if (last_action.row == 0) {
+            buffer[0] = last_action.text;
+         } else {
+             // Should not happen for void buffer, but safe fallback
+             buffer.new_row(last_action.text, last_action.row);
+         }
+      } else {
+          buffer.new_row(last_action.text, last_action.row);
+      }
+      break;
+    }
+    case ActionType::DELETE_SELECTION:
+    {
+      // Inverse: Paste the deleted text back at the location
+      std::string old_clipboard = copy_paste_buffer;
+      copy_paste_buffer = last_action.text;
+      editor::modify::paste();
+      copy_paste_buffer = old_clipboard;
+      break;
+    }
+    case ActionType::PASTE:
+    {
+      // Inverse: Delete the pasted block
+      // Calculate end position based on the text
+      int rows = 0;
+      int last_line_len = 0;
+      for (char c : last_action.text) {
+          if (c == '\n') {
+              rows++;
+              last_line_len = 0;
+          } else {
+              last_line_len++;
+          }
+      }
+      
+      int end_row = last_action.row + rows;
+      int end_col; 
+      // Replicate the quirky logic required for delete_selection to match the block
+      if (rows == 0) {
+          end_col = last_action.col + last_line_len - 1; 
+      } else {
+          end_col = last_line_len;
+      }
+      
+      editor::modify::delete_selection(last_action.row, end_row, last_action.col, end_col);
+      // Ensure we stay in Normal mode
+      editor::system::change2normal();
       break;
     }
     default:

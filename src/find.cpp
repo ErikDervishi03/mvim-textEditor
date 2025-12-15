@@ -43,10 +43,9 @@ void editor::find::highlight_searched_word()
         if (row >= visible_start_row && row <= visible_end_row)
         {
             // Highlight the found word in the visible row
-            editor::visual::highlight(row, 
-                                      row, 
-                                      (col + span + 1) - starting_col,
-                                      (col + current_searched_word_length + span + 1) - starting_col);
+            editor::visual::highlight_row_portion(row,
+                                      (col + span + 1),
+                                      (col + current_searched_word_length + span));
         }
     }
 }

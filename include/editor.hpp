@@ -3,7 +3,7 @@
 
 namespace editor
 {
-  enum ActionType { INSERT_CHAR, DELETE_CHAR, INSERT_NEWLINE, DELETE_NEWLINE, DELETE_ROW, PASTE };
+  enum ActionType { INSERT_CHAR, DELETE_CHAR, INSERT_NEWLINE, DELETE_NEWLINE, DELETE_ROW, PASTE, DELETE_SELECTION };
 
   struct Action
   {
@@ -273,7 +273,7 @@ namespace editor
      * @param start_col The starting column of the highlight.
      * @param end_col The ending column of the highlight.
      */
-    void highlight(int start_row, int end_row, int start_col, int end_col);
+    void highlight(int start_row, int end_row, int start_col, int end_col, color highlight_color = highlightedTextColor);
 
     /**
      * @brief Highlights the text in the visual selection range.
@@ -289,7 +289,7 @@ namespace editor
      * @param end_col The ending column of the highlight.
      * @param color_scheme The color scheme to apply for highlighting.
      */
-    void highlight_row_portion(int row, int start_col, int end_col, color color_scheme);
+    void highlight_row_portion(int row, int start_col, int end_col, color highlight_color = highlightedTextColor);
 
     /**
      * @brief Copies the highlighted text based on the visual selection.

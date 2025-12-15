@@ -13,7 +13,7 @@
 #define IS_VISIBLE_HORIZONTALLY(c) (c > starting_col && c < starting_col+max_col)
 
 
-void editor::visual::highlight(int start_row, int end_row, int start_col, int end_col)
+void editor::visual::highlight(int start_row, int end_row, int start_col, int end_col, color highlight_color)
 {
   int curr_row, curr_start_col, curr_end_col;
 
@@ -62,7 +62,7 @@ void editor::visual::highlight(int start_row, int end_row, int start_col, int en
     // Highlight the current row
     mvwchgat(pointed_window,curr_row - starting_row,
             std::min(curr_start_col, curr_end_col),
-            highlight_length, A_NORMAL, highlightedTextColor, NULL);
+            highlight_length, A_NORMAL, highlight_color, NULL);
   }
 }
 
@@ -80,18 +80,10 @@ void editor::visual::highlight_block(int from, int to){
   highlight(from, to, 0, buffer[to].length());
 }
 
-
-
 void editor::visual::highlight_row_portion(int row, int start_col, int end_col, color color_scheme)
 {
-  int highlight_length = std::max(abs(end_col - start_col), 1);
-  mvwchgat(pointed_window, row - starting_row,
-          std::min(start_col, end_col),
-          highlight_length, A_NORMAL,
-          color_scheme, NULL);
+  highlight(row, row, start_col, end_col,color_scheme);
 }
-
-
 
 void editor::visual::highlight_keywords()
 {
@@ -277,8 +269,31 @@ void editor::visual::copy_highlighted()
 
 
 void editor::visual::insert_brackets(char opening_bracket, char closing_bracket) {
-    buffer.insert_letter(visual_start_row, visual_start_col - span, opening_bracket);
-    buffer.insert_letter(visual_end_row, visual_end_col - span - 1, closing_bracket);
+    // 1. Get raw coordinates adjusted for span
+    int start_row = visual_start_row;
+    int end_row = visual_end_row;
+    int start_col = visual_start_col - span - 1;
+    int end_col = visual_end_col - span - 1;
+
+    // 2. Control: Normalize row order (Handle backwards selection)
+    if (end_row < start_row) {
+        std::swap(start_row, end_row);
+        std::swap(start_col, end_col);
+    }
+
+    // 3. Control: Normalize column order if on the same row
+    if (start_row == end_row && end_col < start_col) {
+        std::swap(start_col, end_col);
+    }
+
+    // 4. Insert Opening Bracket at the start
+    buffer.insert_letter(start_row, start_col, opening_bracket);
+
+    // 5. Insert Closing Bracket
+    end_col = (end_col == buffer[end_row].length())? end_col : end_col + 1;
+
+    buffer.insert_letter(end_row, end_col, closing_bracket);
+
     system::change2normal();
 }
 
