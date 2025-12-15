@@ -10,7 +10,8 @@
   ((pos + len == buffer_row.size()) || isspace(buffer_row[pos + len]) || \
    strchr("(){}[]", buffer_row[pos + len]) || strchr("+-*/%=", buffer_row[pos + len]))
 
-#define IS_VISIBLE_HORIZONTALLY(c) (c > starting_col && c < starting_col+max_col)
+// FIX: Changed > to >= to include the first column (fixes comment at col 0 issue)
+#define IS_VISIBLE_HORIZONTALLY(c) (c >= starting_col && c < starting_col+max_col)
 
 
 void editor::visual::highlight(int start_row, int end_row, int start_col, int end_col, color highlight_color)
@@ -73,8 +74,6 @@ void editor::visual::highlight_selected()
     return;
   }
 
-  // Convert raw coordinates to screen coordinates for the highlight function
-  // pointed_row/col acts as the dynamic "end" of the selection
   highlight(visual_start_row, pointed_row, visual_start_col + span + 1, pointed_col + span + 1);
 }
 
@@ -84,7 +83,7 @@ void editor::visual::highlight_block(int from, int to){
 
 void editor::visual::highlight_row_portion(int row, int start_col, int end_col, color color_scheme)
 {
-  highlight(row, row, start_col, end_col,color_scheme);
+  highlight(row, row, start_col, end_col ,color_scheme);
 }
 
 void editor::visual::highlight_keywords()
@@ -116,8 +115,8 @@ void editor::visual::highlight_keywords()
                 if (IS_LEFT_BOUNDARY_VALID(found_pos) && IS_RIGHT_BOUNDARY_VALID(found_pos, keyword_len))        
                 {
                     editor::visual::highlight_row_portion(row,
-                                                          (found_pos + span + 1) - starting_col,
-                                                          (found_pos + keyword_len + span + 1) - starting_col,
+                                                          found_pos + span + 1,
+                                                          found_pos + keyword_len + span,
                                                           group.color);
                 }
                 found_pos = buffer_row.find(keyword, found_pos + keyword_len);
@@ -135,8 +134,8 @@ void editor::visual::highlight_keywords()
             while (found_pos != std::string::npos)
             {
                 editor::visual::highlight_row_portion(row, 
-                                                      (found_pos + span + 1) - starting_col,
-                                                      (found_pos + 1 + span + 1) - starting_col, 
+                                                      found_pos + span + 1,
+                                                      found_pos + span + 1, 
                                                       bracketsColor);
 
                 found_pos = buffer_row.find(bracket, found_pos + 1);
@@ -150,16 +149,13 @@ void editor::visual::highlight_keywords()
 
         if (single_line_comment_pos != std::string::npos)
         {
-            if(IS_VISIBLE_HORIZONTALLY(single_line_comment_pos)){ 
+            // FIX: Check visibility >= 0. Also check if comment starts BEFORE screen ( < starting_col)
+            // If it starts before, it extends into view, so we highlight it.
+            if(IS_VISIBLE_HORIZONTALLY(single_line_comment_pos) || single_line_comment_pos < starting_col){ 
                 editor::visual::highlight_row_portion(row,
-                                                      (single_line_comment_pos + span + 1) - starting_col,
-                                                      (buffer_row.size() + span + 1) - starting_col, 
+                                                      single_line_comment_pos + span + 1,
+                                                      buffer_row.size() + span, 
                                                       commentsColor);
-            } else if(pointed_col > single_line_comment_pos){
-                editor::visual::highlight_row_portion(row,
-                                              span+1,
-                                              (buffer_row.size() + span + 1) - starting_col, 
-                                              commentsColor);
             }
         }
     }
@@ -173,8 +169,8 @@ void editor::visual::highlight_keywords()
         if (multi_start != std::string::npos && multi_end != std::string::npos)
         {
             editor::visual::highlight_row_portion(row, 
-                                                  (multi_start + span + 1) - starting_col,
-                                                  (multi_end + lang->multiLineCommentEnd.length() + span + 1) - starting_col,
+                                                  multi_start + span + 1,
+                                                  multi_end + lang->multiLineCommentEnd.length() + span,
                                                   commentsColor);
         }
         // Case B: Starts on this line, ends later
@@ -182,8 +178,8 @@ void editor::visual::highlight_keywords()
         {
             // Highlight rest of this line
             editor::visual::highlight_row_portion(row,
-                                                  (multi_start + span + 1) - starting_col,
-                                                  (buffer_row.size() + span + 1) - starting_col, 
+                                                  multi_start + span + 1,
+                                                  buffer_row.size() + span, 
                                                   commentsColor);
 
             // Highlight subsequent lines until end token found
@@ -191,8 +187,8 @@ void editor::visual::highlight_keywords()
             while (next_row <= visible_end_row && buffer[next_row].find(lang->multiLineCommentEnd) == std::string::npos)
             {
                 editor::visual::highlight_row_portion(next_row,
-                                                      (span + 1) - starting_col,
-                                                      (buffer[next_row].size() + span + 1) - starting_col, 
+                                                      span + 1,
+                                                      buffer[next_row].size() + span, 
                                                       commentsColor);
                 next_row++;
             }
@@ -202,8 +198,8 @@ void editor::visual::highlight_keywords()
             {
                 size_t end_pos_next = buffer[next_row].find(lang->multiLineCommentEnd);
                 editor::visual::highlight_row_portion(next_row, 
-                                                      (span + 1) - starting_col,
-                                                      (end_pos_next + lang->multiLineCommentEnd.length() + span + 1) - starting_col, 
+                                                      span + 1,
+                                                      end_pos_next + lang->multiLineCommentEnd.length() + span, 
                                                       commentsColor);
             }
         }
@@ -211,13 +207,12 @@ void editor::visual::highlight_keywords()
   }
 }
 
-// Function to delete and copy the highlighted text based on visual mode selection
 void editor::visual::delete_highlighted()
 {
   int start_row = visual_start_row;
   int end_row = pointed_row;
-  int start_col = visual_start_col; // Raw coordinates
-  int end_col = pointed_col;        // Raw coordinates
+  int start_col = visual_start_col; 
+  int end_col = pointed_col;        
 
   editor::modify::delete_selection(start_row, end_row, start_col, end_col);
   editor::system::change2normal();
@@ -230,8 +225,8 @@ void editor::visual::copy_highlighted()
 
   int start_row = visual_start_row;
   int end_row = pointed_row;
-  int start_col = visual_start_col; // Raw coordinates
-  int end_col = pointed_col;        // Raw coordinates
+  int start_col = visual_start_col; 
+  int end_col = pointed_col;        
 
   if (start_row == end_row)
   {
@@ -270,27 +265,22 @@ void editor::visual::copy_highlighted()
 
 
 void editor::visual::insert_brackets(char opening_bracket, char closing_bracket) {
-    // 1. Get raw coordinates (no span adjustment needed)
     int start_row = visual_start_row;
     int end_row = pointed_row;
     int start_col = visual_start_col; 
     int end_col = pointed_col;
 
-    // 2. Control: Normalize row order (Handle backwards selection)
     if (end_row < start_row) {
         std::swap(start_row, end_row);
         std::swap(start_col, end_col);
     }
 
-    // 3. Control: Normalize column order if on the same row
     if (start_row == end_row && end_col < start_col) {
         std::swap(start_col, end_col);
     }
 
-    // 4. Insert Opening Bracket at the start
     buffer.insert_letter(start_row, start_col, opening_bracket);
 
-    // 5. Insert Closing Bracket
     if (start_row == end_row) {
         end_col++; 
     }
@@ -307,16 +297,12 @@ void editor::visual::insert_brackets(char opening_bracket, char closing_bracket)
 
 void editor::visual::select_all()
 {
-  // 1. Move to the beginning of the file
   editor::movement::move_to_beginning_of_file();
 
-  // 2. Set the start of the visual selection manually
   visual_start_row = pointed_row; 
-  visual_start_col = pointed_col; // Raw coordinate (0)
+  visual_start_col = pointed_col; 
 
-  // 3. Switch to Visual Mode
   mode = Mode::visual;
 
-  // 4. Move to the end of the file to extend the selection
   editor::movement::move_to_end_of_file();
 }
