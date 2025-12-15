@@ -66,6 +66,9 @@ public:
         int maxHeight, maxWidth;
         getmaxyx(stdscr, maxHeight, maxWidth);
 
+        // Reserve the last row for the status bar
+        int effectiveHeight = maxHeight - 1;
+
         clear();
         // refresh(); // You can remove this early refresh as we will refresh at the end
 
@@ -80,12 +83,13 @@ public:
             // Draw a vertical line to the left of the window (if it's not the first one)
             if (i > 0) {
                 // Draw '|' on the background (stdscr) in the gap column
-                mvvline(0, startx - 1, '|', maxHeight); 
+                // Limit the line to effectiveHeight so it doesn't cross the status bar
+                mvvline(0, startx - 1, '|', effectiveHeight); 
             }
             // --- END CHANGE ---
 
             wclear(pair.second);
-            wresize(pair.second, maxHeight, win_width);
+            wresize(pair.second, effectiveHeight, win_width); // Resize to effectiveHeight
             mvwin(pair.second, starty, startx);
             wrefresh(pair.second);
             i++;

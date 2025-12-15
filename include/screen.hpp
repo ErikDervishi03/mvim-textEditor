@@ -86,6 +86,11 @@ public:
     void print_buffer();
 
     /**
+     * @brief Prints the status bar at the bottom of the screen.
+     */
+    void draw_status_bar();
+
+    /**
      * @brief Prints a multiline string starting at specified coordinates.
      * @param start_y The starting y-coordinate for printing.
      * @param start_x The starting x-coordinate for printing.
