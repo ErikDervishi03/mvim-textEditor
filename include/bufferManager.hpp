@@ -29,8 +29,6 @@ public:
 
         int visual_start_row;     ///< Start row for visual selection.
         int visual_start_col;     ///< Start column for visual selection.
-        int visual_end_row;       ///< End row for visual selection.
-        int visual_end_col;       ///< End column for visual selection.
 
         std::string pointed_file; ///< Currently pointed file name.
         std::string command_buffer; ///< Buffer for command input.
@@ -270,8 +268,6 @@ public:
 
         visual_start_row = activeBuffer.visual_start_row;
         visual_start_col = activeBuffer.visual_start_col;
-        visual_end_row = activeBuffer.visual_end_row;
-        visual_end_col = activeBuffer.visual_end_col;
 
         pointed_file = activeBuffer.pointed_file;
         command_buffer = activeBuffer.command_buffer;
@@ -301,8 +297,6 @@ public:
 
         activeBuffer.visual_start_row = visual_start_row;
         activeBuffer.visual_start_col = visual_start_col;
-        activeBuffer.visual_end_row = visual_end_row;
-        activeBuffer.visual_end_col = visual_end_col;
 
         activeBuffer.pointed_file = pointed_file;
         activeBuffer.command_buffer = command_buffer;

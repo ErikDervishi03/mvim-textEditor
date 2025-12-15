@@ -30,8 +30,6 @@ inline std::string copy_paste_buffer;
 
 inline int visual_start_row;
 inline int visual_start_col;
-inline int visual_end_row;
-inline int visual_end_col;
 
 inline WINDOW* pointed_window;
 

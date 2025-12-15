@@ -73,7 +73,9 @@ void editor::visual::highlight_selected()
     return;
   }
 
-  highlight(visual_start_row, visual_end_row, visual_start_col, visual_end_col);
+  // Convert raw coordinates to screen coordinates for the highlight function
+  // pointed_row/col acts as the dynamic "end" of the selection
+  highlight(visual_start_row, pointed_row, visual_start_col + span + 1, pointed_col + span + 1);
 }
 
 void editor::visual::highlight_block(int from, int to){
@@ -213,9 +215,9 @@ void editor::visual::highlight_keywords()
 void editor::visual::delete_highlighted()
 {
   int start_row = visual_start_row;
-  int end_row = visual_end_row;
-  int start_col = visual_start_col - span - 1;
-  int end_col = visual_end_col - span - 1;
+  int end_row = pointed_row;
+  int start_col = visual_start_col; // Raw coordinates
+  int end_col = pointed_col;        // Raw coordinates
 
   editor::modify::delete_selection(start_row, end_row, start_col, end_col);
   editor::system::change2normal();
@@ -227,9 +229,9 @@ void editor::visual::copy_highlighted()
   copy_paste_buffer = "";
 
   int start_row = visual_start_row;
-  int end_row = visual_end_row;
-  int start_col = visual_start_col - span - 1;
-  int end_col = visual_end_col - span - 1;
+  int end_row = pointed_row;
+  int start_col = visual_start_col; // Raw coordinates
+  int end_col = pointed_col;        // Raw coordinates
 
   if (start_row == end_row)
   {
@@ -267,13 +269,12 @@ void editor::visual::copy_highlighted()
 }
 
 
-
 void editor::visual::insert_brackets(char opening_bracket, char closing_bracket) {
-    // 1. Get raw coordinates adjusted for span
+    // 1. Get raw coordinates (no span adjustment needed)
     int start_row = visual_start_row;
-    int end_row = visual_end_row;
-    int start_col = visual_start_col - span - 1;
-    int end_col = visual_end_col - span - 1;
+    int end_row = pointed_row;
+    int start_col = visual_start_col; 
+    int end_col = pointed_col;
 
     // 2. Control: Normalize row order (Handle backwards selection)
     if (end_row < start_row) {
@@ -290,7 +291,13 @@ void editor::visual::insert_brackets(char opening_bracket, char closing_bracket)
     buffer.insert_letter(start_row, start_col, opening_bracket);
 
     // 5. Insert Closing Bracket
-    end_col = (end_col == buffer[end_row].length())? end_col : end_col + 1;
+    if (start_row == end_row) {
+        end_col++; 
+    }
+    
+    if (end_col < buffer[end_row].length()) {
+        end_col++;
+    }
 
     buffer.insert_letter(end_row, end_col, closing_bracket);
 
@@ -304,9 +311,8 @@ void editor::visual::select_all()
   editor::movement::move_to_beginning_of_file();
 
   // 2. Set the start of the visual selection manually
-  // We use 'span + 1' because that represents the first textual column in your layout
   visual_start_row = pointed_row; 
-  visual_start_col = pointed_col + span + 1; 
+  visual_start_col = pointed_col; // Raw coordinate (0)
 
   // 3. Switch to Visual Mode
   mode = Mode::visual;

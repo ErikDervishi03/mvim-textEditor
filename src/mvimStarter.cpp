@@ -62,17 +62,6 @@ void mvimStarter::updateVar()
 {
   getmaxyx(pointed_window, max_row, max_col);
   max_col = max_col- span - 1;
-  // If in visual mode, highlight the selection
-  if (mode == visual)
-  {
-    visual_end_row = pointed_row;
-    visual_end_col = pointed_col + span + 1;
-  }
-  else
-  {
-    visual_start_row = pointed_row;
-    visual_start_col = pointed_col + span + 1;
-  }
 }
 
 // Run the mvimStarter main loop

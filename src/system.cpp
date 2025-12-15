@@ -256,6 +256,10 @@ void editor::system::change2insert()
 
 void editor::system::change2visual()
 {
+  // Capture the anchor
+  visual_start_row = pointed_row;
+  visual_start_col = pointed_col;
+
   mode = Mode::visual;
 }
 
@@ -271,8 +275,8 @@ void editor::system::restore()
   cursor.set(0, 0);
   copy_paste_buffer = "";
   status = Status::saved;
-  visual_start_row = visual_end_row = pointed_row;
-  visual_start_col = visual_end_col = cursor.getX();
+  visual_start_row  = pointed_row;
+  visual_start_col  = cursor.getX();
   current_occurrence_index = -1;
   found_occurrences.clear();
 }
