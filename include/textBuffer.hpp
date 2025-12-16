@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 
-#pragma once
-
 /**
  * @class Buffer
  * @brief A class to manage a text buffer for a text editor.

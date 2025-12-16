@@ -1,14 +1,15 @@
 #include "../include/screen.hpp"
+#include "../include/globals/mvimResources.h"
+#include "../include/bufferManager.hpp"
 #include <ncurses.h>
 
 Screen::~Screen()
 {
 }
 
-Screen::Screen()
+Screen::Screen() : message_color_pair(1)
 {
 }
-
 
 void Screen::start()
 {
@@ -74,32 +75,63 @@ void Screen::draw_status_bar()
   getmaxyx(stdscr, height, width);
   int row = height - 1;
 
-  // Determine Mode String
-  std::string mode_str;
-  switch (mode) {
-    case Mode::normal: mode_str = " NORMAL "; break;
-    case Mode::insert: mode_str = " INSERT "; break;
-    case Mode::visual: mode_str = " VISUAL "; break;
-    case Mode::command: mode_str = " COMMAND "; break;
-    case Mode::find:   mode_str = " FIND "; break;
-    default:           mode_str = " UNKNOWN "; break;
-  }
-
-  // Construct status string
-  std::string filename = pointed_file.empty() ? "[No Name]" : pointed_file;
-  std::string cursor_pos = std::to_string(pointed_row + 1) + ":" + std::to_string(pointed_col + 1);
+  // Check if we have a valid, recent message (< 3 seconds old)
+  auto now = std::chrono::steady_clock::now();
+  auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - message_timestamp).count();
   
-  std::string status_text = mode_str + " | " + filename + " | " + cursor_pos;
+  // -- ERROR MESSAGE MODE --
+  if (!status_message.empty() && elapsed < 3) 
+  {
+    attron(COLOR_PAIR(message_color_pair)); // Use the specific color for the message
+    
+    // Clear the line first
+    move(row, 0);
+    clrtoeol(); 
+    
+    // Print message
+    mvprintw(row, 0, "%s", status_message.c_str());
+    
+    // Fill the rest of the bar with space to look consistent
+    if (status_message.length() < width) {
+        std::string padding(width - status_message.length(), ' ');
+        printw("%s", padding.c_str());
+    }
 
-  // Pad the rest of the line with spaces
-  if (status_text.length() < width) {
-    status_text.append(width - status_text.length(), ' ');
+    attroff(COLOR_PAIR(message_color_pair));
+  } 
+  // -- STANDARD STATUS BAR MODE --
+  else 
+  {
+    // Clear old message so it doesn't reappear randomly
+    if(!status_message.empty()) status_message.clear();
+
+    // Determine Mode String
+    std::string mode_str;
+    switch (mode) {
+      case Mode::normal: mode_str = " NORMAL "; break;
+      case Mode::insert: mode_str = " INSERT "; break;
+      case Mode::visual: mode_str = " VISUAL "; break;
+      case Mode::command: mode_str = " COMMAND "; break;
+      case Mode::find:   mode_str = " FIND "; break;
+      default:           mode_str = " UNKNOWN "; break;
+    }
+
+    // Construct status string
+    std::string filename = pointed_file.empty() ? "[No Name]" : pointed_file;
+    std::string cursor_pos = std::to_string(pointed_row + 1) + ":" + std::to_string(pointed_col + 1);
+    
+    std::string status_text = mode_str + " | " + filename + " | " + cursor_pos;
+
+    // Pad the rest of the line with spaces
+    if (status_text.length() < width) {
+      status_text.append(width - status_text.length(), ' ');
+    }
+
+    // Draw on stdscr (background window)
+    attron(A_REVERSE); // Invert colors for status bar
+    mvprintw(row, 0, "%s", status_text.c_str());
+    attroff(A_REVERSE);
   }
-
-  // Draw on stdscr (background window)
-  attron(A_REVERSE); // Invert colors for status bar
-  mvprintw(row, 0, "%s", status_text.c_str());
-  attroff(A_REVERSE);
 
   refresh(); // Refresh stdscr to render the bar
 }
@@ -201,4 +233,14 @@ void Screen::refresh_all_buffers() {
         // Rinfresca la finestra per aggiornare il contenuto
         wrefresh(window);
     }
+}
+
+void Screen::set_status_message(const std::string& msg, int color_pair)
+{
+    status_message = msg;
+    message_color_pair = color_pair;
+    message_timestamp = std::chrono::steady_clock::now();
+    
+    // Force an immediate update of the status bar so the user sees the error instantly
+    draw_status_bar();
 }

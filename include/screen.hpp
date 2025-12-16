@@ -1,6 +1,9 @@
 #pragma once
-#include "globals/mvimResources.h"
-#include "./bufferManager.hpp"
+
+#include <ncurses.h>
+#include <string>
+#include <chrono>
+#include <vector>
 
 /**
  * @class Screen
@@ -34,6 +37,10 @@ private:
      * @brief Destructor for the Screen class.
      */
     ~Screen();
+
+    std::string status_message;
+    std::chrono::steady_clock::time_point message_timestamp;
+    int message_color_pair;
 public:
     /**
      * @brief Gets the singleton instance of the Screen class.
@@ -103,4 +110,6 @@ public:
     void print_buffer(const std::vector<std::string> &buffer, WINDOW* window, size_t starting_row, size_t starting_col, size_t max_col);
 
     void refresh_all_buffers(); 
+
+    void set_status_message(const std::string& msg, int color_pair = 1);
 };

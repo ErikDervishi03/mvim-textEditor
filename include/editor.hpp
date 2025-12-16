@@ -1,5 +1,10 @@
 #pragma once
 #include "globals/mvimResources.h"
+// Standard libraries required for std::stack, std::vector, std::string
+#include <string>
+#include <vector>
+#include <stack>
+#include <utility>
 
 namespace editor
 {

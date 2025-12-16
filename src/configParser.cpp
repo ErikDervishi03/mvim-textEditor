@@ -1,9 +1,5 @@
 #include "../include/configParser.hpp"
 #include "../include/command.hpp"
-#include "../include/editor.hpp"
-#include <fstream>
-#include <algorithm>
-#include <ncurses.h> 
 
 // Helper macro for Ctrl keys
 #ifndef ctrl

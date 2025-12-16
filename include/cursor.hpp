@@ -1,5 +1,7 @@
 #pragma once
 #include <ncurses.h>
+#include "errorHandler.hpp"
+#include <string>
 
 /**
  * @class Cursor

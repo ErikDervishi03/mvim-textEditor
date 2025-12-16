@@ -5,6 +5,7 @@
 #include "service.hpp"
 #include "screen.hpp"
 #include "command.hpp"
+#include "bufferManager.hpp"
 
 // mvimStarter class definition
 class mvimStarter {

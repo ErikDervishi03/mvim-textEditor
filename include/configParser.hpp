@@ -2,7 +2,9 @@
 #include <string>
 #include <map>
 #include <functional>
-#include <filesystem>
+#include "editor.hpp"
+
+class Command;
 
 // Forward declaration to avoid circular dependency issues
 class Command;

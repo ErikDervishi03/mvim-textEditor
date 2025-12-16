@@ -1,6 +1,4 @@
 #include "../include/cursor.hpp"
-#include "../include/utils.h" // Needed for ErrorHandler
-#include <iostream>
 
 Cursor::Cursor() :
   x(0), y(0)
