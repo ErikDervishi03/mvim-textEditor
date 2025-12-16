@@ -74,7 +74,12 @@ void mvimStarter::run()
   
   while (true)
   {
+    // Set a timeout (e.g., 200ms) so wgetch doesn't block forever.
+    // This allows us to refresh the status bar to clear expired messages.
+    wtimeout(pointed_window, 200);
+
     int input = wgetch(pointed_window);
+    
     if (input != ERR)
     {
       // Cancella il contenuto della finestra attualmente puntata
@@ -116,6 +121,13 @@ void mvimStarter::run()
       // Aggiorna la finestra attualmente puntata
       wrefresh(pointed_window);
     }
+    else 
+    {
+      // If no key was pressed (timeout), we still check the status bar.
+      // This ensures that error messages disappear automatically after 3 seconds.
+      screen.draw_status_bar();
+      wrefresh(pointed_window);
+    }
   }
 }
 
@@ -150,7 +162,10 @@ void mvimStarter::homeScreen()
     // Print the welcome message
     screen.print_multiline_string(start_y, start_x, mvim_logo);
 
+    // Make sure this wait is blocking (or handles ERR, but blocking is fine for intro)
+    wtimeout(pointed_window, -1); 
     int input = wgetch(pointed_window);      // Wait for user input
+    
     _command.execute(input);
     werase(pointed_window);
     screen.update();      // Update screen
@@ -200,5 +215,6 @@ void mvimStarter::startBenchmark(std::string filename)
   std::cout << "Benchmarking mode: Exiting mvimStarter after loading." << std::endl;
   exit(0);    // Exit the program after showing benchmark results
 }
+
 
 

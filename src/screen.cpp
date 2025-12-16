@@ -80,7 +80,7 @@ void Screen::draw_status_bar()
   auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - message_timestamp).count();
   
   // -- ERROR MESSAGE MODE --
-  if (!status_message.empty() && elapsed < 3) 
+  if (!status_message.empty() && elapsed < 1) 
   {
     attron(COLOR_PAIR(message_color_pair)); // Use the specific color for the message
     

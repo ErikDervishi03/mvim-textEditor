@@ -105,7 +105,7 @@ void SyntaxHighlighter::parseLanguageFile(const fs::path& path) {
 
     if (!lang.name.empty() && !lang.extensions.empty()) {
         languages.push_back(lang);
-        ErrorHandler::instance().report(ErrorLevel::INFO, "Loaded language module: " + lang.name);
+        // ErrorHandler::instance().report(ErrorLevel::INFO, "Loaded language module: " + lang.name);
     }
 }
 
