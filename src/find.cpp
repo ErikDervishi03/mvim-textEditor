@@ -1,4 +1,5 @@
 #include "../include/editor.hpp"
+#include "../include/errorHandler.hpp" 
 #include <regex>
 
 void editor::find::find_all_occurrence(const std::string& pattern_str)
@@ -151,5 +152,10 @@ void editor::find::find()
         // Highlight occurrences in the visible rows
         go_to_next_occurrence();
         editor::system::change2find();
+    }
+    else 
+    {
+        // Use ErrorHandler to report the issue
+        ErrorHandler::instance().report(ErrorLevel::WARNING, "Pattern not found: " + search_term);
     }
 }
