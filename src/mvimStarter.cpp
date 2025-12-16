@@ -86,7 +86,7 @@ void mvimStarter::run()
     wtimeout(pointed_window, 200);
 
     int input = wgetch(pointed_window);
-    
+
     if (input != ERR)
     {
       // Cancella il contenuto della finestra attualmente puntata

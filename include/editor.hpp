@@ -91,6 +91,8 @@ namespace editor
      */
     void move_to_next_word();
 
+    void move_to_previous_word();
+
     /**
      * @brief Move the cursor to the end of the file,
      * positioning it at the last character or the end of the last line,

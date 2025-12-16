@@ -1,10 +1,21 @@
 #include "../include/configParser.hpp"
 #include "../include/command.hpp"
+#include "../include/editor.hpp"
+#include <fstream>
+#include <algorithm>
+#include <ncurses.h> 
 
 // Helper macro for Ctrl keys
 #ifndef ctrl
 #define ctrl(x) ((x) & 0x1f)
 #endif
+
+// Define common xterm key codes for Ctrl+Arrows
+// These are not standard in ncurses, so we define them manually.
+#define KEY_CTRL_UP    571
+#define KEY_CTRL_DOWN  530
+#define KEY_CTRL_LEFT  550
+#define KEY_CTRL_RIGHT 565
 
 std::string ConfigParser::trim(const std::string& str) {
     size_t first = str.find_first_not_of(" \t");
@@ -16,19 +27,31 @@ std::string ConfigParser::trim(const std::string& str) {
 int ConfigParser::parseKey(const std::string& keyStr) {
     std::string key = trim(keyStr);
     
+    // Handle single characters
     if (key.length() == 1) {
         return key[0];
     }
     
+    // Handle standard Ctrl-X (e.g., Ctrl-s, Ctrl-w)
     if (key.substr(0, 5) == "Ctrl-" && key.length() == 6) {
         return ctrl(key[5]);
     }
 
+    // Map of string names to integer key codes
     static std::map<std::string, int> specialKeys = {
-        {"KEY_UP", KEY_UP}, {"KEY_DOWN", KEY_DOWN},
-        {"KEY_LEFT", KEY_LEFT}, {"KEY_RIGHT", KEY_RIGHT},
-        {"KEY_BACKSPACE", KEY_BACKSPACE}, {"KEY_ENTER", 10},
-        {"TAB", 9}, {"ESC", 27}
+        {"KEY_UP", KEY_UP}, 
+        {"KEY_DOWN", KEY_DOWN},
+        {"KEY_LEFT", KEY_LEFT}, 
+        {"KEY_RIGHT", KEY_RIGHT},
+        {"KEY_BACKSPACE", KEY_BACKSPACE}, 
+        {"KEY_ENTER", 10},
+        {"TAB", 9}, 
+        {"ESC", 27},
+        
+        {"Ctrl-Up",    KEY_CTRL_UP},
+        {"Ctrl-Down",  KEY_CTRL_DOWN},
+        {"Ctrl-Left",  KEY_CTRL_LEFT},
+        {"Ctrl-Right", KEY_CTRL_RIGHT}
     };
 
     if (specialKeys.find(key) != specialKeys.end()) {
@@ -50,6 +73,7 @@ std::map<std::string, std::function<void()>> ConfigParser::getActionMap() {
         {"goto_start_file", editor::movement::move_to_beginning_of_file},
         {"goto_end_file", editor::movement::move_to_end_of_file},
         {"next_word", editor::movement::move_to_next_word},
+        {"previous_word", editor::movement::move_to_previous_word},
 
         // Modify
         {"insert_newline_below", editor::movement::go_down_creating_newline},

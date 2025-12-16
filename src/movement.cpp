@@ -213,6 +213,50 @@ void editor::movement::move_to_next_word()
   }
 }
 
+void editor::movement::move_to_previous_word()
+{
+  // Safety check
+  if (pointed_row == 0 && pointed_col == 0) return;
+
+  // Always move left at least once to avoid getting stuck if we are at the start of a word
+  editor::movement::move_left();
+
+  // 1. Skip Whitespace (moving backwards)
+  while (true) 
+  {
+      if (pointed_row < 0) return;
+      
+      // Get current character safely
+      char c = ' ';
+      if (pointed_col < buffer[pointed_row].length()) {
+          c = buffer[pointed_row][pointed_col];
+      }
+      
+      if (c != ' ') break; // Found a non-space character
+      
+      // Stop if we hit the start of the file
+      if (pointed_row == 0 && pointed_col == 0) return;
+      
+      editor::movement::move_left();
+  }
+
+  // 2. Go to the start of the current word
+  while (true) 
+  {
+      if (pointed_col == 0) return; // Start of line is implicitly start of word
+      
+      // Check the character to the left
+      char prev_c = ' ';
+      if (pointed_col - 1 < buffer[pointed_row].length()) {
+          prev_c = buffer[pointed_row][pointed_col - 1];
+      }
+      
+      if (prev_c == ' ') break; // If left char is space, we are at start of word
+      
+      editor::movement::move_left();
+  }
+}
+
 void editor::movement::move_to_end_of_file()
 {
   // point to the last row
