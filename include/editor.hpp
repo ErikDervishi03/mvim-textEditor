@@ -15,8 +15,9 @@ namespace editor
     ActionType type;
     int row;
     int col;
-    char letter;              // For single char insert/delete
-    std::string text;         // For row deletion or paste
+    char letter;              
+    std::string text;         
+    bool is_chained = false; // if true, undo will continue to the next item
   };
 
   inline std::stack<Action> action_history;
