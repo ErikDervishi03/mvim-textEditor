@@ -7,10 +7,8 @@
 #define ctrl(x) ((x) & 0x1f)
 #define isOpenBracket(c) (c == '{' || c == '[' || c == '(')
 
-
 class Command
 {
-
 private:
   keymap insertMap;
   keymap commandMap;
@@ -35,7 +33,6 @@ public:
     insertMap[ESC] = editor::system::change2normal;
 
     /*normal*/
-
     normalMap[KEY_UP] = editor::movement::move_up;
     normalMap[KEY_DOWN] = editor::movement::move_down;
     normalMap[KEY_LEFT] = editor::movement::move_left;
@@ -59,7 +56,6 @@ public:
     normalMap['d'] = editor::modify::delete_row;
 
     normalMap['s'] = editor::file::save;
-
     normalMap['q'] = editor::system::exit_ide;
 
     normalMap['i'] = editor::system::change2insert;
@@ -86,11 +82,9 @@ public:
     visualMap['G'] = editor::movement::move_to_beginning_of_file;
     visualMap['w'] = editor::movement::move_to_next_word;
     visualMap['d'] = visualMap[KEY_BACKSPACE] = editor::visual::delete_highlighted;
-
     visualMap['y'] = editor::visual::copy_highlighted;
 
     visualMap[ESC] = editor::system::change2normal;
-
 
     /*find*/
     findMap['n'] = editor::find::go_to_next_occurrence;
@@ -102,7 +96,12 @@ public:
     /*special keys*/
     specialKeys[ctrl('s')] = editor::file::save;
 
-    ConfigParser::loadKeyBindings(*this, ".mvimrc"); 
+    // REMOVED: ConfigParser::loadKeyBindings(*this, ".mvimrc"); 
+  }
+
+  // ADDED: Method to load config manually
+  void loadConfig(const std::string& filename) {
+      ConfigParser::loadKeyBindings(*this, filename);
   }
 
   void execute(int key)
@@ -131,15 +130,12 @@ public:
       {
         editor::modify::delete_word_backyard();
       }
-      // We check key < 256 to ensure it's a valid ASCII/extended char and not a function key like KEY_UP
       else if (key < 256 && isprint(key)) 
       {
         editor::modify::insert_letter(key);
       }
-
       break;
     }
-
     case normal:
     {
       if (normalMap.find(key) != normalMap.end())
@@ -148,21 +144,18 @@ public:
       }
       break;
     }
-
     case visual:
     { 
       if(isOpenBracket(key)){
         editor::visual::insert_brackets(key, getClosingBracketOf(key));
         return;
       }
-
       if (visualMap.find(key) != visualMap.end())
       {
         visualMap[key]();
       }
       break;
     }
-
     case find:
     {
       if (findMap.find(key) != findMap.end())
@@ -171,54 +164,21 @@ public:
       }
       break;
     }
-
     default:
-    {
       break;
     }
-    }
   }
-
-// include/command.hpp
 
   void bind(int key, std::function<void()> editor, Mode mode_)
   {
     switch (mode_)
     {
-    case insert:
-    {
-      insertMap[key] = editor;
-      break;
-    }
-
-    case normal:
-    {
-      normalMap[key] = editor;
-      break;
-    }
-
-    case command:
-    {
-      commandMap[key] = editor;
-      break;
-    }
-
-    case visual:
-    {
-      visualMap[key] = editor;
-      break;
-    }
-
-    case find:
-    {
-      findMap[key] = editor;
-      break;
-    }
-
-    default:
-    {
-      break;
-    }
+    case insert: insertMap[key] = editor; break;
+    case normal: normalMap[key] = editor; break;
+    case command: commandMap[key] = editor; break;
+    case visual: visualMap[key] = editor; break;
+    case find: findMap[key] = editor; break;
+    default: break;
     }
   }
 
@@ -237,14 +197,6 @@ public:
     else return '?';
   }
 
-
-  void menu()
-  {
-    // TODO
-  }
-
-  void save()
-  {
-    // TODO
-  }
+  void menu() {}
+  void save() {}
 };

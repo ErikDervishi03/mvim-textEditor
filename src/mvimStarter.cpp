@@ -23,10 +23,16 @@ mvimStarter::mvimStarter() :
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
   is_undoing = false;
-  initialize_ncurses();    // Initialize ncurses and colors
+  
+  initialize_ncurses();    // Initialize ncurses first (CRITICAL)
+  
   pointed_file = "";
   status = Status::saved;
   setDefaults();
+
+  // Load config NOW, after the screen is ready to display errors
+  _command.loadConfig(".mvimrc"); 
+
   mvimService.enableService("highlighting", editor::visual::highlight_keywords);
 }
 
@@ -39,23 +45,24 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
     return;
   }
 
-
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
   
-  initialize_ncurses();    // Initialize ncurses and colors
+  initialize_ncurses();    // Initialize ncurses first (CRITICAL)
   setDefaults();
+
+  // Load config NOW, after the screen is ready to display errors
+  _command.loadConfig(".mvimrc");
 
   is_undoing = false;
   status = Status::saved;
   pointed_file = filename;
 
-  cursor.restore(span);    // Restore cursor position
-  editor::file::read(filename);    // Load file content
-  screen.update();    // Update screen
+  cursor.restore(span);
+  editor::file::read(filename);
+  screen.update();
   mvimService.run();
   wrefresh(pointed_window);
-  
 }
 
 void mvimStarter::updateVar()
