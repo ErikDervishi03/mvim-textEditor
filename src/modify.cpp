@@ -226,6 +226,7 @@ void editor::modify::paste_in_visual()
   editor::system::change2normal();
 }
 
+  // Replace occurrences
 void editor::modify::replace()
 {
   std::string replace_term = editor::system::text_form("Replace with: ");
@@ -239,29 +240,30 @@ void editor::modify::replace()
   // Replace occurrences
   for (auto& occ : found_occurrences)
   {
-    int row = occ.first;
-    int col = occ.second;
+    int row = occ.row;
+    int col = occ.col;
+    int match_len = occ.length; // Use specific length of this match
 
     if (!is_undoing) {
         // Synthesize undo actions: first delete old text, then insert new text.
         // On undo: popping 'PASTE' deletes new text, popping 'DELETE_SELECTION' restores old.
         editor::action_history.push({ActionType::DELETE_SELECTION, row, col, 0, 
-            buffer[row].substr(col, current_searched_word_length)});
+            buffer[row].substr(col, match_len)}); // Use match_len here
         editor::action_history.push({ActionType::PASTE, row, col, 0, replace_term});
     }
 
     // Replace the word in the buffer at the found position
-    buffer[row].replace(col, current_searched_word_length, replace_term);
+    buffer[row].replace(col, match_len, replace_term); // Use match_len here
 
     // Update occurrences in the same row after replacement
-    if (replace_len != current_searched_word_length)
+    if (replace_len != match_len)
     {
-      int shift = replace_len - current_searched_word_length;
+      int shift = replace_len - match_len;
       for (auto& occ_update : found_occurrences)
       {
-        if (occ_update.first == row && occ_update.second > col)
+        if (occ_update.row == row && occ_update.col > col)
         {
-          occ_update.second += shift;
+          occ_update.col += shift;
         }
       }
     }

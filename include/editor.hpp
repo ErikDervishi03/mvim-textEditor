@@ -21,9 +21,15 @@ namespace editor
 
   inline std::stack<Action> action_history;
 
-  inline std::vector<std::pair<int, int>> found_occurrences;  // Store (row, col) of each found occurrence
-  inline int current_occurrence_index;  // Track which occurrence is currently highlighted
-  inline int current_searched_word_length;  // Length of the word being searched
+  // Structure to hold variable-length match data for Regex
+  struct SearchMatch {
+      int row;
+      int col;
+      int length;
+  };
+
+  inline std::vector<SearchMatch> found_occurrences;  
+  inline int current_occurrence_index;
 
   namespace movement
   {
