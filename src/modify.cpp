@@ -20,8 +20,25 @@ static void reverse_insert(int row, int col)
 void editor::modify::insert_letter(int letter)
 {
   if (!is_undoing) {
-    // Single action: not chained
-    editor::action_history.push({ActionType::INSERT_CHAR, (int)pointed_row, (int)pointed_col, (char)letter, "", false});
+    bool chain_action = false;
+    
+    // Check if we should chain this action to the previous one
+    if (!editor::action_history.empty()) {
+        const Action& last_action = editor::action_history.top();
+        
+        // Only chain if the previous action was also inserting a character
+        if (last_action.type == ActionType::INSERT_CHAR) {
+            bool current_is_space = (letter == ' ');
+            bool last_is_space = (last_action.letter == ' ');
+
+            // Chain if both are spaces OR both are not spaces (letters/symbols)
+            if (current_is_space == last_is_space) {
+                chain_action = true;
+            }
+        }
+    }
+
+    editor::action_history.push({ActionType::INSERT_CHAR, (int)pointed_row, (int)pointed_col, (char)letter, "", chain_action});
   }
   
   status = Status::unsaved;
@@ -42,6 +59,7 @@ void editor::modify::insert_letter(int letter)
 void editor::modify::new_line()
 {
   if (!is_undoing) {
+    // New lines always break the chain
     editor::action_history.push({ActionType::INSERT_NEWLINE, (int)pointed_row, (int)pointed_col, 0, "", false});
   }
 
@@ -124,6 +142,8 @@ void editor::modify::normal_delete_letter()
 void editor::modify::tab()
 {
   status = Status::unsaved;
+  // Tabs are inserted as multiple spaces. 
+  // Because our insert_letter logic groups spaces, the entire tab will automatically be undone in one go.
   for (int i = 0; i < tab_size; i++)
   {
     editor::modify::insert_letter(' ');
@@ -201,10 +221,8 @@ void editor::modify::replace()
 
   int replace_len = replace_term.length();
   
-  // Flag to track if we have pushed the first action of the batch
   bool first_action_pushed = false;
 
-  // Replace occurrences
   for (auto& occ : found_occurrences)
   {
     int row = occ.row;
@@ -212,12 +230,6 @@ void editor::modify::replace()
     int match_len = occ.length; 
 
     if (!is_undoing) {
-        // We push two actions per replacement: Delete Old, then Paste New.
-        // We want all of these to be undone together.
-        
-        // 1. DELETE Action
-        // If this is the VERY first action of the loop, is_chained = false (stop point for undo).
-        // All subsequent actions have is_chained = true.
         bool chain_delete = first_action_pushed; 
         editor::action_history.push({
             ActionType::DELETE_SELECTION, 
@@ -226,9 +238,8 @@ void editor::modify::replace()
             chain_delete
         });
         
-        first_action_pushed = true; // All future actions in this loop are chained
+        first_action_pushed = true; 
 
-        // 2. PASTE Action (Always chained to the delete we just pushed)
         editor::action_history.push({
             ActionType::PASTE, 
             row, col, 0, 
@@ -308,12 +319,6 @@ void editor::modify::delete_selection(int start_row, int end_row, int start_col,
 
 void editor::modify::delete_word_backyard()
 {
-  // This logic calls delete_letter multiple times.
-  // Ideally, this should also be batched, but strictly keeping to the request, 
-  // 'delete_letter' does individual pushes. 
-  // NOTE: If you want 'Ctrl+W' to be one undo step, you would need to implement batching here too
-  // similar to 'replace'. For now, we leave it as individual char deletions.
-  
   if (pointed_col == 0) return;
   status = Status::unsaved;
   char curr_char_pointed = buffer[pointed_row][pointed_col - 1];
@@ -334,7 +339,6 @@ void editor::modify::delete_word_backyard()
 
 void editor::modify::delete_word()
 {
-  // Same as delete_word_backyard
   int row_length = buffer[pointed_row].length();
   if (pointed_col == row_length) return;
 
@@ -365,16 +369,13 @@ void editor::modify::undo()
 
   bool keep_undoing = true;
   
-  // Loop to handle chained actions
   while (keep_undoing && !editor::action_history.empty())
   {
       Action last_action = editor::action_history.top();
       editor::action_history.pop();
       
-      // If this action says "I am chained", it means we must ALSO undo the next one in the stack
       keep_undoing = last_action.is_chained;
 
-      // Restore Cursor Position
       pointed_row = last_action.row;
       pointed_col = last_action.col;
       
