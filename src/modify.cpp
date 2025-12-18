@@ -76,8 +76,9 @@ void editor::modify::new_line()
     buffer.row_append(pointed_row + 1, line_break);
   }
 
-  if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
-      !buffer.is_void_row(max_row) && pointed_row < buffer.getSize())
+  // Logic: If we are at the visual threshold AND the file is taller than the screen, scroll.
+  if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 && 
+      buffer.getSize() > max_row)
   {
     starting_row++;
   }

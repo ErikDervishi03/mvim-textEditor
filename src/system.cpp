@@ -338,13 +338,11 @@ void editor::system::new_buffer() {
 }
 
 void editor::system::resize(){
+  // Update BufferManager and WindowManager layouts
   BufferManager::instance().update_all_buffers_dimensions();
   BufferManager::instance().getWindowManager().resize_windows();
-
-  // Ensure the stdscr meets the minimum size requirement
-  int height, width;
-  getmaxyx(stdscr, height, width);
-  if (height < 50 || width < 50) {
-      resizeterm(std::max(50, height), std::max(50, width));
-  }
+  
+  // Clear the standard screen to remove debris
+  wclear(stdscr);
+  wrefresh(stdscr);
 }

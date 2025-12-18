@@ -2,6 +2,7 @@
 #include "../include/globals/mvimResources.h"
 #include "../include/bufferManager.hpp"
 #include <ncurses.h>
+#include <string>
 
 Screen::~Screen()
 {
@@ -120,7 +121,7 @@ void Screen::draw_status_bar()
     std::string filename = pointed_file.empty() ? "[No Name]" : pointed_file;
     std::string cursor_pos = std::to_string(pointed_row + 1) + ":" + std::to_string(pointed_col + 1);
     
-    std::string status_text = mode_str + " | " + filename + " | " + cursor_pos;
+    std::string status_text = mode_str + " | " + filename + " | " + cursor_pos + " / " + std::to_string(buffer.getSize()) + std::to_string(starting_row);
 
     // Pad the rest of the line with spaces
     if (status_text.length() < width) {

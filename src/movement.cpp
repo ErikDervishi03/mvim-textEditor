@@ -55,11 +55,12 @@ void editor::movement::move_down()
       move2X(next_row.length());
     }
 
-    if (pointed_row - starting_row == max_row - SCROLL_START_THRESHOLD - 1 &&
-        pointed_row < buffer.getSize() - SCROLL_START_THRESHOLD - 1)
+    if (pointed_row - starting_row >= max_row - SCROLL_START_THRESHOLD - 1)
     {
-
-      starting_row++;
+       // ...only scroll if the end of the file is not yet fully visible.
+       if (starting_row + max_row < buffer.getSize()) {
+          starting_row++;
+       }
     }
     pointed_row++;
   }

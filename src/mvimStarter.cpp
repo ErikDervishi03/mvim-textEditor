@@ -68,7 +68,16 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
 void mvimStarter::updateVar()
 {
   getmaxyx(pointed_window, max_row, max_col);
-  max_col = max_col- span - 1;
+  max_col = max_col - span - 1;
+
+  // 1. If cursor is above the viewport, scroll up
+  if (pointed_row < starting_row) {
+    starting_row = pointed_row;
+  }
+  // 2. If cursor is below the viewport, scroll down
+  else if (pointed_row >= starting_row + max_row) {
+    starting_row = pointed_row - max_row + 1;
+  }
 }
 
 // Run the mvimStarter main loop
@@ -89,20 +98,24 @@ void mvimStarter::run()
 
     if (input != ERR)
     {
+      if (input == KEY_RESIZE) {
+          editor::system::resize();
+      }
+
       // Cancella il contenuto della finestra attualmente puntata
       werase(pointed_window);  
 
       // Esegue il comando dell'utente
       _command.execute(input);
 
+      // Aggiorna le variabili dello stato attuale
+      updateVar();
+
       // Aggiorna il contenuto dello schermo
       screen.update();
 
       // Reimposta il colore di sfondo della finestra principale
       wbkgd(pointed_window, COLOR_PAIR(get_pair(bgColor, cursorColor)));
-
-      // Aggiorna le variabili dello stato attuale
-      updateVar();
 
       // Esegue i servizi necessari
       mvimService.run();
@@ -133,6 +146,10 @@ void mvimStarter::run()
       // If no key was pressed (timeout), we still check the status bar.
       // This ensures that error messages disappear automatically after 3 seconds.
       screen.draw_status_bar();
+      
+      // Aggiorna le variabili dello stato attuale
+      updateVar();
+
       wrefresh(pointed_window);
     }
   }
