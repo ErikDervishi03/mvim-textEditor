@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <stack>
-#include <utility>
 
 namespace editor
 {
