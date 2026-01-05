@@ -1,17 +1,53 @@
+[NORMAL]
+# --- File Operations ---
+Ctrl-a = select_all
+Ctrl-s = save
+Ctrl-q = quit
+
+# --- Editing ---
+Ctrl-z = undo
+Ctrl-v = paste
+u      = undo      
+
+# --- Navigation ---
+Ctrl-Right = next_word
+Ctrl-Left  = previous_word
+Ctrl-f     = mode_find
+
+# --- Buffers ---
+Ctrl-n = buffer_new
+Ctrl-l   = buffer_next
+Ctrl-h   = buffer_prev
+
+
 [INSERT]
+# --- Allow VS Code habits inside Insert Mode ---
+Ctrl-s = save
+Ctrl-z = undo
+Ctrl-v = paste
 Ctrl-a = select_all
 
-[NORMAL]
-# "Select All" from Normal Mode
-Ctrl-a = select_all
-# Standard Paste
-p = paste
-Ctrl-v = paste
+# --- Navigation in Insert Mode ---
+# This allows jumping words without hitting ESC
+Ctrl-Right = next_word
+Ctrl-Left  = previous_word
+Ctrl-Up    = move_up
+Ctrl-Down  = move_down
+
 
 [VISUAL]
-# "Select All" from Visual Mode (if you want to re-select)
-Ctrl-a = select_all
-# Paste with replacement
-p = paste_visual
-Ctrl-v = paste_visual
+# --- Clipboard ---
+# Standard VS Code Copy/Cut
+Ctrl-c = copy_selection
+Ctrl-x = delete_selection  
 
+# --- Navigation ---
+Ctrl-Right = next_word
+Ctrl-Left  = previous_word
+
+
+[FIND]
+# --- Search Navigation ---
+Ctrl-n = find_next
+Ctrl-p = find_prev
+# Enter  = find_next
