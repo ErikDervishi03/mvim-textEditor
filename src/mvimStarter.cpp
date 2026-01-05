@@ -60,6 +60,7 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
 
   cursor.restore(span);
   editor::file::read(filename);
+  updateVar();
   screen.update();
   mvimService.run();
   wrefresh(pointed_window);
@@ -69,15 +70,6 @@ void mvimStarter::updateVar()
 {
   getmaxyx(pointed_window, max_row, max_col);
   max_col = max_col - span - 1;
-
-  // 1. If cursor is above the viewport, scroll up
-  if (pointed_row < starting_row) {
-    starting_row = pointed_row;
-  }
-  // 2. If cursor is below the viewport, scroll down
-  else if (pointed_row >= starting_row + max_row) {
-    starting_row = pointed_row - max_row + 1;
-  }
 }
 
 // Run the mvimStarter main loop
@@ -98,9 +90,9 @@ void mvimStarter::run()
 
     if (input != ERR)
     {
-      if (input == KEY_RESIZE) {
-          editor::system::resize();
-      }
+
+      
+      
 
       // Cancella il contenuto della finestra attualmente puntata
       werase(pointed_window);  
@@ -137,6 +129,8 @@ void mvimStarter::run()
           // Aggiorna la finestra per mostrare i nuovi contenuti
           wrefresh(buffer->window);
       }
+
+      //WindowManager::getInstance().refresh_separators();
 
       // Aggiorna la finestra attualmente puntata
       wrefresh(pointed_window);

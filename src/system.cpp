@@ -2,6 +2,7 @@
 #include <string>
 #include "../include/editor.hpp"
 #include "../include/bufferManager.hpp"
+#include <algorithm>
 
 // Function to prompt user for confirmation before exiting unsaved changes
 bool editor::system::confirm_exit()
@@ -234,7 +235,7 @@ std::string editor::system::text_form(const std::string& label)
   delwin(form_win);
   
   // Refresh again to clear the popup artifacts and restore lines immediately
-  BufferManager::instance().getWindowManager().resize_windows();
+  //BufferManager::instance().getWindowManager().resize_windows();
 
   return input;
 }
@@ -337,12 +338,68 @@ void editor::system::new_buffer() {
     }
 }
 
+// ... (keep confirm_exit, exit_ide, etc. unchanged) ...
+
 void editor::system::resize(){
-  // Update BufferManager and WindowManager layouts
+  // 1. Resize internal buffers
   BufferManager::instance().update_all_buffers_dimensions();
   BufferManager::instance().getWindowManager().resize_windows();
   
-  // Clear the standard screen to remove debris
+  // 2. Update GLOBAL dimensions
+  getmaxyx(pointed_window, max_row, max_col);
+  
+  max_row = max_row - 1;           // Reserve space for Status Bar
+  max_col = max_col - span - 1;    // Reserve space for Line Numbers
+
+  // --- HORIZONTAL LOGIC (Keep existing) ---
+  if (pointed_col < max_col) {
+      starting_col = 0;
+  }
+  else {
+      int min_required_start = std::max(0, (int)(pointed_col - max_col + 2)); 
+      if (starting_col > min_required_start) {
+          starting_col = min_required_start;
+      }
+  }
+  if (pointed_col >= starting_col + max_col) {
+      starting_col = pointed_col - max_col + 1;
+  }
+  
+  // --- VERTICAL LOGIC ---
+
+  // A. If the cursor is in the first "page", just reset to top
+  if (pointed_row < max_row) {
+      starting_row = 0;
+  }
+  else {
+      // B. "Backfill" Check:
+      // If the current view shows void lines at the bottom (starting_row + max_row > size)
+      // AND we have hidden lines at the top (starting_row > 0)...
+      // We should scroll UP to fill the screen with text.
+      int total_lines = buffer.getSize();
+      if (starting_row + max_row > total_lines) {
+           // Try to fit the last line of the file at the bottom of the screen
+           int new_start = total_lines - max_row;
+           if (new_start < 0) new_start = 0;
+           starting_row = new_start;
+      }
+  }
+
+  // C. Standard Safety Clamp
+  // Ensure cursor is strictly visible at the bottom
+  if (pointed_row >= starting_row + max_row) {
+      starting_row = pointed_row - max_row + 1;
+  }
+  // Ensure cursor is strictly visible at the top
+  if (pointed_row < starting_row) {
+      starting_row = pointed_row;
+  }
+
+  // 5. UPDATE CURSOR
+  cursor.setX(pointed_col - starting_col);
+  cursor.setY(pointed_row - starting_row);
+
+  // 6. Refresh
   wclear(stdscr);
   wrefresh(stdscr);
 }

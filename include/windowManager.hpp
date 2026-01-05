@@ -58,6 +58,41 @@ public:
     }   
 
 
+    void refresh_separators() {
+        int num_windows = windows.size();
+        if (num_windows < 2) return;
+
+        int maxHeight, maxWidth;
+        getmaxyx(stdscr, maxHeight, maxWidth);
+        int effectiveHeight = maxHeight - 1;
+
+        // 1. Pulisce lo sfondo per rimuovere artefatti grafici
+        // Questo è il segreto: simula il "ritorno dal menu"
+        werase(stdscr); 
+
+        int win_width = (maxWidth - (num_windows - 1)) / num_windows;
+        int remainder = (maxWidth - (num_windows - 1)) % num_windows;
+
+        int current_x = 0;
+        int i = 0;
+
+        for (auto& pair : windows) {
+            int current_win_width = win_width + (i < remainder ? 1 : 0);
+
+            if (i > 0) {
+                // Ridisegna la linea nel punto esatto
+                mvvline(0, current_x - 1, ACS_VLINE, effectiveHeight);
+            }
+
+            current_x += current_win_width + 1;
+            i++;
+        }
+
+        // 2. Prepara lo sfondo per il rendering
+        wnoutrefresh(stdscr);
+    }
+
+
     // Helper methods
     void resize_windows() {
         int num_windows = windows.size();
@@ -69,36 +104,58 @@ public:
         // Reserve the last row for the status bar
         int effectiveHeight = maxHeight - 1;
 
-        clear();
-        // refresh(); // You can remove this early refresh as we will refresh at the end
+        // 1. CLEAR STD SCR FIRST
+        // Remove old artifacts/lines before calculating new positions
+        wclear(stdscr); 
 
-        int win_width = (maxWidth - num_windows + 1) / num_windows;
-
+        int win_width = (maxWidth - (num_windows - 1)) / num_windows; // Subtract space for separators
+        int remainder = (maxWidth - (num_windows - 1)) % num_windows;
+        
+        // --- PASS 1: RESIZE AND MOVE WINDOWS ---
+        int current_x = 0;
         int i = 0;
         for (auto& pair : windows) {
-            int starty = 0;
-            int startx = i * (win_width + 1);
+            int current_win_width = win_width + (i < remainder ? 1 : 0);
+            
+            // Resize and move the window logic
+            wresize(pair.second, effectiveHeight, current_win_width);
+            mvwin(pair.second, 0, current_x);
+            
+            // Queue the window for refresh (but don't push to screen yet)
+            wnoutrefresh(pair.second);
 
-            // --- START CHANGE ---
-            // Draw a vertical line to the left of the window (if it's not the first one)
-            if (i > 0) {
-                // Draw '|' on the background (stdscr) in the gap column
-                // Limit the line to effectiveHeight so it doesn't cross the status bar
-                mvvline(0, startx - 1, '|', effectiveHeight); 
-            }
-            // --- END CHANGE ---
-
-            wclear(pair.second);
-            wresize(pair.second, effectiveHeight, win_width); // Resize to effectiveHeight
-            mvwin(pair.second, starty, startx);
-            wrefresh(pair.second);
+            // Advance X (Width + 1 for the separator gap)
+            current_x += current_win_width + 1; 
             i++;
         }
+
+        // --- PASS 2: DRAW SEPARATORS ON STDSCR ---
+        // We do this AFTER processing windows so we know exactly where the gaps are.
+        // Using ACS_VLINE as advised for better terminal compatibility.
         
-        // --- START CHANGE ---
-        refresh(); // Refresh stdscr to show the vertical lines
-        // --- END CHANGE ---
-    }
+        current_x = 0;
+        i = 0;
+        for (auto& pair : windows) {
+            int current_win_width = win_width + (i < remainder ? 1 : 0);
+
+            // Calculate where the separator should be (to the left of the window)
+            // We skip the first window (index 0) because there's no line on the far left edge.
+            if (i > 0) {
+                // The separator is at (current_x - 1)
+                mvvline(0, current_x - 1, ACS_VLINE, effectiveHeight);
+            }
+            
+            current_x += current_win_width + 1;
+            i++;
+        }
+
+    // --- REFRESH STDSCR ---
+    // This effectively "prints" the lines we just drew onto the background layer
+    wnoutrefresh(stdscr);
+    
+    // Push everything to the physical screen
+    doupdate();
+}
 
 private:
     // Private members

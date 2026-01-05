@@ -80,7 +80,7 @@ void Cursor::restore(int span) {
                           ", max_row=" + std::to_string(max_row) + 
                           ", max_col=" + std::to_string(max_col) + ")";
         
-        ErrorHandler::instance().report(ErrorLevel::FATAL, msg);
+        // ErrorHandler::instance().report(ErrorLevel::FATAL, msg);
 
         // Ritorna alla modalità ncurses
         refresh();
