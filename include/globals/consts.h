@@ -13,3 +13,5 @@ constexpr int span = 4;
 constexpr int tab_size = 2;
 
 constexpr int MAX_FILENAME_LENGTH = 30;
+
+constexpr int KEY_BACKSPACE_LEGACY = 8;

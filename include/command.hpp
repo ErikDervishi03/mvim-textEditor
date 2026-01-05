@@ -1,6 +1,7 @@
 #pragma once
 #include "editor.hpp"
 #include "configParser.hpp" 
+#include "globals/consts.h"
 #include <ncurses.h>
 #include <cctype> 
 
@@ -28,6 +29,8 @@ public:
     insertMap[KEY_ENTER_] = editor::modify::new_line;
 
     insertMap[KEY_BACKSPACE] = editor::modify::delete_letter;
+    insertMap[KEY_BACKSPACE_LEGACY] = editor::modify::delete_letter;
+
     insertMap[KEY_TAB] = editor::modify::tab;
 
     insertMap[ESC] = editor::system::change2normal;
@@ -95,11 +98,8 @@ public:
 
     /*special keys*/
     specialKeys[ctrl('s')] = editor::file::save;
-
-    // REMOVED: ConfigParser::loadKeyBindings(*this, ".mvimrc"); 
   }
 
-  // ADDED: Method to load config manually
   void loadConfig(const std::string& filename) {
       ConfigParser::loadKeyBindings(*this, filename);
   }

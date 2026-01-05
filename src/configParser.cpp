@@ -1,6 +1,7 @@
 #include "../include/configParser.hpp"
 #include "../include/command.hpp"
 #include "../include/editor.hpp"
+#include "../include/globals/consts.h" 
 #include <fstream>
 #include <algorithm>
 #include <ncurses.h> 
@@ -185,6 +186,12 @@ void ConfigParser::loadKeyBindings(Command& command, const std::string& filename
         else if (currentSection == "VISUAL") mode = Mode::visual;
         else if (currentSection == "FIND") mode = Mode::find;
 
+        // Lega il tasto principale
         command.bind(keyCode, actions[actionStr], mode);
+
+        // --- TERMINAL COMPATIBILITY ---
+        if (keyCode == KEY_BACKSPACE) {
+            command.bind(KEY_BACKSPACE_LEGACY, actions[actionStr], mode);
+        }
     }
 }

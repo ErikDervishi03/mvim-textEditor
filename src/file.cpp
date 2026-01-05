@@ -1,6 +1,7 @@
 #include "../include/editor.hpp"
 #include <ncurses.h>
 #include "../include/syntax.hpp"
+#include <algorithm>
 
 namespace fs = std::filesystem;
 
