@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <ostream>
 #include "../include/bufferManager.hpp"
+#include "../include/mouse.hpp"  
 
 // Define constants and global variables
 const char* mvim_logo =
@@ -82,9 +83,9 @@ void mvimStarter::run()
   
   while (true)
   {
-    // Set a timeout (e.g., 200ms) so wgetch doesn't block forever.
-    // This allows us to refresh the status bar to clear expired messages.
-    wtimeout(pointed_window, 200);
+    // Set a timeout (50ms) to allow continuous actions (like mouse scrolling)
+    // and status bar updates.
+    wtimeout(pointed_window, 50);
 
     int input = wgetch(pointed_window);
 
@@ -93,8 +94,15 @@ void mvimStarter::run()
       // Cancella il contenuto della finestra attualmente puntata
       werase(pointed_window);  
 
-      // Esegue il comando dell'utente
-      _command.execute(input);
+      if (input == KEY_MOUSE) 
+      {
+          Mouse::handle_event();
+      }
+      else 
+      {
+          // Esegue il comando dell'utente (tastiera)
+          _command.execute(input);
+      }
 
       // Aggiorna le variabili dello stato attuale
       updateVar();
@@ -126,20 +134,44 @@ void mvimStarter::run()
           wrefresh(buffer->window);
       }
 
-      //WindowManager::getInstance().refresh_separators();
-
       // Aggiorna la finestra attualmente puntata
       wrefresh(pointed_window);
     }
     else 
     {
-      // If no key was pressed (timeout), we still check the status bar.
-      // This ensures that error messages disappear automatically after 3 seconds.
+      // --- IDLE / TIMEOUT Handling ---
+      
+      // 1. Handle continuous mouse behavior (e.g. scrolling while dragging at edge)
+      Mouse::behavior_timer();
+
+      // 2. Handle status bar updates (clearing messages)
       screen.draw_status_bar();
       
-      // Aggiorna le variabili dello stato attuale
+      // 3. Update state and refresh
       updateVar();
-
+      
+      // We must check if behavior_timer changed anything visually (like scrolling)
+      // Since behavior_timer calls move_up/down which modifies state, we should
+      // probably update the screen if drag is active.
+      // However, to be safe and simple, we can refresh the pointed window.
+      // If we are scrolling, we need a full update() actually.
+      
+      // A safe optimization: only full update if dragging is active (assumed from mouse module)
+      // or we can just rely on standard ncurses flow. 
+      // Given the structure, let's just refresh the window to show cursor moves 
+      // or screen updates triggered by move_up/down in behavior_timer.
+      
+      // Note: move_up/down modify global variables but don't draw. 
+      // We need to call screen.update() if we actually scrolled.
+      // Since we don't return a flag here, we can just call update() inside this block 
+      // if we want to be sure, or rely on the next input. 
+      // BUT, for animation, we MUST update here.
+      
+      werase(pointed_window);
+      screen.update(); 
+      wbkgd(pointed_window, COLOR_PAIR(get_pair(bgColor, cursorColor)));
+      mvimService.run();
+      cursor.restore(span);
       wrefresh(pointed_window);
     }
   }
@@ -156,7 +188,6 @@ void mvimStarter::print_bufferStructure(BufferManager::BufferStructure* buffer){
     );
   }
 }
-
 
 // Show the initial welcome screen
 void mvimStarter::homeScreen()
@@ -176,23 +207,28 @@ void mvimStarter::homeScreen()
     // Print the welcome message
     screen.print_multiline_string(start_y, start_x, mvim_logo);
 
-    // Make sure this wait is blocking (or handles ERR, but blocking is fine for intro)
     wtimeout(pointed_window, -1); 
     int input = wgetch(pointed_window);      // Wait for user input
     
-    _command.execute(input);
+    if (input != KEY_MOUSE) {
+        _command.execute(input);
+    }
+    
     werase(pointed_window);
     screen.update();      // Update screen
     curs_set(1);      // Restore cursor visibility
   }
 }
 
-
 // Helper function to initialize ncurses and color pairs
 void mvimStarter::initialize_ncurses()
 {
   screen.start();
   start_color();
+
+  mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+  printf("\033[?1002h");
+  fflush(stdout);
 
   // Colori di sfondo da utilizzare
   int colors[] = { COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN,
@@ -210,12 +246,10 @@ void mvimStarter::initialize_ncurses()
   }
 }
 
-
 void mvimStarter::setDefaults()
 {
   mvimColorManager.setColorSchemaByName("default");
 }
-
 
 void mvimStarter::startBenchmark(std::string filename)
 {
@@ -229,6 +263,3 @@ void mvimStarter::startBenchmark(std::string filename)
   std::cout << "Benchmarking mode: Exiting mvimStarter after loading." << std::endl;
   exit(0);    // Exit the program after showing benchmark results
 }
-
-
-
