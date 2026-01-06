@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 
 /**
  * @class Buffer
@@ -19,7 +20,7 @@
 class textBuffer
 {
 private:
-  std::vector<std::string> buffer;   ///< The internal storage for the lines of text.
+  std::deque<std::string> buffer;   ///< The internal storage for the lines of text.
   int size;   ///< The current number of rows in the buffer.
   int nonEmptyRowCount;
 
@@ -37,7 +38,7 @@ public:
   std::string& operator [] (int row);
 
 
-   std::vector<std::string> getBuffer() const {
+   std::deque<std::string> getBuffer() const {
     return this->buffer;  // Accesso al membro 'buffer'
   }
 
@@ -127,7 +128,7 @@ public:
    * @brief Retrieves the entire buffer as a vector of strings.
    * @return A vector containing all rows of the buffer.
    */
-  const std::vector<std::string>& get_buffer() const;
+  const std::deque<std::string>& get_buffer() const;
 
   /**
    * @brief Restores the buffer to its initial state with one empty row.

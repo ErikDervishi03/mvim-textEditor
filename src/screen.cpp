@@ -180,7 +180,7 @@ void Screen::print_multiline_string(int start_y, int start_x, const char* str)
 }
 
 void Screen::print_buffer(
-  const std::vector<std::string>& buffer,
+  const std::deque<std::string>& buffer,
   WINDOW* window,
   size_t starting_row,
   size_t starting_col,

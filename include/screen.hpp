@@ -1,5 +1,6 @@
 #pragma once
 
+#include <deque>
 #include <ncurses.h>
 #include <string>
 #include <chrono>
@@ -107,7 +108,7 @@ public:
 
     void print_buffer(WINDOW* window);
 
-    void print_buffer(const std::vector<std::string> &buffer, WINDOW* window, size_t starting_row, size_t starting_col, size_t max_col);
+    void print_buffer(const std::deque<std::string> &buffer, WINDOW* window, size_t starting_row, size_t starting_col, size_t max_col);
 
     void refresh_all_buffers(); 
 

@@ -3,7 +3,6 @@
 
 textBuffer::textBuffer() : buffer(1, ""), size(1), nonEmptyRowCount(0) 
 {
-    buffer.reserve(10000); // Reserve initial space for efficiency
 }
 
 std::string& textBuffer::operator [] (int row)
@@ -62,7 +61,6 @@ void textBuffer::push_back(std::string str)
 void textBuffer::restore()
 {
   clear();
-  this->buffer.reserve(10000);
   this->buffer.emplace_back("");
   size = 1;
 }
@@ -95,12 +93,6 @@ int textBuffer::getSize() const
   return size;
 }
 
-const std::vector<std::string>& textBuffer::get_buffer() const
-{
-  return this->buffer;
-}
-
-
 bool textBuffer::is_void() const
 {
   // If the this->buffer size is 0, it's considered void
@@ -123,4 +115,9 @@ bool textBuffer::is_void() const
 void textBuffer::swap_rows(int row1, int row2)
 {
   std::swap(this->buffer[row1], this->buffer[row2]);
+}
+
+const std::deque<std::string>& textBuffer::get_buffer() const
+{
+  return this->buffer;
 }
