@@ -90,10 +90,6 @@ void mvimStarter::run()
 
     if (input != ERR)
     {
-
-      
-      
-
       // Cancella il contenuto della finestra attualmente puntata
       werase(pointed_window);  
 

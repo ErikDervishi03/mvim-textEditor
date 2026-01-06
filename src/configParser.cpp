@@ -11,13 +11,6 @@
 #define ctrl(x) ((x) & 0x1f)
 #endif
 
-// Define common xterm key codes for Ctrl+Arrows
-// These are not standard in ncurses, so we define them manually.
-#define KEY_CTRL_UP    571
-#define KEY_CTRL_DOWN  530
-#define KEY_CTRL_LEFT  550
-#define KEY_CTRL_RIGHT 565
-
 std::string ConfigParser::trim(const std::string& str) {
     size_t first = str.find_first_not_of(" \t");
     if (std::string::npos == first) return "";
@@ -49,10 +42,10 @@ int ConfigParser::parseKey(const std::string& keyStr) {
         {"TAB", 9}, 
         {"ESC", 27},
         
-        {"Ctrl-Up",    KEY_CTRL_UP},
-        {"Ctrl-Down",  KEY_CTRL_DOWN},
-        {"Ctrl-Left",  KEY_CTRL_LEFT},
-        {"Ctrl-Right", KEY_CTRL_RIGHT}
+        {"Ctrl-Up",    CTRL_KEY_UP},
+        {"Ctrl-Down",  CTRL_KEY_DOWN},
+        {"Ctrl-Left",  CTRL_KEY_LEFT},
+        {"Ctrl-Right", CTRL_KEY_RIGHT}
     };
 
     if (specialKeys.find(key) != specialKeys.end()) {
