@@ -147,11 +147,12 @@ void Screen::print_buffer(WINDOW* window)
     
     std::string curr_row = buffer[i + starting_row];
 
+    size_t curr_row_len = curr_row.length();
     // if curr_row.length() <= starting_col the string is not visible
-    if(curr_row.length() > starting_col){ 
-      std::string row2print = curr_row.substr(starting_col, max_col);
+    if(curr_row_len > starting_col){ 
+      size_t len = std::min(curr_row_len - starting_col, max_col);
       wattron(window, COLOR_PAIR(textColor));
-      mvwprintw(window, i, span + 1, "%s", row2print.c_str());
+      mvwaddnstr(pointed_window, i, span + 1, curr_row.c_str() + starting_col, len);
       wattroff(window, COLOR_PAIR(textColor));
     } 
   }
