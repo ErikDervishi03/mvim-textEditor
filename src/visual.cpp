@@ -305,3 +305,12 @@ void editor::visual::select_all()
 
   editor::movement::move_to_end_of_file();
 }
+
+void editor::visual::copy_line()
+{
+  if (pointed_row < buffer.getSize())
+  {
+    // Copy the content of the current line to the buffer
+    copy_paste_buffer = buffer[pointed_row]; 
+  }
+}

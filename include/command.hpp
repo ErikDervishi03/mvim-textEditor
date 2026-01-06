@@ -1,7 +1,7 @@
 #pragma once
 #include "editor.hpp"
 #include "configParser.hpp" 
-#include "globals/consts.h"
+#include "globals/consts.h" 
 #include <ncurses.h>
 #include <cctype> 
 
@@ -21,25 +21,35 @@ private:
 public:
   Command()
   {
-    /*insert*/
+    /* --- INSERT MODE --- */
+    // Basic Navigation & Editing
     insertMap[KEY_UP] = editor::movement::move_up;
     insertMap[KEY_DOWN] = editor::movement::move_down;
     insertMap[KEY_LEFT] = editor::movement::move_left;
     insertMap[KEY_RIGHT] = editor::movement::move_right;
     insertMap[KEY_ENTER_] = editor::modify::new_line;
-
     insertMap[KEY_BACKSPACE] = editor::modify::delete_letter;
     insertMap[KEY_BACKSPACE_LEGACY] = editor::modify::delete_letter;
-
     insertMap[KEY_TAB] = editor::modify::tab;
-
     insertMap[ESC] = editor::system::change2normal;
 
-    /*normal*/
+    // Copy operations
+    insertMap[ctrl('c')] = editor::visual::copy_line; 
+    insertMap['y'] = editor::visual::copy_line;   
+
+    insertMap[ctrl('z')] = editor::modify::undo;            // Ctrl-z = undo
+    insertMap[ctrl('v')] = editor::modify::paste;           // Ctrl-v = paste
+    insertMap[ctrl('a')] = editor::visual::select_all;      // Ctrl-a = select_all
+    insertMap[ctrl('f')] = editor::system::change2find;     // Ctrl-f = mode_find
+
+    /* --- NORMAL MODE --- */
+    // Basic Navigation
     normalMap[KEY_UP] = editor::movement::move_up;
     normalMap[KEY_DOWN] = editor::movement::move_down;
     normalMap[KEY_LEFT] = editor::movement::move_left;
     normalMap[KEY_RIGHT] = editor::movement::move_right;
+    
+    // Vim Standard Bindings
     normalMap['h'] = editor::movement::move_left;
     normalMap['j'] = editor::movement::move_down;
     normalMap['k'] = editor::movement::move_up;
@@ -50,27 +60,38 @@ public:
     normalMap['A'] = editor::movement::move_to_beginning_of_line;
     normalMap['g'] = editor::movement::move_to_end_of_file;
     normalMap['G'] = editor::movement::move_to_beginning_of_file;
-    normalMap['p'] = editor::modify::paste;
     normalMap['w'] = editor::movement::move_to_next_word;
     normalMap['e'] = editor::file::file_selection_menu;
-    normalMap['u'] = editor::modify::undo;
-
+    normalMap['q'] = editor::system::exit_ide;
+    // Editing
     normalMap['x'] = editor::modify::normal_delete_letter;
     normalMap['d'] = editor::modify::delete_row;
-
-    normalMap['s'] = editor::file::save;
-    normalMap['q'] = editor::system::exit_ide;
-
+    normalMap['u'] = editor::modify::undo;                  
+    normalMap['p'] = editor::modify::paste;
+    
+    // Mode Switching
     normalMap['i'] = editor::system::change2insert;
     normalMap['v'] = editor::system::change2visual;
-
-    normalMap['N'] = editor::system::new_buffer;
-    normalMap['n'] = editor::system::switch_to_next_buffer;
-    normalMap['m'] = editor::system::switch_to_previous_buffer;
-
     normalMap['f'] = editor::find::find;
 
-    /*visual*/
+    // Copy operations
+    normalMap[ctrl('c')] = editor::visual::copy_line; 
+    normalMap['y'] = editor::visual::copy_line;      
+
+    // Config Shortcuts 
+    normalMap[ctrl('a')] = editor::visual::select_all;      // Ctrl-a = select_all
+    normalMap[ctrl('z')] = editor::modify::undo;            // Ctrl-z = undo
+    normalMap[ctrl('v')] = editor::modify::paste;           // Ctrl-v = paste
+    normalMap[ctrl('f')] = editor::system::change2find;     // Ctrl-f = mode_find
+
+    // Buffers
+    normalMap[ctrl('n')] = editor::system::new_buffer;              // Ctrl-n = buffer_new
+    normalMap['n'] = editor::system::switch_to_next_buffer;   // Ctrl-l = buffer_next (override Vim 'l' con Ctrl)
+    normalMap['m'] = editor::system::switch_to_previous_buffer; // Ctrl-h = buffer_prev
+
+
+    /* --- VISUAL MODE --- */
+    // Navigation
     visualMap[KEY_UP] = editor::movement::move_up;
     visualMap[KEY_DOWN] = editor::movement::move_down;
     visualMap[KEY_LEFT] = editor::movement::move_left;
@@ -79,25 +100,29 @@ public:
     visualMap['j'] = editor::movement::move_down;
     visualMap['k'] = editor::movement::move_up;
     visualMap['l'] = editor::movement::move_right;
-    visualMap['a'] = editor::movement::move_to_end_of_line;
-    visualMap['A'] = editor::movement::move_to_beginning_of_line;
-    visualMap['g'] = editor::movement::move_to_end_of_file;
-    visualMap['G'] = editor::movement::move_to_beginning_of_file;
     visualMap['w'] = editor::movement::move_to_next_word;
+    visualMap[ESC] = editor::system::change2normal;
+
+    // Config Shortcuts 
+    visualMap[ctrl('a')] = editor::visual::select_all;      // Ctrl-a = select_all
+    visualMap[ctrl('c')] = editor::visual::copy_highlighted;    // Ctrl-c = copy_selection
+    visualMap[ctrl('x')] = editor::visual::delete_highlighted;  // Ctrl-x = delete_selection
+    
+    // Standard Vim Visual keys
     visualMap['d'] = visualMap[KEY_BACKSPACE] = editor::visual::delete_highlighted;
     visualMap['y'] = editor::visual::copy_highlighted;
 
-    visualMap[ESC] = editor::system::change2normal;
 
-    /*find*/
+    /* --- FIND MODE --- */
     findMap['n'] = editor::find::go_to_next_occurrence;
-    findMap['N'] = editor::find::go_to_previous_occurrence;
+    findMap['m'] = editor::find::go_to_previous_occurrence;
     findMap['r'] = editor::modify::replace;
 
     findMap[ESC] = editor::system::change2normal;
 
-    /*special keys*/
+    /* --- SPECIAL KEYS (Global) --- */
     specialKeys[ctrl('s')] = editor::file::save;
+    specialKeys[ctrl('q')] = editor::system::exit_ide;        // Ctrl-q = quit
   }
 
   void loadConfig(const std::string& filename) {

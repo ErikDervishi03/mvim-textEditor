@@ -332,6 +332,8 @@ namespace editor
     void insert_brackets(char opening_bracket, char closing_bracket);
 
     void select_all();
+
+    void copy_line();
   };
 
   namespace find
