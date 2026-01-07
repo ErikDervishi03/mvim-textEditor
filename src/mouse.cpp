@@ -77,13 +77,15 @@ namespace Mouse {
     static void process_mouse_action(mmask_t bstate, int target_row, int target_col) {
         
         // Left Click: Start Selection
-        if (bstate & BUTTON1_CLICKED) {
+        if ((bstate & BUTTON1_CLICKED) || (bstate & BUTTON1_PRESSED)) {
+            mode = Mode::normal;
             is_dragging = false;
 
             pointed_row = target_row;
             pointed_col = target_col;
             visual_start_row = pointed_row;
             visual_start_col = pointed_col;
+
 
             cursor.setY(pointed_row - starting_row);
             cursor.setX(pointed_col - starting_col);
