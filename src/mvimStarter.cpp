@@ -1,6 +1,7 @@
 #include "../include/mvimStarter.hpp"
 #include <ncurses.h>
 #include <ostream>
+#include <string>
 #include "../include/bufferManager.hpp"
 #include "../include/mouse.hpp"  
 
@@ -103,7 +104,7 @@ void mvimStarter::run()
           // Esegue il comando dell'utente (tastiera)
           _command.execute(input);
       }
-
+  
       // Aggiorna le variabili dello stato attuale
       updateVar();
 
@@ -136,6 +137,8 @@ void mvimStarter::run()
 
       // Aggiorna la finestra attualmente puntata
       wrefresh(pointed_window);
+
+      Mouse::reset_dragging();
     }
     else 
     {

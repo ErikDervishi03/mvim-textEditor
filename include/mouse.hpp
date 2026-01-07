@@ -14,4 +14,10 @@ namespace Mouse {
      * Should be called periodically from the main loop.
      */
     void behavior_timer();
+
+    /**
+     * @brief Resets mouse state and re-enables tracking. 
+     * Essential when switching files or buffers.
+     */
+    void reset_dragging();
 }

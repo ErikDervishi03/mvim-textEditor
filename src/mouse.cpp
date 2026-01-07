@@ -16,6 +16,10 @@ namespace Mouse {
     static int last_mouse_y = 0;
     static int last_mouse_x = 0;
 
+    void reset_dragging() {
+        printf("\033[?1002h");
+        fflush(stdout);
+    }
     // Helper to sync column after vertical movement
     void sync_cursor_column() {
         // Calculate target column based on last known X
@@ -103,6 +107,8 @@ namespace Mouse {
 
             cursor.setY(pointed_row - starting_row);
             cursor.setX(pointed_col - starting_col);
+
+            is_dragging = false;
 
         }else if (event.bstate & BUTTON1_RELEASED) {
             is_dragging = false;
