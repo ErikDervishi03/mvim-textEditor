@@ -338,7 +338,6 @@ void editor::system::new_buffer() {
     }
 }
 
-// ... (keep confirm_exit, exit_ide, etc. unchanged) ...
 
 void editor::system::resize(){
   // 1. Resize internal buffers

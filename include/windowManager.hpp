@@ -157,6 +157,31 @@ public:
     doupdate();
 }
 
+
+WINDOW* getWindowAt(int y, int x) {
+        // Iterate through all windows
+        for (auto it = windows.rbegin(); it != windows.rend(); ++it) {
+            WINDOW* win = it->second;
+            
+            // 1. Get Window Position (Top-Left corner relative to screen)
+            int winY, winX;
+            getbegyx(win, winY, winX); 
+
+            // 2. Get Window Dimensions (Height and Width)
+            int winH, winW;
+            getmaxyx(win, winH, winW);
+
+            // 3. Perform Hit Test
+            // Check if the click coordinates (y, x) are within this window's bounds
+            if (x >= winX && x < (winX + winW) &&
+                y >= winY && y < (winY + winH)) {
+                return win;
+            }
+        }
+
+        return nullptr; // No window found at these coordinates
+    }
+
 private:
     // Private members
     std::map<std::string, WINDOW*> windows;

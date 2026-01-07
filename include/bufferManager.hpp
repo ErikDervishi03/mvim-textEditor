@@ -1,4 +1,5 @@
 #pragma once
+#include "errorHandler.hpp"
 #include "globals/mode.h"
 #include "globals/status.h"
 #include "globals/mvimResources.h"
@@ -253,6 +254,35 @@ public:
 
                 buffer.cursor.setX(buffer.pointed_col - buffer.starting_col);
             }
+        }
+    }
+
+    void switchToWindowBuffer(WINDOW* window) {
+        if (window == nullptr) {
+            return;
+        }
+
+        // 1. Find the index of the buffer that owns this window
+        int targetIndex = -1;
+        for (int i = 0; i < buffer_count; ++i) {
+            if (buffers[i].window == window) {
+                targetIndex = i;
+                break;
+            }
+        }
+
+        // 2. If the buffer exists, execute the sync sequence
+        if (targetIndex != -1) {
+            // A. Save current UI state (sliders/inputs) to the PREVIOUS active buffer
+            syncBufferFromSystemVars();
+
+            // B. Switch the active buffer index in the backend
+            set_active_buffer(targetIndex);
+
+            // C. Load the NEW buffer's data into the UI system variables
+            syncSystemVarsFromBuffer();
+        } else {
+            ErrorHandler::instance().report(ErrorLevel::ERROR, "switching to not existing buffer");
         }
     }
 

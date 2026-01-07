@@ -121,3 +121,4 @@ const std::deque<std::string>& textBuffer::get_buffer() const
 {
   return this->buffer;
 }
+

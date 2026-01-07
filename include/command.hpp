@@ -41,6 +41,7 @@ public:
     insertMap[ctrl('v')] = editor::modify::paste;           // Ctrl-v = paste
     insertMap[ctrl('a')] = editor::visual::select_all;      // Ctrl-a = select_all
     insertMap[ctrl('f')] = editor::system::change2find;     // Ctrl-f = mode_find
+    insertMap[ctrl('n')] = editor::system::new_buffer;  
 
     /* --- NORMAL MODE --- */
     // Basic Navigation

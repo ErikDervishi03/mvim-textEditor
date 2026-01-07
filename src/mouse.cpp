@@ -1,6 +1,7 @@
 #include "../include/mouse.hpp"
 #include "../include/globals/mvimResources.h"
 #include "../include/editor.hpp"
+#include "../include/bufferManager.hpp"
 
 // Definitions for scroll wheel buttons if not present in older ncurses versions
 #if !defined(BUTTON4_PRESSED)
@@ -42,6 +43,72 @@ namespace Mouse {
         cursor.setX(pointed_col - starting_col);
     }
 
+    static bool handle_scrolling(const MEVENT& event) {
+        if (event.bstate & BUTTON4_PRESSED) { // Scroll Up
+            editor::movement::move_up();
+            editor::movement::move_up(); 
+            editor::movement::move_up(); 
+            return true;
+        }
+        
+        if (event.bstate & BUTTON5_PRESSED) { // Scroll Down
+            editor::movement::move_down();
+            editor::movement::move_down();
+            editor::movement::move_down();
+            return true;
+        }
+        return false;
+    }
+
+    static void switch_window_context(const MEVENT& event) {
+        // Use the WindowManager to find which window object is at the click coordinates.
+        auto* target_window = WindowManager::getInstance().getWindowAt(event.y, event.x);
+
+        if (target_window) {
+            // Pass ONLY the window object to the BufferManager.
+            // This function handles the context switch (save old -> load new).
+            BufferManager::instance().switchToWindowBuffer(target_window);
+        }
+    }
+
+    // ---------------------------------------------------------
+    // Action Processing (Click, Drag, Release)
+    // ---------------------------------------------------------
+    static void process_mouse_action(mmask_t bstate, int target_row, int target_col) {
+        
+        // Left Click: Start Selection
+        if (bstate & BUTTON1_CLICKED) {
+            is_dragging = false;
+
+            pointed_row = target_row;
+            pointed_col = target_col;
+            visual_start_row = pointed_row;
+            visual_start_col = pointed_col;
+
+            cursor.setY(pointed_row - starting_row);
+            cursor.setX(pointed_col - starting_col);
+        }
+        // Left Release: End Dragging
+        else if (bstate & BUTTON1_RELEASED) {
+            is_dragging = false;
+        }
+        // Mouse Dragging
+        else if (bstate & REPORT_MOUSE_POSITION) {
+            is_dragging = true;
+
+            pointed_row = target_row;
+            pointed_col = target_col;
+
+            cursor.setY(pointed_row - starting_row);
+            cursor.setX(pointed_col - starting_col);
+
+            // Trigger visual mode if selection range exists
+            if (pointed_row != visual_start_row || pointed_col != visual_start_col) {
+                mode = Mode::visual;
+            }
+        }
+    }
+
     void handle_event() {
         MEVENT event;
 
@@ -49,22 +116,15 @@ namespace Mouse {
             return;
         }
 
-        // --- Handle Scrolling (Wheel) ---
-        if (event.bstate & BUTTON4_PRESSED) { // Scroll Wheel Up
-            editor::movement::move_up();
-            editor::movement::move_up(); 
-            editor::movement::move_up(); 
+        // 1. Handle Scrolling (Wheel) - return early if scrolled
+        if (handle_scrolling(event)) {
             return;
         }
         
-        if (event.bstate & BUTTON5_PRESSED) { // Scroll Wheel Down
-            editor::movement::move_down();
-            editor::movement::move_down();
-            editor::movement::move_down();
-            return;
-        }
+        // 2. Window Identification & Buffer Switching
+        switch_window_context(event);
 
-        // --- Handle Clicks & Dragging ---
+        // 3. Handle Clicks & Dragging 
         
         int y = event.y;
         int x = event.x;
@@ -96,37 +156,9 @@ namespace Mouse {
             if (target_col < 0) target_col = 0;
         }
 
-        // --- Event Logic ---
 
-        if (event.bstate & BUTTON1_CLICKED) {
-            mode = Mode::normal;
-            pointed_row = target_row;
-            pointed_col = target_col;
-            visual_start_row = pointed_row;
-            visual_start_col = pointed_col;
-
-            cursor.setY(pointed_row - starting_row);
-            cursor.setX(pointed_col - starting_col);
-
-            is_dragging = false;
-
-        }else if (event.bstate & BUTTON1_RELEASED) {
-            is_dragging = false;
-        }
-        else if (event.bstate & REPORT_MOUSE_POSITION) {
-
-            is_dragging = true;
-
-            pointed_row = target_row;
-            pointed_col = target_col;
-
-            cursor.setY(pointed_row - starting_row);
-            cursor.setX(pointed_col - starting_col);
-
-            if (pointed_row != visual_start_row || pointed_col != visual_start_col) {
-                mode = Mode::visual;
-            }
-        }
+        // 4. Apply Actions (Click/Drag logic)
+        process_mouse_action(event.bstate, target_row, target_col);
     }
 
     void behavior_timer() {
