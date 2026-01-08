@@ -37,7 +37,7 @@ void editor::visual::highlight(int start_row, int end_row, int start_col, int en
       curr_start_col = std::max(start_col - (int)starting_col, span+1);
       curr_end_col = end_col - starting_col;
     }
-    else if (i == 0)
+    else if (curr_row == start_row)
     {
       // First row of the selection
       curr_start_col = std::max(start_col - (int)starting_col,span+1);
