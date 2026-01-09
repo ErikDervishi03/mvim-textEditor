@@ -1,5 +1,6 @@
 #include "../include/editor.hpp"
 #include "../include/syntax.hpp"
+#include "../include/clipboardManager.hpp"
 
 // Check if the character before the found position is a valid boundary (whitespace or delimiter)
 #define IS_LEFT_BOUNDARY_VALID(pos) \
@@ -252,12 +253,7 @@ void editor::visual::copy_highlighted()
     copy_paste_buffer += '\n' + buffer[end_row].substr(0, end_col);
   }
 
-  // Copia negli appunti usando xclip
-  std::ofstream clipboard_file("/tmp/clipboard.txt");
-  clipboard_file << copy_paste_buffer;
-  clipboard_file.close();
-
-  std::system("cat /tmp/clipboard.txt | xclip -selection clipboard");
+  ClipboardManager::setSystemClipboard(copy_paste_buffer);
 
   editor::system::change2normal();
 }

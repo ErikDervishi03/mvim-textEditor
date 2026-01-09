@@ -1,4 +1,5 @@
 #include "../include/editor.hpp"
+#include "../include/clipboardManager.hpp"
 
 // Helper function used in older versions
 static void reverse_insert(int row, int col)
@@ -180,6 +181,9 @@ void editor::modify::delete_row()
 
 void editor::modify::paste()
 {
+  // 1. SYNC FROM SYSTEM: Fetch the latest text from the PC clipboard
+  copy_paste_buffer = ClipboardManager::getSystemClipboard();
+
   if (copy_paste_buffer.length() > 0)
   {
     status = Status::unsaved;
