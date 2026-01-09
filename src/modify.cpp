@@ -1,5 +1,6 @@
 #include "../include/editor.hpp"
 #include "../include/clipboardManager.hpp"
+#include <ncurses.h>
 
 // Helper function used in older versions
 static void reverse_insert(int row, int col)
@@ -324,7 +325,11 @@ void editor::modify::delete_selection(int start_row, int end_row, int start_col,
 
 void editor::modify::delete_word_backyard()
 {
-  if (pointed_col == 0) return;
+  if (pointed_col == 0) {
+    delete_letter();
+    return;
+  }
+
   status = Status::unsaved;
   char curr_char_pointed = buffer[pointed_row][pointed_col - 1];
 
