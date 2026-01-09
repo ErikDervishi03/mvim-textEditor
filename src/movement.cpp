@@ -1,5 +1,24 @@
 #include "../include/editor.hpp"
 
+void editor::movement::move2Y(int y, bool center_view) {
+    // Set the cursor to the new occurrence
+    pointed_row = y;
+
+    if(center_view) {
+      // Maintain the current selected word at the center of the screen
+      if (pointed_row > max_row / 2)
+      {
+          starting_row = pointed_row - max_row / 2;
+      }
+      else
+      {
+          starting_row = 0;
+      }
+    }
+
+    cursor.setY(y - starting_row);
+}
+
 void editor::movement::move2X(int x){
   pointed_col = x;
 
@@ -97,7 +116,7 @@ void editor::movement::move_right()
   if ((cursor.getX() <= (buffer[pointed_row].length() - 1 - starting_col)) &&
       !buffer[pointed_row].empty())
   {
-    if(cursor.getX() == max_col - span - 2) starting_col++;
+    if(cursor.getX() >= max_col - span - 2) starting_col++;
     else cursor.move_right();
 
     pointed_col++;

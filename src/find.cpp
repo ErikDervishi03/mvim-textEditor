@@ -90,20 +90,10 @@ void editor::find::go_to_previous_occurrence()
     int row = found_occurrences[current_occurrence_index].row;
     int col = found_occurrences[current_occurrence_index].col;
 
-    // Set the cursor to the new occurrence
-    pointed_row = row;
-
-    // Maintain the current selected word at the center of the screen
-    if (pointed_row > max_row / 2)
-    {
-        starting_row = pointed_row - max_row / 2;
-    }
-    else
-    {
-        starting_row = 0;
-    }
     movement::move2X(col);
-    cursor.setY(row - starting_row);
+
+    bool center_view = true;
+    movement::move2Y(row, center_view);
 }
 
 void editor::find::go_to_next_occurrence()
@@ -117,21 +107,10 @@ void editor::find::go_to_next_occurrence()
     int row = found_occurrences[current_occurrence_index].row;
     int col = found_occurrences[current_occurrence_index].col;
 
-    // Set the cursor to the new occurrence
-    pointed_row = row;
-
-    // Maintain the current selected word at the center of the screen
-    if (pointed_row > max_row / 2)
-    {
-        starting_row = pointed_row - max_row / 2;
-    }
-    else
-    {
-        starting_row = 0;
-    }
-
     movement::move2X(col);
-    cursor.setY(row - starting_row);
+
+    bool center_view = true;
+    movement::move2Y(row, center_view);
 }
 
 void editor::find::find()

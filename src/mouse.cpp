@@ -34,7 +34,7 @@ namespace Mouse {
         // Clamp to current row length
         int line_len = buffer[pointed_row].length();
         if (target_col > line_len) target_col = line_len;
-        if (target_col < 0) target_col = 0;
+        if (target_col < 0) target_col = starting_col;
 
         pointed_col = target_col;
         
@@ -81,14 +81,11 @@ namespace Mouse {
             mode = Mode::normal;
             is_dragging = false;
 
-            pointed_row = target_row;
-            pointed_col = target_col;
+            editor::movement::move2Y(target_row);
+            editor::movement::move2X(target_col);
+
             visual_start_row = pointed_row;
             visual_start_col = pointed_col;
-
-
-            cursor.setY(pointed_row - starting_row);
-            cursor.setX(pointed_col - starting_col);
         }
         // Left Release: End Dragging
         else if (bstate & BUTTON1_RELEASED) {
@@ -98,11 +95,8 @@ namespace Mouse {
         else if (bstate & REPORT_MOUSE_POSITION) {
             is_dragging = true;
 
-            pointed_row = target_row;
-            pointed_col = target_col;
-
-            cursor.setY(pointed_row - starting_row);
-            cursor.setX(pointed_col - starting_col);
+            editor::movement::move2Y(target_row);
+            editor::movement::move2X(target_col);
 
             // Trigger visual mode if selection range exists
             if (pointed_row != visual_start_row || pointed_col != visual_start_col) {
@@ -151,11 +145,11 @@ namespace Mouse {
         int target_col = 0;
 
         if (x < (span + 1)) {
-            target_col = 0; 
+            target_col = starting_col; 
         } else {
             target_col = x - (span + 1) + starting_col;
             if (target_col > line_len) target_col = line_len;
-            if (target_col < 0) target_col = 0;
+            if (target_col < 0) target_col = starting_col;
         }
 
 
@@ -163,28 +157,40 @@ namespace Mouse {
         process_mouse_action(event.bstate, target_row, target_col);
     }
 
+    // ---------------------------------------------------------
+    // Timer Logic: Handles Dragging Outside Bounds
+    // ---------------------------------------------------------
     void behavior_timer() {
         if (!is_dragging) return;
 
         bool scrolled = false;
 
-        // Check if mouse is at the top edge
+        // --- Vertical Scrolling ---
         if (last_mouse_y == 0) {
-            // Move up (this handles scrolling internal to movement.cpp)
             editor::movement::move_up();
             scrolled = true;
         } 
-        // Check if mouse is at the bottom edge
-        else if (last_mouse_y == (int)max_row - 1) {
-            // Move down
+        else if (last_mouse_y >= (int)max_row - 1) {
             editor::movement::move_down();
             scrolled = true;
         }
 
+        // --- Horizontal Scrolling ---
+        // Left Edge: Mouse is in the line number area or at col 0
+        //if (last_mouse_x <= (span + 1)) {
+        //    editor::movement::move_left();
+        //    scrolled = true;
+        //}
+
+        // Right Edge: Mouse is at the rightmost visible text column
+        // (max_col is the text width, span is the offset for line numbers)
+        else if (last_mouse_x >= (max_col + span)) {
+             editor::movement::move_right();
+             scrolled = true;
+        }
+
+        // If any scroll happened, re-sync the selection
         if (scrolled) {
-            // If we scrolled, the row under the mouse changed.
-            // We must re-sync the pointed_col to the mouse's X position on the NEW row.
-            // pointed_row is already updated by move_up/down.
             sync_cursor_column();
 
             // Ensure we stay in visual mode during drag

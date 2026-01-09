@@ -33,6 +33,8 @@ namespace editor
 
   namespace movement
   {
+    void move2Y(int y, bool center_view = false);
+
     void move2X(int x);
     
     /**
