@@ -11,6 +11,8 @@
 #define BUTTON5_PRESSED NCURSES_BUTTON_PRESSED(5)
 #endif
 
+#define isDragging() (pointed_row != visual_start_row || pointed_col != visual_start_col)
+
 namespace Mouse {
 
     static bool is_dragging = false;
@@ -21,24 +23,26 @@ namespace Mouse {
         printf("\033[?1002h");
         fflush(stdout);
     }
-    // Helper to sync column after vertical movement
+
+    // Helper to sync column after vertical/horizontal movement
     void sync_cursor_column() {
-        // Calculate target column based on last known X
         int target_col = 0;
+        
+        // FIX: If in margin, snap to 'starting_col' (visible left edge), NOT 0.
         if (last_mouse_x < (span + 1)) {
-            target_col = 0;
+            target_col = starting_col; 
         } else {
             target_col = last_mouse_x - (span + 1) + starting_col;
         }
 
-        // Clamp to current row length
         int line_len = buffer[pointed_row].length();
         if (target_col > line_len) target_col = line_len;
-        if (target_col < 0) target_col = starting_col;
+        
+        // Ensure we don't go before the visible area if simply syncing
+        if (target_col < starting_col) target_col = starting_col;
 
         pointed_col = target_col;
         
-        // Update visual cursor
         cursor.setY(pointed_row - starting_row);
         cursor.setX(pointed_col - starting_col);
     }
@@ -72,12 +76,75 @@ namespace Mouse {
     }
 
     // ---------------------------------------------------------
-    // Action Processing (Click, Drag, Release)
+    // Action Processing (Click, Drag, Release, Double/Triple)
     // ---------------------------------------------------------
     static void process_mouse_action(mmask_t bstate, int target_row, int target_col) {
         
-        // Left Click: Start Selection
-        if ((bstate & BUTTON1_CLICKED) || (bstate & BUTTON1_PRESSED)) {
+        // --- 1. TRIPLE CLICK: Select Whole Line ---
+        if (bstate & BUTTON1_TRIPLE_CLICKED) {
+            mode = Mode::visual;
+            is_dragging = false;
+
+            editor::movement::move2Y(target_row);
+
+            // Start at beginning of line
+            visual_start_row = target_row;
+            visual_start_col = 0;
+
+            // End at end of line
+            int line_len = buffer[target_row].length();
+            
+            // Move cursor to end of line
+            editor::movement::move2X(line_len); 
+            pointed_col = line_len; // Ensure pointed_col captures the full length
+            pointed_row = target_row;
+        }
+
+        // --- 2. DOUBLE CLICK: Select Word ---
+        else if (bstate & BUTTON1_DOUBLE_CLICKED) {
+            mode = Mode::visual;
+            is_dragging = false;
+
+            editor::movement::move2Y(target_row);
+            
+            std::string& line = buffer[target_row];
+            int len = line.length();
+            int start = target_col;
+            int end = target_col;
+
+            // Safety check
+            if (target_col < len) {
+                // Determine if we are clicking on a word char (alphanum or _) or delimiter
+                bool is_word_char = (isalnum(line[target_col]) || line[target_col] == '_');
+
+                // Find start of the word/segment
+                while (start > 0) {
+                    bool prev_char_is_word = (isalnum(line[start - 1]) || line[start - 1] == '_');
+                    if (prev_char_is_word != is_word_char) break;
+                    start--;
+                }
+
+                // Find end of the word/segment
+                while (end < len) {
+                    bool curr_char_is_word = (isalnum(line[end]) || line[end] == '_');
+                    if (curr_char_is_word != is_word_char) break;
+                    end++;
+                }
+            }
+
+            visual_start_row = target_row;
+            visual_start_col = start;
+
+            // Point cursor to the end of the found word (exclusive index usually becomes inclusive in visual logic)
+            // Adjust -1 if your visual mode is inclusive of the pointed character
+            int cursor_target = (end > 0) ? end - 1 : 0; 
+            if (end == len) cursor_target = len; // Handle end of line case
+
+            editor::movement::move2X(cursor_target);
+        }
+
+        // --- 3. SINGLE CLICK: Start Normal Selection ---
+        else if ((bstate & BUTTON1_CLICKED) || (bstate & BUTTON1_PRESSED)) {
             mode = Mode::normal;
             is_dragging = false;
 
@@ -87,19 +154,20 @@ namespace Mouse {
             visual_start_row = pointed_row;
             visual_start_col = pointed_col;
         }
-        // Left Release: End Dragging
+
+        // --- 4. RELEASE: Stop Dragging ---
         else if (bstate & BUTTON1_RELEASED) {
             is_dragging = false;
         }
-        // Mouse Dragging
+
+        // --- 5. DRAGGING: Update Selection ---
         else if (bstate & REPORT_MOUSE_POSITION) {
             is_dragging = true;
 
             editor::movement::move2Y(target_row);
             editor::movement::move2X(target_col);
 
-            // Trigger visual mode if selection range exists
-            if (pointed_row != visual_start_row || pointed_col != visual_start_col) {
+            if (isDragging()) {
                 mode = Mode::visual;
             }
         }
@@ -177,10 +245,10 @@ namespace Mouse {
 
         // --- Horizontal Scrolling ---
         // Left Edge: Mouse is in the line number area or at col 0
-        //if (last_mouse_x <= (span + 1)) {
-        //    editor::movement::move_left();
-        //    scrolled = true;
-        //}
+        if ((last_mouse_x <= (span + 1) && starting_col > 0)) {
+            editor::movement::move_left();
+            scrolled = true;
+        }
 
         // Right Edge: Mouse is at the rightmost visible text column
         // (max_col is the text width, span is the offset for line numbers)
@@ -193,8 +261,7 @@ namespace Mouse {
         if (scrolled) {
             sync_cursor_column();
 
-            // Ensure we stay in visual mode during drag
-            if (pointed_row != visual_start_row || pointed_col != visual_start_col) {
+            if (isDragging()) {
                 mode = Mode::visual;
             }
         }
