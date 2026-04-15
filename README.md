@@ -38,7 +38,7 @@ You can install them with:
 ### Option 1: Build from source
 
 ```sh
-  git clone [https://github.com/ErikDervishi03/mvim-textEditor.git](https://github.com/ErikDervishi03/mvim-textEditor.git)
+  git clone https://github.com/ErikDervishi03/mvim-textEditor.git
   cd mvim-textEditor
   mkdir build
   cd build
