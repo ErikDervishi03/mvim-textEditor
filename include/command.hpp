@@ -49,7 +49,7 @@ public:
     normalMap[KEY_RIGHT] = editor::movement::move_right;
     
     // Vim Standard Bindings
-    normalMap['h'] = editor::movement::move_left;
+    normalMap['h'] = editor::modify::delete_word_backyard;
     normalMap['j'] = editor::movement::move_down;
     normalMap['k'] = editor::movement::move_up;
     normalMap['l'] = editor::movement::move_right;

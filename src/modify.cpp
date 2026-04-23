@@ -425,23 +425,24 @@ void editor::modify::delete_word_backyard()
 void editor::modify::delete_word()
 {
   int row_length = buffer[pointed_row].length();
-  if (pointed_col == row_length) return;
+  
+  if (pointed_col >= row_length) return; 
 
-  status = Status::unsaved;
-  char curr_char_pointed = buffer[pointed_row][pointed_col + 1];
+  int start = pointed_col;
+  int end = pointed_col;
 
-  while (curr_char_pointed != ' ')
+  while (end < row_length && buffer[pointed_row][end] != ' ')
   {
-    editor::modify::normal_delete_letter();
-    row_length--;
-    if (pointed_col == row_length) return;
-    curr_char_pointed = buffer[pointed_row][pointed_col + 1];
+    end++;
   }
 
-  while (curr_char_pointed == ' ' && pointed_col < row_length)
+  while (end < row_length && buffer[pointed_row][end] == ' ')
   {
-    editor::modify::normal_delete_letter();
-    curr_char_pointed = buffer[pointed_row][pointed_col + 1];
+    end++;
+  }
+
+  if (end > start) {
+      editor::modify::delete_selection(pointed_row, pointed_row, start, end - 1);
   }
 }
 
