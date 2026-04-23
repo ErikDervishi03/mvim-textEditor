@@ -18,7 +18,7 @@ public:
             // Write the copied text directly to the process
             fwrite(text.c_str(), 1, text.length(), pipe.get());
         }
-}
+    }
 
     // Pulls text from the System Clipboard
     static std::string getSystemClipboard() {

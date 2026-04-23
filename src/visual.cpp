@@ -258,7 +258,6 @@ void editor::visual::copy_highlighted()
   editor::system::change2normal();
 }
 
-
 void editor::visual::insert_brackets(char opening_bracket, char closing_bracket) {
     int start_row = visual_start_row;
     int end_row = pointed_row;

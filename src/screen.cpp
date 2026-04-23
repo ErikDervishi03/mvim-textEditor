@@ -4,7 +4,6 @@
 #include <ncursesw/ncurses.h>
 #include <string>
 
-// [cite] Helper to determine UTF-8 byte length
 static size_t get_byte_len_for_width(const std::string& str, size_t start_byte, size_t max_width) {
     size_t width = 0;
     size_t byte_pos = start_byte;
@@ -13,7 +12,6 @@ static size_t get_byte_len_for_width(const std::string& str, size_t start_byte, 
         unsigned char c = str[byte_pos];
         size_t char_len = 1;
 
-        // [cite] Determine byte length of current UTF-8 character
         if      ((c & 0x80) == 0)    char_len = 1;
         else if ((c & 0xE0) == 0xC0) char_len = 2;
         else if ((c & 0xF0) == 0xE0) char_len = 3;
@@ -21,7 +19,7 @@ static size_t get_byte_len_for_width(const std::string& str, size_t start_byte, 
         
         if (byte_pos + char_len > str.length()) break; 
 
-        width += 1; // Assume 1 column width per char (simplification)
+        width += 1;
         byte_pos += char_len;
     }
     return byte_pos - start_byte;
@@ -95,7 +93,6 @@ void Screen::print_buffer()
   }
 }
 
-// ... [draw_status_bar remains unchanged] ...
 void Screen::draw_status_bar()
 {
   int height, width;
@@ -233,7 +230,6 @@ void Screen::print_buffer(
     }
 }
 
-// ... [rest of file remains unchanged] ...
 void Screen::refresh_all_buffers() {
     // Ottieni tutte le finestre dei buffer dal BufferManager
     const auto& windows = BufferManager::instance().get_bufferWindows();

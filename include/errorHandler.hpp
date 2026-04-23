@@ -20,16 +20,16 @@ public:
 
     void report(ErrorLevel level, const std::string& message) {
         std::string prefix;
-        int color_pair = 1; // Default to standard pair (usually red/error)
+        int color_pair = 1; // Default red
 
         switch (level) {
             case ErrorLevel::INFO:    
                 prefix = "[INFO] "; 
-                color_pair = 2; // Assuming pair 2 is Green or similar
+                color_pair = 2; // Green 
                 break;
             case ErrorLevel::WARNING: 
                 prefix = "[WARN] "; 
-                color_pair = 3; // Assuming pair 3 is Yellow
+                color_pair = 3; // Yellow
                 break;
             case ErrorLevel::ERROR:   
                 prefix = "[ERR] "; 
@@ -40,12 +40,12 @@ public:
                 break;
         }
 
-        // FATAL errors must still crash the program safely
         if (level == ErrorLevel::FATAL) {
             endwin(); 
+            fprintf(stderr, "\033[?1049l\033[?1002l\033[0m\r\n");
             std::cerr << prefix << message << std::endl;
-            std::exit(1);
-        } 
+            std::_Exit(1);
+        }
         else {
             // Send the message to the status bar
             Screen::getScreen().set_status_message(prefix + message, color_pair);

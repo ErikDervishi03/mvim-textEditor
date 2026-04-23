@@ -1,7 +1,11 @@
 #include "../include/editor.hpp"
+#include "../include/bufferManager.hpp"
 #include <ncursesw/ncurses.h>
 #include "../include/syntax.hpp"
 #include <algorithm>
+#include <sys/file.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 namespace fs = std::filesystem;
 
@@ -76,6 +80,37 @@ void editor::file::read(std::string file_name)
 
   if (is_readable(file_name))
   {
+    // --- 1. TRY TO LOCK THE FILE ---
+    int new_lock_fd = open(file_name.c_str(), O_RDONLY);
+    if (new_lock_fd != -1)
+    {
+      // LOCK_EX = Exclusive lock, LOCK_NB = Non-Blocking (returns immediately if locked)
+      if (flock(new_lock_fd, LOCK_EX | LOCK_NB) == -1)
+      {
+        if(BufferManager::instance().getBufferCount() == 1) 
+        {
+          close(new_lock_fd);
+          ErrorHandler::instance().report(ErrorLevel::FATAL, "File is already open in another instance!");
+        }else
+        {
+          ErrorHandler::instance().report(ErrorLevel::ERROR, "File is already open in another instance!");
+          close(new_lock_fd);
+        }
+
+        return; // Abort reading
+      }
+    }
+
+    // --- 2. RELEASE OLD LOCK (if the buffer had a different file open previously) ---
+    auto& active_buffer = BufferManager::instance().get_active_buffer();
+    if (active_buffer.lock_fd != -1)
+    {
+      close(active_buffer.lock_fd);
+    }
+    
+    // --- 3. SAVE THE NEW LOCK TO THE BUFFER ---
+    active_buffer.lock_fd = new_lock_fd;
+
     std::ifstream myfile(file_name);
     if (!myfile.is_open())
     {

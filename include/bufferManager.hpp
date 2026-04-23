@@ -37,6 +37,8 @@ public:
 
         WINDOW* window;
         std::string name;
+
+        int lock_fd = -1;
     };
 
     static BufferManager& instance() {
@@ -75,6 +77,8 @@ public:
         buffer.starting_col = 0;
         buffer.command_buffer.clear();
         buffer.copy_paste_buffer.clear();
+
+        buffer.lock_fd = -1;
 
         buffer_count++;
 
@@ -157,6 +161,11 @@ public:
         
         if (index < 0 || index >= buffer_count) {
             throw std::out_of_range("Buffer index out of range");
+        }
+
+        if (buffers[index].lock_fd != -1) {
+            close(buffers[index].lock_fd);
+            buffers[index].lock_fd = -1;
         }
 
         // Kill the window (resizes other windows physically)

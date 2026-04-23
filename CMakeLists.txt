@@ -41,6 +41,8 @@ file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 
 add_executable(mvim ${SRC_FILES})
 
+target_precompile_headers(mvim PRIVATE <string> <vector> <stack> <map> <iostream>)
+
 # Forza l'inclusione della directory corretta PRIMA di quelle di sistema
 target_include_directories(mvim BEFORE PUBLIC ${CURSES_INCLUDE_DIR})
 target_include_directories(mvim PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
