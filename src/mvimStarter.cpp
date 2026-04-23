@@ -1,5 +1,6 @@
 #include "../include/mvimStarter.hpp"
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
+#include <clocale>
 #include <ostream>
 #include <string>
 #include "../include/bufferManager.hpp"
@@ -22,11 +23,13 @@ const char* mvim_logo =
 mvimStarter::mvimStarter() :
   screen(Screen::getScreen()), benchmark(false)
 {
+
+
+  initialize_ncurses();    // Initialize ncurses first (CRITICAL)
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
   is_undoing = false;
   
-  initialize_ncurses();    // Initialize ncurses first (CRITICAL)
   
   pointed_file = "";
   status = Status::saved;
@@ -47,10 +50,11 @@ mvimStarter::mvimStarter(std::string filename, bool benchmark)
     return;
   }
 
+  initialize_ncurses();    // Initialize ncurses first (CRITICAL)
+
   BufferManager::instance().create_buffer("main");
   BufferManager::instance().syncSystemVarsFromBuffer();
   
-  initialize_ncurses();    // Initialize ncurses first (CRITICAL)
   setDefaults();
 
   // Load config NOW, after the screen is ready to display errors
@@ -226,6 +230,8 @@ void mvimStarter::homeScreen()
 // Helper function to initialize ncurses and color pairs
 void mvimStarter::initialize_ncurses()
 {
+  setlocale(LC_ALL, "");
+
   screen.start();
   start_color();
 

@@ -2,7 +2,7 @@
 #include "editor.hpp"
 #include "configParser.hpp" 
 #include "globals/consts.h" 
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <cctype> 
 
 #define ctrl(x) ((x) & 0x1f)

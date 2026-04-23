@@ -1,4 +1,4 @@
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <string>
 #include "../include/editor.hpp"
 #include "../include/bufferManager.hpp"

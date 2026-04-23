@@ -1,11 +1,13 @@
 #include "../include/editor.hpp"
 
+static bool is_continuation(char c) {
+    return (c & 0xC0) == 0x80;
+}
+
 void editor::movement::move2Y(int y, bool center_view) {
-    // Set the cursor to the new occurrence
     pointed_row = y;
 
     if(center_view) {
-      // Maintain the current selected word at the center of the screen
       if (pointed_row > max_row / 2)
       {
           starting_row = pointed_row - max_row / 2;
@@ -22,17 +24,30 @@ void editor::movement::move2Y(int y, bool center_view) {
 void editor::movement::move2X(int x){
   pointed_col = x;
 
-  // if this condition is true means that the new position is out of the 
-  // visible view of the user
   if(x < starting_col || x > starting_col + (max_col - 1))
   {
-    if(pointed_col > max_col/2)
+    if(pointed_col > max_col/2) {
       starting_col = pointed_col - max_col/2;
-    else
+
+      if (starting_col < buffer[pointed_row].length()) {
+          while (starting_col > 0 && is_continuation(buffer[pointed_row][starting_col])) {
+              starting_col--;
+          }
+      }
+    }
+    else {
       starting_col = 0;
+    }
   }
 
-  cursor.setX(pointed_col - starting_col);
+  int visual_x = 0;
+  std::string& row = buffer[pointed_row];
+  for (int i = starting_col; i < pointed_col && i < row.length(); ++i) {
+      if (!is_continuation(row[i])) {
+          visual_x++;
+      }
+  }
+  cursor.setX(visual_x);
 }
 
 void editor::movement::move_up()
@@ -44,10 +59,19 @@ void editor::movement::move_up()
     {
       cursor.move_up();
     }
+    
     if (prev_row.length() <= pointed_col)
     {
       move2X(prev_row.length());
     }
+    else 
+    {
+        while(pointed_col > 0 && is_continuation(prev_row[pointed_col])) {
+            pointed_col--;
+        }
+        move2X(pointed_col);
+    }
+
     if (starting_row > 0 &&
         pointed_row <= starting_row + SCROLL_START_THRESHOLD)
     {
@@ -73,10 +97,16 @@ void editor::movement::move_down()
     {
       move2X(next_row.length());
     }
+    else 
+    {
+        while (pointed_col > 0 && pointed_col < next_row.length() && is_continuation(next_row[pointed_col])) {
+            pointed_col--;
+        }
+        move2X(pointed_col);
+    }
 
     if (pointed_row - starting_row >= max_row - SCROLL_START_THRESHOLD - 1)
     {
-       // ...only scroll if the end of the file is not yet fully visible.
        if (starting_row + max_row < buffer.getSize()) {
           starting_row++;
        }
@@ -90,19 +120,32 @@ void editor::movement::move_left()
   if (pointed_col == 0 && cursor.getY() > 0)
   {
     pointed_row--;
-
     int currRowLen = buffer[pointed_row].length();
-
     move2X(currRowLen);
-
     cursor.setY(pointed_row - starting_row);
-    
+    return;
   }
-  else if (pointed_col > 0)
+  
+  if (pointed_col > 0)
   {
-    if(starting_col == pointed_col) starting_col--;
-    else cursor.move_left();
-    pointed_col--;
+    int bytes_to_jump = 1;
+    while (pointed_col - bytes_to_jump > 0 && 
+           is_continuation(buffer[pointed_row][pointed_col - bytes_to_jump])) 
+    {
+        bytes_to_jump++;
+    }
+
+    if (starting_col >= pointed_col) 
+    {
+        starting_col -= bytes_to_jump;
+        if (starting_col < 0) starting_col = 0;
+    }
+    else 
+    {
+        cursor.move_left();
+    }
+    
+    pointed_col -= bytes_to_jump;
   }
 
   if (starting_row > 0 && pointed_row == starting_row)
@@ -113,26 +156,37 @@ void editor::movement::move_left()
 
 void editor::movement::move_right()
 {
-  if ((cursor.getX() <= (buffer[pointed_row].length() - 1 - starting_col)) &&
-      !buffer[pointed_row].empty())
+  std::string& row = buffer[pointed_row];
+  
+  if (pointed_col < row.length() && !row.empty())
   {
-    if(cursor.getX() >= max_col - span - 2) starting_col++;
-    else cursor.move_right();
+    int bytes_to_jump = 1;
+    while (pointed_col + bytes_to_jump < row.length() && 
+           is_continuation(row[pointed_col + bytes_to_jump])) 
+    {
+        bytes_to_jump++;
+    }
+    
+    if(cursor.getX() >= max_col - span - 2) 
+    {
+        starting_col += bytes_to_jump;
+    }
+    else 
+    {
+        cursor.move_right();
+    }
 
-    pointed_col++;
+    pointed_col += bytes_to_jump;
   }
 }
 
 void editor::movement::go_down_creating_newline()
 {
-  // Create a new line below the current pointed_row
   buffer.new_row("", pointed_row + 1);
   
-
   if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
       !buffer.is_void_row(max_row) && pointed_row < buffer.getSize())
   {
-
     starting_row++;
   }
   else if (cursor.getY() < max_row - 1)
@@ -164,9 +218,7 @@ void editor::movement::go_up_creating_newline()
 void editor::movement::move_to_end_of_line()
 {
   const int currRowLen = buffer[pointed_row].length();
-
   move2X(currRowLen);
-
   cursor.setY(pointed_row - starting_row);
 }
 
@@ -193,15 +245,15 @@ void editor::movement::move_to_beginning_of_line()
 
 void editor::movement::move_to_next_word()
 {
+  if (pointed_row >= buffer.getSize()) return;
+
   std::string current_row = buffer[pointed_row];
   int row_length = current_row.length();
 
-  // if we are in the middle of a word we go at the end of it
-  while (current_row[pointed_col] != ' ')
+  while (pointed_col < row_length && current_row[pointed_col] != ' ')
   {
     editor::movement::move_right();
-
-    if (pointed_col >= row_length)
+    if (pointed_col >= buffer[pointed_row].length())
     {
       if (pointed_row < buffer.getSize() - 1)
       {
@@ -212,12 +264,11 @@ void editor::movement::move_to_next_word()
     }
   }
 
-  // lets go ahead until we find the next word
-  while (current_row[pointed_col] == ' ')
+  while (pointed_col < buffer[pointed_row].length() && buffer[pointed_row][pointed_col] == ' ')
   {
     editor::movement::move_right();
-
-    if (pointed_col >= row_length)
+    
+    if (pointed_col >= buffer[pointed_row].length())
     {
       if (pointed_row < buffer.getSize() - 1)
       {
@@ -226,7 +277,7 @@ void editor::movement::move_to_next_word()
       }
       return;
     }
-    else if (isalnum(current_row[pointed_col]))
+    else if (isalnum(buffer[pointed_row][pointed_col]))
     {
       return;
     }
@@ -235,43 +286,41 @@ void editor::movement::move_to_next_word()
 
 void editor::movement::move_to_previous_word()
 {
-  // Safety check
   if (pointed_row == 0 && pointed_col == 0) return;
 
-  // Always move left at least once to avoid getting stuck if we are at the start of a word
   editor::movement::move_left();
 
-  // 1. Skip Whitespace (moving backwards)
   while (true) 
   {
       if (pointed_row < 0) return;
       
-      // Get current character safely
       char c = ' ';
       if (pointed_col < buffer[pointed_row].length()) {
           c = buffer[pointed_row][pointed_col];
       }
       
-      if (c != ' ') break; // Found a non-space character
+      if (c != ' ') break; 
       
-      // Stop if we hit the start of the file
       if (pointed_row == 0 && pointed_col == 0) return;
       
       editor::movement::move_left();
   }
 
-  // 2. Go to the start of the current word
   while (true) 
   {
-      if (pointed_col == 0) return; // Start of line is implicitly start of word
+      if (pointed_col == 0) return; 
       
-      // Check the character to the left
-      char prev_c = ' ';
-      if (pointed_col - 1 < buffer[pointed_row].length()) {
-          prev_c = buffer[pointed_row][pointed_col - 1];
+      int prev_idx = pointed_col - 1;
+      while (prev_idx > 0 && is_continuation(buffer[pointed_row][prev_idx])) {
+          prev_idx--;
       }
       
-      if (prev_c == ' ') break; // If left char is space, we are at start of word
+      char prev_c = ' ';
+      if (prev_idx < buffer[pointed_row].length()) {
+          prev_c = buffer[pointed_row][prev_idx];
+      }
+      
+      if (prev_c == ' ') break; 
       
       editor::movement::move_left();
   }
@@ -279,9 +328,7 @@ void editor::movement::move_to_previous_word()
 
 void editor::movement::move_to_end_of_file()
 {
-  // point to the last row
   pointed_row = buffer.getSize() - 1;
-
   starting_row = std::max((int) (buffer.getSize() - max_row), 0);
   move2X(buffer[pointed_row].length());
   cursor.setY(pointed_row - starting_row);

@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <ncurses.h> 
+#include <ncursesw/ncurses.h> 
 #include <iostream>
 #include "screen.hpp"
 

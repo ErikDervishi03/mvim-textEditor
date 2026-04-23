@@ -12,47 +12,40 @@ endif()
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
-# Try to find ncurses
-find_package(Curses)
+# --- MODIFICHE BASATE SUL MANUALE NCURSES(3X) ---
 
-# If ncurses is not found, give instructions to install it
-if(NOT CURSES_FOUND)
-  message(STATUS "Ncurses not found.")
-  
-  # Detect OS and provide installation instructions
-  if(UNIX AND NOT APPLE)
-    message(STATUS "To install ncurses on a Linux system, run:")
-    message(STATUS "  sudo apt-get install libncurses5-dev libncursesw5-dev")
-  elseif(APPLE)
-    message(STATUS "To install ncurses on macOS, run:")
-    message(STATUS "  brew install ncurses")
-  else()
-    message(FATAL_ERROR "Ncurses not found. Please install it manually.")
-  endif()
+# 1. Abilita le feature Wide Character negli header
+# "X/Open Curses, Issue 7 (2009) recommends defining it to 700"
+add_definitions(-D_XOPEN_SOURCE=700)
+# "Alternatively, you can enable the feature by defining NCURSES_WIDECHAR"
+add_definitions(-DNCURSES_WIDECHAR=1)
 
-  message(FATAL_ERROR "Ncurses is required to build this project. Please install it and retry.")
+# 2. Trova e linka ncursesw (Wide)
+# Il manuale specifica che i nomi hanno una "w" appesa (es. -lncursesw)
+find_library(NCURSESW_LIB NAMES ncursesw)
+find_path(NCURSESW_INCLUDE_DIR NAMES ncurses.h PATH_SUFFIXES ncursesw)
+
+if(NCURSESW_LIB AND NCURSESW_INCLUDE_DIR)
+  message(STATUS "Found ncursesw: ${NCURSESW_LIB}")
+  message(STATUS "Header Path: ${NCURSESW_INCLUDE_DIR}")
+  set(CURSES_LIBRARIES ${NCURSESW_LIB})
+  set(CURSES_INCLUDE_DIR ${NCURSESW_INCLUDE_DIR})
 else()
-  message(STATUS "Ncurses found!")
+  message(FATAL_ERROR "ncursesw (Wide) non trovata. Installa libncursesw5-dev o ncurses-devel.")
 endif()
+# ------------------------------------------------
 
-# Include ncurses headers
 include_directories(${CURSES_INCLUDE_DIR})
 
-# Collect all source files
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 
-# Add the executable with all source files
 add_executable(mvim ${SRC_FILES})
 
-# Link against the ncurses library
+# Forza l'inclusione della directory corretta PRIMA di quelle di sistema
+target_include_directories(mvim BEFORE PUBLIC ${CURSES_INCLUDE_DIR})
 target_include_directories(mvim PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(mvim ${CURSES_LIBRARIES})
 
-# Install the executable globally
 install(TARGETS mvim DESTINATION /usr/local/bin)
-
-# Install the languages directory to /usr/local/share/mvim/languages
 install(DIRECTORY languages DESTINATION /usr/local/share/mvim)
-
-# Install the configuration file
 install(FILES .mvimrc DESTINATION /usr/local/share/mvim)

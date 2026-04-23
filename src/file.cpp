@@ -1,5 +1,5 @@
 #include "../include/editor.hpp"
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include "../include/syntax.hpp"
 #include <algorithm>
 
@@ -23,8 +23,6 @@ void editor::file::save()
       ErrorHandler::instance().report(ErrorLevel::ERROR, "Cannot open file: " + pointed_file);
       return;
     }
-
-    editor::system::restore();
 
     for (int i = 0; i < buffer.getSize(); i++)
     {

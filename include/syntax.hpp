@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <filesystem>
 #include "globals/mvimResources.h"
 

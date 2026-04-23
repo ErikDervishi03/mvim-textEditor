@@ -7,7 +7,7 @@
 #include "textBuffer.hpp"
 #include "windowManager.hpp"
 #include <array>
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <stdexcept>
 
 // Maximum number of buffers

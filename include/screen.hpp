@@ -1,7 +1,7 @@
 #pragma once
 
 #include <deque>
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <string>
 #include <chrono>
 #include <vector>

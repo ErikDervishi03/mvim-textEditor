@@ -3,7 +3,7 @@
 #include <cstddef>
 
 
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <iostream> // std::cerr
 #include <map> // for Keymap
 #include <functional> // for storing functions or lambdas

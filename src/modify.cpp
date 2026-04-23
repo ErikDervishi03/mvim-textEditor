@@ -2,6 +2,22 @@
 #include "../include/clipboardManager.hpp"
 #include <ncurses.h>
 
+// Helper to detect UTF-8 continuation bytes (10xxxxxx)
+static bool is_continuation(char c) {
+    return (c & 0xC0) == 0x80;
+}
+
+// Helper to get the length of the UTF-8 character starting at 'index'
+static int get_utf8_char_len(const std::string& line, int index) {
+    if (index >= line.length()) return 1;
+    unsigned char c = (unsigned char)line[index];
+    if ((c & 0x80) == 0) return 1;
+    if ((c & 0xE0) == 0xC0) return 2;
+    if ((c & 0xF0) == 0xE0) return 3;
+    if ((c & 0xF8) == 0xF0) return 4;
+    return 1;
+}
+
 // Helper function used in older versions
 static void reverse_insert(int row, int col)
 {
@@ -47,14 +63,30 @@ void editor::modify::insert_letter(int letter)
 
   buffer.insert_letter(pointed_row, pointed_col, letter);
 
-  if (cursor.getX() == max_col - 1)
+  // UTF-8: Check if we are inserting a continuation byte
+  bool is_cont = is_continuation((char)letter);
+
+  // Only move the VISUAL cursor if it is NOT a continuation byte
+  if (!is_cont) 
   {
-    starting_col++;
+      if (cursor.getX() == max_col - 1)
+      {
+        // UTF-8 SCROLL: 
+        // Instead of blindly doing starting_col++, we must skip the entire 
+        // character that is currently at the left edge (starting_col).
+        int char_len = 1;
+        if (starting_col < buffer[pointed_row].length()) {
+            char_len = get_utf8_char_len(buffer[pointed_row], starting_col);
+        }
+        starting_col += char_len;
+      }
+      else
+      {
+        cursor.move_right();
+      }
   }
-  else
-  {
-    cursor.move_right();
-  }
+  
+  // Always increment the internal byte buffer position
   pointed_col++;
 }
 
@@ -110,43 +142,87 @@ void editor::modify::delete_letter()
   }
   else if (pointed_col > 0) 
   {
-    if(starting_col + 1 == pointed_col && starting_col != 0) starting_col--;
-    else cursor.move_left();
-    pointed_col--;
-
-    char char_to_delete = buffer[pointed_row][pointed_col];
-    if (!is_undoing) {
-        editor::action_history.push({ActionType::DELETE_CHAR, (int)pointed_row, (int)pointed_col, char_to_delete, "", false});
+    // UTF-8: Identify how many bytes to delete (Backwards scan)
+    int bytes_to_delete = 0;
+    int temp_col = pointed_col;
+    
+    // Step back as long as we see continuation bytes
+    while (temp_col > 0 && is_continuation(buffer[pointed_row][temp_col - 1])) {
+        temp_col--;
+        bytes_to_delete++;
     }
+    // Add 1 for the start byte
+    temp_col--;
+    bytes_to_delete++;
 
-    buffer.delete_letter(pointed_row, pointed_col);
+    // Update visual cursor (move left once per character, not per byte)
+    // UTF-8 SCROLL BACK:
+    if(starting_col > 0 && pointed_col <= starting_col + 1) // At/Near left edge
+    {
+         // Find start of char before starting_col to scroll back correctly
+         int prev = starting_col - 1;
+         while(prev > 0 && is_continuation(buffer[pointed_row][prev])) prev--;
+         starting_col = prev;
+    }
+    else {
+        cursor.move_left();
+    }
+    
+    // Move internal pointer to start of char
+    pointed_col = temp_col; 
+
+    // Delete ALL bytes of this character
+    // Chain the deletions for UNDO so they restore as one block
+    for(int i=0; i < bytes_to_delete; i++) {
+        int del_index = pointed_col + bytes_to_delete - 1 - i;
+        char char_to_delete = buffer[pointed_row][del_index]; 
+        
+        // The first byte deleted (last in loop) starts the chain. 
+        // Wait: The loop deletes from right to left (end of char to start).
+        // The first action pushed (highest index) should NOT be chained to previous random actions.
+        // Subsequent bytes (lower indexes) SHOULD be chained to this one.
+        bool chain = (i > 0); 
+        
+        if (!is_undoing) {
+            editor::action_history.push({ActionType::DELETE_CHAR, (int)pointed_row, del_index, char_to_delete, "", chain});
+        }
+        buffer.delete_letter(pointed_row, del_index);
+    }
+    // Reset pointed_col to where it should be (already done via temp_col logic, but ensure it matches buffer state)
+    // Actually the loop above deletes at `del_index`. pointed_col remains at `temp_col`.
   }
 }
 
 void editor::modify::normal_delete_letter()
 {
-  if (buffer[pointed_row].length() == 0) return;
+  if (buffer[pointed_row].length() == 0 || pointed_col >= buffer[pointed_row].length()) return;
 
   status = Status::unsaved;
 
-  if (buffer[pointed_row].length() == pointed_col)
+  // UTF-8: Identify bytes to delete (Forward scan)
+  int bytes_to_delete = 1;
+  while (pointed_col + bytes_to_delete < buffer[pointed_row].length() && 
+         is_continuation(buffer[pointed_row][pointed_col + bytes_to_delete])) 
   {
-    editor::movement::move_left();
+      bytes_to_delete++;
   }
 
-  char char_to_delete = buffer[pointed_row][pointed_col];
-  if (!is_undoing) {
-      editor::action_history.push({ActionType::DELETE_CHAR, (int)pointed_row, (int)pointed_col, char_to_delete, "", false});
-  }
+  // Delete all bytes
+  for(int i=0; i<bytes_to_delete; i++) {
+      // Always delete at pointed_col (buffer shifts left)
+      char char_to_delete = buffer[pointed_row][pointed_col];
+      bool chain = (i > 0);
 
-  buffer.delete_letter(pointed_row, pointed_col);
+      if (!is_undoing) {
+          editor::action_history.push({ActionType::DELETE_CHAR, (int)pointed_row, (int)pointed_col, char_to_delete, "", chain});
+      }
+      buffer.delete_letter(pointed_row, pointed_col);
+  }
 }
 
 void editor::modify::tab()
 {
   status = Status::unsaved;
-  // Tabs are inserted as multiple spaces. 
-  // Because our insert_letter logic groups spaces, the entire tab will automatically be undone in one go.
   for (int i = 0; i < tab_size; i++)
   {
     editor::modify::insert_letter(' ');
@@ -182,7 +258,6 @@ void editor::modify::delete_row()
 
 void editor::modify::paste()
 {
-  // 1. SYNC FROM SYSTEM: Fetch the latest text from the PC clipboard
   copy_paste_buffer = ClipboardManager::getSystemClipboard();
 
   if (copy_paste_buffer.length() > 0)

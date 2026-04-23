@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 #include <map>
 #include <string>
 #include <variant>

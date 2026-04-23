@@ -4,7 +4,7 @@
 #include "../include/globals/consts.h" 
 #include <fstream>
 #include <algorithm>
-#include <ncurses.h> 
+#include <ncursesw/ncurses.h> 
 
 // Helper macro for Ctrl keys
 #ifndef ctrl
