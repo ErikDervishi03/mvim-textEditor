@@ -87,16 +87,10 @@ void editor::file::read(std::string file_name)
       // LOCK_EX = Exclusive lock, LOCK_NB = Non-Blocking (returns immediately if locked)
       if (flock(new_lock_fd, LOCK_EX | LOCK_NB) == -1)
       {
-        if(BufferManager::instance().getBufferCount() == 1) 
-        {
-          close(new_lock_fd);
-          ErrorHandler::instance().report(ErrorLevel::FATAL, "File is already open in another instance!");
-        }else
-        {
-          ErrorHandler::instance().report(ErrorLevel::ERROR, "File is already open in another instance!");
-          close(new_lock_fd);
-        }
 
+        ErrorHandler::instance().report(ErrorLevel::ERROR, "File is already open in another instance!");
+        close(new_lock_fd);
+        
         return; // Abort reading
       }
     }

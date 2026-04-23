@@ -97,6 +97,30 @@ void editor::visual::highlight_keywords()
   int visible_start_row = starting_row;
   int visible_end_row = std::min((int)(starting_row + max_row), buffer.getSize() - 1);
 
+  // --- Pre-calculate if we start inside a multi-line comment ---
+  bool in_multiline_comment = false;
+  if (!lang->multiLineCommentStart.empty() && !lang->multiLineCommentEnd.empty()) {
+      for (int r = 0; r < visible_start_row; ++r) {
+          std::string& r_str = buffer[r];
+          size_t pos = 0;
+          while (pos < r_str.length()) {
+              if (!in_multiline_comment) {
+                  pos = r_str.find(lang->multiLineCommentStart, pos);
+                  if (pos != std::string::npos) {
+                      in_multiline_comment = true;
+                      pos += lang->multiLineCommentStart.length();
+                  } else break;
+              } else {
+                  pos = r_str.find(lang->multiLineCommentEnd, pos);
+                  if (pos != std::string::npos) {
+                      in_multiline_comment = false;
+                      pos += lang->multiLineCommentEnd.length();
+                  } else break;
+              }
+          }
+      }
+  }
+
   for (int row = visible_start_row; row <= visible_end_row; ++row)
   {
     std::string& buffer_row = buffer[row];
@@ -111,7 +135,6 @@ void editor::visual::highlight_keywords()
 
             while (found_pos != std::string::npos)
             {
-                // Use existing boundary checks
                 if (IS_LEFT_BOUNDARY_VALID(found_pos) && IS_RIGHT_BOUNDARY_VALID(found_pos, keyword_len))        
                 {
                     editor::visual::highlight_row_portion(row,
@@ -127,7 +150,6 @@ void editor::visual::highlight_keywords()
     /* 3. Highlight Brackets */
     if (!lang->brackets.empty()) {
         for (char bracketChar : lang->brackets) {
-            // Convert char to string for find
             std::string bracket(1, bracketChar); 
             size_t found_pos = buffer_row.find(bracket);
 
@@ -149,8 +171,6 @@ void editor::visual::highlight_keywords()
 
         if (single_line_comment_pos != std::string::npos)
         {
-            // FIX: Check visibility >= 0. Also check if comment starts BEFORE screen ( < starting_col)
-            // If it starts before, it extends into view, so we highlight it.
             if(IS_VISIBLE_HORIZONTALLY(single_line_comment_pos) || single_line_comment_pos < starting_col){ 
                 editor::visual::highlight_row_portion(row,
                                                       single_line_comment_pos + span + 1,
@@ -162,45 +182,42 @@ void editor::visual::highlight_keywords()
 
     /* 5. Highlight Multi-line Comments */
     if (!lang->multiLineCommentStart.empty() && !lang->multiLineCommentEnd.empty()) {
-        size_t multi_start = buffer_row.find(lang->multiLineCommentStart);
-        size_t multi_end = buffer_row.find(lang->multiLineCommentEnd, multi_start);
-
-        // Case A: Start and End on same line
-        if (multi_start != std::string::npos && multi_end != std::string::npos)
-        {
-            editor::visual::highlight_row_portion(row, 
-                                                  multi_start + span + 1,
-                                                  multi_end + lang->multiLineCommentEnd.length() + span,
-                                                  commentsColor);
-        }
-        // Case B: Starts on this line, ends later
-        else if (multi_start != std::string::npos)
-        {
-            // Highlight rest of this line
-            editor::visual::highlight_row_portion(row,
-                                                  multi_start + span + 1,
-                                                  buffer_row.size() + span, 
-                                                  commentsColor);
-
-            // Highlight subsequent lines until end token found
-            int next_row = row + 1;
-            while (next_row <= visible_end_row && buffer[next_row].find(lang->multiLineCommentEnd) == std::string::npos)
-            {
-                editor::visual::highlight_row_portion(next_row,
-                                                      span + 1,
-                                                      buffer[next_row].size() + span, 
-                                                      commentsColor);
-                next_row++;
-            }
-
-            // Highlight the closing line if visible
-            if (next_row <= visible_end_row)
-            {
-                size_t end_pos_next = buffer[next_row].find(lang->multiLineCommentEnd);
-                editor::visual::highlight_row_portion(next_row, 
-                                                      span + 1,
-                                                      end_pos_next + lang->multiLineCommentEnd.length() + span, 
-                                                      commentsColor);
+        if (in_multiline_comment && buffer_row.empty()) {
+            // Keep empty lines highlighted if they are inside a comment block
+            editor::visual::highlight_row_portion(row, span + 1, span + 1, commentsColor);
+        } else {
+            size_t pos = 0;
+            while (pos < buffer_row.length()) {
+                if (!in_multiline_comment) {
+                    size_t start_pos = buffer_row.find(lang->multiLineCommentStart, pos);
+                    if (start_pos == std::string::npos) break; // No comment starts on this line
+                    
+                    in_multiline_comment = true;
+                    size_t end_pos = buffer_row.find(lang->multiLineCommentEnd, start_pos + lang->multiLineCommentStart.length());
+                    
+                    if (end_pos != std::string::npos) {
+                        // Comment starts and ends on this line
+                        editor::visual::highlight_row_portion(row, start_pos + span + 1, end_pos + lang->multiLineCommentEnd.length() + span, commentsColor);
+                        in_multiline_comment = false;
+                        pos = end_pos + lang->multiLineCommentEnd.length();
+                    } else {
+                        // Comment starts on this line, and continues downwards
+                        editor::visual::highlight_row_portion(row, start_pos + span + 1, buffer_row.length() + span, commentsColor);
+                        break; 
+                    }
+                } else {
+                    size_t end_pos = buffer_row.find(lang->multiLineCommentEnd, pos);
+                    if (end_pos != std::string::npos) {
+                        // Comment ends on this line
+                        editor::visual::highlight_row_portion(row, pos + span + 1, end_pos + lang->multiLineCommentEnd.length() + span, commentsColor);
+                        in_multiline_comment = false;
+                        pos = end_pos + lang->multiLineCommentEnd.length();
+                    } else {
+                        // Comment covers the entire line
+                        editor::visual::highlight_row_portion(row, pos + span + 1, buffer_row.length() + span, commentsColor);
+                        break; 
+                    }
+                }
             }
         }
     }
