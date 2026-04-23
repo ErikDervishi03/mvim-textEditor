@@ -306,7 +306,6 @@ void editor::movement::move_to_end_of_file()
 
 void editor::movement::move_to_beginning_of_file()
 {
-  starting_row = pointed_row = 0;
-  starting_col = pointed_col = 0;
-  cursor.set(0, 0);
+  editor::movement::move2Y(0, true); 
+  editor::movement::move2X(0);
 }
