@@ -183,20 +183,8 @@ void editor::movement::move_right()
 void editor::movement::go_down_creating_newline()
 {
   buffer.new_row("", pointed_row + 1);
-  
-  if (cursor.getY() >= max_row - SCROLL_START_THRESHOLD - 1 &&
-      !buffer.is_void_row(max_row) && pointed_row < buffer.getSize())
-  {
-    starting_row++;
-  }
-  else if (cursor.getY() < max_row - 1)
-  {
-    cursor.move_down();
-  }
-
-  move2X(0);
-  pointed_row++;
-
+  editor::movement::move_down();
+  editor::movement::move2X(0);
   editor::system::change2insert();
 }
 
