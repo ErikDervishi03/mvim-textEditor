@@ -215,42 +215,32 @@ void editor::movement::move_to_beginning_of_line()
 
 void editor::movement::move_to_next_word()
 {
-  if (pointed_row >= buffer.getSize()) return;
+  int row_length = buffer[pointed_row].length();
+  int target_col = pointed_col;
 
-  std::string current_row = buffer[pointed_row];
-  int row_length = current_row.length();
-
-  while (pointed_col < row_length && current_row[pointed_col] != ' ')
-  {
-    editor::movement::move_right();
-    if (pointed_col >= buffer[pointed_row].length())
-    {
-      if (pointed_row < buffer.getSize() - 1)
-      {
-        editor::movement::move_down();
-        move2X(0);
-      }
-      return;
-    }
+  // 1. Skip the current word (traverse non-spaces forward)
+  while (target_col < row_length && buffer[pointed_row][target_col] != ' ') {
+      target_col++;
   }
 
-  while (pointed_col < buffer[pointed_row].length() && buffer[pointed_row][pointed_col] == ' ')
-  {
-    editor::movement::move_right();
-    
-    if (pointed_col >= buffer[pointed_row].length())
-    {
-      if (pointed_row < buffer.getSize() - 1)
-      {
-        editor::movement::move_down();
-        move2X(0);
+  // 2. Skip trailing spaces (find the start of the next word)
+  while (target_col < row_length && buffer[pointed_row][target_col] == ' ') {
+      target_col++;
+  }
+
+  // 3. Jump to the new position or wrap to the next line
+  if (target_col >= row_length) {
+      if (pointed_row < buffer.getSize() - 1) {
+          // Wrap to the beginning of the next line
+          editor::movement::move_down();
+          editor::movement::move2X(0);
+      } else {
+          // Reached the very end of the file
+          editor::movement::move2X(row_length); 
       }
-      return;
-    }
-    else if (isalnum(buffer[pointed_row][pointed_col]))
-    {
-      return;
-    }
+  } else {
+      // Jump directly to the start of the next word on the current line
+      editor::movement::move2X(target_col);
   }
 }
 
