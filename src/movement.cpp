@@ -205,9 +205,7 @@ void editor::movement::go_up_creating_newline()
 
 void editor::movement::move_to_end_of_line()
 {
-  const int currRowLen = buffer[pointed_row].length();
-  move2X(currRowLen);
-  cursor.setY(pointed_row - starting_row);
+  editor::movement::move2X(buffer[pointed_row].length());
 }
 
 void editor::movement::move_to_beginning_of_line()
