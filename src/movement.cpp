@@ -218,13 +218,13 @@ void editor::movement::move_to_next_word()
   int row_length = buffer[pointed_row].length();
   int target_col = pointed_col;
 
-  // 1. Skip the current word (traverse non-spaces forward)
-  while (target_col < row_length && buffer[pointed_row][target_col] != ' ') {
+  // 1. Skip the current word (traverse letters forward)
+  while (target_col < row_length && isalpha(buffer[pointed_row][target_col])) {
       target_col++;
   }
 
-  // 2. Skip trailing spaces (find the start of the next word)
-  while (target_col < row_length && buffer[pointed_row][target_col] == ' ') {
+  // 2. Skip EVERYTHING that isn't a letter (spaces, symbols, punctuation)
+  while (target_col < row_length && !isalpha(buffer[pointed_row][target_col])) {
       target_col++;
   }
 
@@ -239,51 +239,62 @@ void editor::movement::move_to_next_word()
           editor::movement::move2X(row_length); 
       }
   } else {
-      // Jump directly to the start of the next word on the current line
+      // Jump directly to the start of the next word
       editor::movement::move2X(target_col);
   }
 }
 
 void editor::movement::move_to_previous_word()
 {
+  // Safety check: already at the beginning of the file
   if (pointed_row == 0 && pointed_col == 0) return;
 
-  editor::movement::move_left();
+  int target_row = pointed_row;
+  int target_col = pointed_col - 1;
 
-  while (true) 
+  // 1. Skip non-letters backwards (spaces, symbols, punctuation) 
+  // and handle line wrapping safely
+  while (true)
   {
-      if (pointed_row < 0) return;
-      
-      char c = ' ';
-      if (pointed_col < buffer[pointed_row].length()) {
-          c = buffer[pointed_row][pointed_col];
+    if (target_col < 0) 
+    {
+      if (target_row == 0)
+      {
+        // Reached the very beginning of the file while scanning
+        editor::movement::move2Y(0);
+        editor::movement::move2X(0);
+        return;
       }
-      
-      if (c != ' ') break; 
-      
-      if (pointed_row == 0 && pointed_col == 0) return;
-      
-      editor::movement::move_left();
+      // Wrap to the end of the previous line
+      target_row--;
+      target_col = buffer[target_row].length() - 1;
+      continue;
+    }
+
+    if (isalpha(buffer[target_row][target_col]))
+    {
+      break; // Found the end of the previous actual word
+    }
+    target_col--;
   }
 
-  while (true) 
+  // 2. Skip letters backwards to find the exact start of the word
+  while (target_col >= 0 && isalpha(buffer[target_row][target_col]))
   {
-      if (pointed_col == 0) return; 
-      
-      int prev_idx = pointed_col - 1;
-      while (prev_idx > 0 && is_continuation(buffer[pointed_row][prev_idx])) {
-          prev_idx--;
-      }
-      
-      char prev_c = ' ';
-      if (prev_idx < buffer[pointed_row].length()) {
-          prev_c = buffer[pointed_row][prev_idx];
-      }
-      
-      if (prev_c == ' ') break; 
-      
-      editor::movement::move_left();
+    target_col--;
   }
+
+  // target_col is now pointing to the character right before the word.
+  // Add 1 to point to the first letter of the word.
+  target_col++;
+
+  // 3. Jump directly to the calculated coordinates
+  if (target_row != pointed_row)
+  {
+    editor::movement::move2Y(target_row);
+  }
+  
+  editor::movement::move2X(target_col);
 }
 
 void editor::movement::move_to_end_of_file()

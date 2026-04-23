@@ -8,17 +8,17 @@
 
 class ClipboardManager {
 public:
+
     // Pushes text to the System Clipboard
     static void setSystemClipboard(const std::string& text) {
-        // Write to a temporary file first to avoid shell quoting issues
-        std::ofstream clipboardFile("/tmp/mvim_clipboard_buffer.txt");
-        if (clipboardFile.is_open()) {
-            clipboardFile << text;
-            clipboardFile.close();
-            // Pipe the file into xclip's clipboard selection
-            std::system("xclip -selection clipboard -i < /tmp/mvim_clipboard_buffer.txt");
+        // Open a pipe to write directly to xclip's standard input
+        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("xclip -selection clipboard -i 2>/dev/null", "w"), pclose);
+        
+        if (pipe) {
+            // Write the copied text directly to the process
+            fwrite(text.c_str(), 1, text.length(), pipe.get());
         }
-    }
+}
 
     // Pulls text from the System Clipboard
     static std::string getSystemClipboard() {
