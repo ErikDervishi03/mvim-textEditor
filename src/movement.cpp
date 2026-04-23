@@ -210,23 +210,7 @@ void editor::movement::move_to_end_of_line()
 
 void editor::movement::move_to_beginning_of_line()
 {
-  std::string current_row = buffer[pointed_row];
-  int row_length = current_row.length();
-  int count = 0;
-
-  while (count < row_length && current_row[count] == ' ')
-  {
-    count++;
-  }
-
-  if (count != row_length)
-  {
-    move2X(count);
-  }
-  else
-  {
-    move2X(0);
-  }
+  editor::movement::move2X(0);
 }
 
 void editor::movement::move_to_next_word()
