@@ -258,7 +258,9 @@ void editor::modify::delete_row()
 
 void editor::modify::paste()
 {
-  copy_paste_buffer = ClipboardManager::getSystemClipboard();
+  if (!is_undoing) {
+      copy_paste_buffer = ClipboardManager::getSystemClipboard();
+  }
 
   if (copy_paste_buffer.length() > 0)
   {
@@ -405,20 +407,24 @@ void editor::modify::delete_word_backyard()
     return;
   }
 
-  status = Status::unsaved;
-  char curr_char_pointed = buffer[pointed_row][pointed_col - 1];
+  int start = pointed_col - 1;
+  int end = pointed_col - 1;
 
-  while (curr_char_pointed == ' ')
+  while (start >= 0 && buffer[pointed_row][start] == ' ')
   {
-    editor::modify::delete_letter();
-    if (pointed_col == 0) return;
-    curr_char_pointed = buffer[pointed_row][pointed_col - 1];
+    start--;
   }
 
-  while (curr_char_pointed != ' ' && pointed_col > 0)
+  while (start >= 0 && buffer[pointed_row][start] != ' ')
   {
-    editor::modify::delete_letter();
-    curr_char_pointed = buffer[pointed_row][pointed_col - 1];
+    start--;
+  }
+
+  // We add 1 to point exactly to the first character we want to delete.
+  start++;
+
+  if (start <= end) {
+      editor::modify::delete_selection(pointed_row, pointed_row, start, end);
   }
 }
 
