@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 namespace editor {
   namespace system
   {

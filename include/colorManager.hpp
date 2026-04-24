@@ -1,3 +1,4 @@
+#pragma once
 #include "globals/mvimResources.h"
 
 #define nColor 8

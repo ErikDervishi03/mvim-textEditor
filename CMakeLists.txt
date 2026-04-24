@@ -1,53 +1,56 @@
-cmake_minimum_required(VERSION 3.10)
+# Bumped to 3.16 to support Precompiled Headers (PCH)
+cmake_minimum_required(VERSION 3.16)
+
 project(
-  project_00819
+  mvim_text_editor
   VERSION 1.0.0
   DESCRIPTION "IDE vim-like"
   LANGUAGES C CXX
 )
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
+# --- 1. UNITY BUILD (The Ultimate Speed Hack) ---
+# This merges all your .cpp files into one giant file before compiling.
+# The compiler only parses your headers ONCE for the entire project!
+set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_UNITY_BUILD_BATCH_SIZE 4) 
 
-# --- MODIFICHE BASATE SUL MANUALE NCURSES(3X) ---
+set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
-# 1. Abilita le feature Wide Character negli header
-# "X/Open Curses, Issue 7 (2009) recommends defining it to 700"
-add_definitions(-D_XOPEN_SOURCE=700)
-# "Alternatively, you can enable the feature by defining NCURSES_WIDECHAR"
-add_definitions(-DNCURSES_WIDECHAR=1)
+# Find ncurses library
+find_package(Curses REQUIRED)
 
-# 2. Trova e linka ncursesw (Wide)
-# Il manuale specifica che i nomi hanno una "w" appesa (es. -lncursesw)
-find_library(NCURSESW_LIB NAMES ncursesw)
-find_path(NCURSESW_INCLUDE_DIR NAMES ncurses.h PATH_SUFFIXES ncursesw)
+# Include directories
+include_directories(${CURSES_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-if(NCURSESW_LIB AND NCURSESW_INCLUDE_DIR)
-  message(STATUS "Found ncursesw: ${NCURSESW_LIB}")
-  message(STATUS "Header Path: ${NCURSESW_INCLUDE_DIR}")
-  set(CURSES_LIBRARIES ${NCURSESW_LIB})
-  set(CURSES_INCLUDE_DIR ${NCURSESW_INCLUDE_DIR})
-else()
-  message(FATAL_ERROR "ncursesw (Wide) non trovata. Installa libncursesw5-dev o ncurses-devel.")
-endif()
-# ------------------------------------------------
-
-include_directories(${CURSES_INCLUDE_DIR})
-
+# Collect source files (Note: If you add new files, remember to re-run cmake ..)
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 
+# Add the executable
 add_executable(mvim ${SRC_FILES})
 
-target_precompile_headers(mvim PRIVATE <string> <vector> <stack> <map> <iostream>)
+# --- 2. PRECOMPILED HEADERS (PCH) ---
+# Pre-bakes these massive standard libraries into a binary format
+# so they are instantly loaded instead of parsed line-by-line.
+target_precompile_headers(mvim PRIVATE 
+    <string> 
+    <vector> 
+    <deque>
+    <stack> 
+    <map>
+    <variant>
+    <memory>
+    <filesystem>
+    <fstream>
+)
 
-# Forza l'inclusione della directory corretta PRIMA di quelle di sistema
-target_include_directories(mvim BEFORE PUBLIC ${CURSES_INCLUDE_DIR})
-target_include_directories(mvim PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# Link against the ncurses library
 target_link_libraries(mvim ${CURSES_LIBRARIES})
 
-install(TARGETS mvim DESTINATION /usr/local/bin)
-install(DIRECTORY languages DESTINATION /usr/local/share/mvim)
-install(FILES .mvimrc DESTINATION /usr/local/share/mvim)
+# Install target
+install(TARGETS mvim DESTINATION bin)

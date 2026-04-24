@@ -5,14 +5,10 @@
 #include "../include/editor/visual.hpp"
 #include "../include/clipboardManager.hpp"
 #include "../include/globals/mvimResources.h"
+#include "../include/utils.hpp"
 
 #include <string>
 #include <stack>
-
-// Helper to detect UTF-8 continuation bytes (10xxxxxx)
-static bool is_continuation(char c) {
-    return (c & 0xC0) == 0x80;
-}
 
 // Helper to get the length of the UTF-8 character starting at 'index'
 static int get_utf8_char_len(const std::string& line, int index) {
