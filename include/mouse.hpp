@@ -1,5 +1,4 @@
 #pragma once
-#include <ncursesw/ncurses.h>
 
 namespace Mouse {
     /**

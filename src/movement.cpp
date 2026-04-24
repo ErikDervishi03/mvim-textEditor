@@ -1,4 +1,10 @@
-#include "../include/editor.hpp"
+#include "../include/editor/movement.hpp"
+#include "../include/editor/system.hpp"      // Needed for change2insert()
+#include "../include/globals/mvimResources.h" // Needed for global cursor, buffer, max_row, etc.
+
+#include <string>
+#include <cctype>    // Needed for isalpha()
+#include <algorithm> // Needed for std::max()
 
 static bool is_continuation(char c) {
     return (c & 0xC0) == 0x80;

@@ -1,10 +1,11 @@
 #pragma once
 
 #include <deque>
-#include <ncursesw/ncurses.h>
 #include <string>
 #include <chrono>
-#include <vector>
+
+struct _win_st;           
+typedef struct _win_st WINDOW;
 
 /**
  * @class Screen

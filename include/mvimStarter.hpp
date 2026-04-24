@@ -1,7 +1,6 @@
 #pragma once
 
 // Include necessary headers
-#include "colorManager.hpp"
 #include "service.hpp"
 #include "screen.hpp"
 #include "command.hpp"

@@ -1,10 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <map>
-#include <ncursesw/ncurses.h>
 #include <filesystem>
-#include "globals/mvimResources.h"
 
 struct SyntaxGroup {
     std::vector<std::string> keywords;

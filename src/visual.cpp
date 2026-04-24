@@ -1,6 +1,14 @@
-#include "../include/editor.hpp"
-#include "../include/syntax.hpp"
+#include "../include/editor/visual.hpp"
+#include "../include/editor/system.hpp"     // Needed for changing modes
+#include "../include/editor/modify.hpp"  
+#include "../include/editor/movement.hpp" 
 #include "../include/clipboardManager.hpp"
+#include "../include/syntax.hpp"
+#include "../include/globals/mvimResources.h"
+
+#include <ncurses.h>
+#include <string>
+#include <algorithm> // Needed for std::min / std::max
 
 // Check if the character before the found position is a valid boundary (whitespace or delimiter)
 #define IS_LEFT_BOUNDARY_VALID(pos) \

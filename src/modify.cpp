@@ -1,6 +1,13 @@
-#include "../include/editor.hpp"
+#include "../include/editor/modify.hpp"
+#include "../include/editor/state.hpp"      // Needed for action_history
+#include "../include/editor/system.hpp"     // Needed for change2... modes
+#include "../include/editor/movement.hpp"   // Needed for move2X, move_down, etc.
+#include "../include/editor/visual.hpp"
 #include "../include/clipboardManager.hpp"
-#include <ncurses.h>
+#include "../include/globals/mvimResources.h"
+
+#include <string>
+#include <stack>
 
 // Helper to detect UTF-8 continuation bytes (10xxxxxx)
 static bool is_continuation(char c) {

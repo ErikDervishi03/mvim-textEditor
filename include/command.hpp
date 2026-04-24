@@ -1,5 +1,12 @@
 #pragma once
-#include "editor.hpp"
+
+#include "editor/movement.hpp"
+#include "editor/modify.hpp"
+#include "editor/system.hpp"
+#include "editor/find.hpp"
+#include "editor/visual.hpp"
+#include "editor/file.hpp"
+#include "globals/mvimResources.h"
 #include "configParser.hpp" 
 #include "globals/consts.h" 
 #include <ncursesw/ncurses.h>

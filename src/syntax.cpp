@@ -1,4 +1,7 @@
 #include "../include/syntax.hpp"
+#include "../include/errorHandler.hpp"
+#include "../include/colorManager.hpp"
+#include <ncursesw/ncurses.h>
 #include <fstream>
 #include <sstream>
 

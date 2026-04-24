@@ -2,7 +2,6 @@
 #include <string>
 #include <map>
 #include <functional>
-#include "editor.hpp"
 
 class Command;
 

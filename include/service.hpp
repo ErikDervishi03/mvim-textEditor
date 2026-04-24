@@ -1,4 +1,5 @@
-#include "editor.hpp"
+#include "editor/find.hpp"
+#include "editor/visual.hpp"
 
 class service {
 public:

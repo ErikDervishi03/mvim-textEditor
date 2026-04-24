@@ -1,11 +1,20 @@
 #include "../include/configParser.hpp"
 #include "../include/command.hpp"
-#include "../include/editor.hpp"
-#include "../include/globals/consts.h" 
+#include "../include/errorHandler.hpp"
+#include "../include/globals/consts.h"
+
+// Bring in all editor modules so they can be mapped to keys
+#include "../include/editor/movement.hpp"
+#include "../include/editor/modify.hpp"
+#include "../include/editor/file.hpp"
+#include "../include/editor/system.hpp"
+#include "../include/editor/visual.hpp"
+#include "../include/editor/find.hpp"
+
 #include <fstream>
 #include <algorithm>
-#include <ncursesw/ncurses.h> 
-
+#include <filesystem>
+#include <ncurses.h>
 // Helper macro for Ctrl keys
 #ifndef ctrl
 #define ctrl(x) ((x) & 0x1f)

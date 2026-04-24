@@ -1,5 +1,13 @@
-#include "../include/editor.hpp"
-#include "../include/errorHandler.hpp" 
+#include "../include/editor/find.hpp"
+#include "../include/editor/state.hpp"      // Needed for found_occurrences
+#include "../include/editor/system.hpp"     // Needed for text_form()
+#include "../include/editor/movement.hpp"   // Needed for jumping cursor to results
+#include "../include/editor/visual.hpp" 
+#include "../include/globals/mvimResources.h"
+
+#include <ncurses.h>
+#include <string>
+#include <vector>
 #include <regex>
 
 void editor::find::find_all_occurrence(const std::string& pattern_str)

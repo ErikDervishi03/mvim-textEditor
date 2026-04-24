@@ -1,7 +1,9 @@
 #include "../include/mouse.hpp"
-#include "../include/globals/mvimResources.h"
-#include "../include/editor.hpp"
+#include "../include/editor/movement.hpp"
 #include "../include/bufferManager.hpp"
+#include "../include/globals/mvimResources.h"
+
+#include <ncurses.h>
 
 // Definitions for scroll wheel buttons if not present in older ncurses versions
 #if !defined(BUTTON4_PRESSED)

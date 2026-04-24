@@ -1,8 +1,13 @@
-#include <ncursesw/ncurses.h>
-#include <string>
-#include "../include/editor.hpp"
+#include "../include/editor/system.hpp"
+#include "../include/editor/state.hpp"      // Needed to clear action_history on restore
+#include "../include/editor/file.hpp"       // Needed to check save state or trigger saves
 #include "../include/bufferManager.hpp"
-#include <algorithm>
+#include "../include/errorHandler.hpp"
+#include "../include/globals/mvimResources.h"
+
+#include <ncurses.h>
+#include <string>
+#include <cstdlib>   // Needed for std::_Exit()
 
 // Function to prompt user for confirmation before exiting unsaved changes
 bool editor::system::confirm_exit()

@@ -1,10 +1,14 @@
 #include "../include/mvimStarter.hpp"
-#include <ncursesw/ncurses.h>
-#include <clocale>
-#include <ostream>
-#include <string>
 #include "../include/bufferManager.hpp"
 #include "../include/mouse.hpp"  
+#include "../include/editor/file.hpp"       // Needed for file::read(filename)
+
+#include <ncurses.h>
+#include <iostream>
+#include <string>
+#include <sys/file.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 // Define constants and global variables
 const char* mvim_logo =

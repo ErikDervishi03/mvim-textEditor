@@ -1,8 +1,14 @@
-#include "../include/editor.hpp"
-#include "../include/bufferManager.hpp"
-#include <ncursesw/ncurses.h>
+#include "../include/editor/file.hpp"
+#include "../include/editor/system.hpp"      
+#include "../include/bufferManager.hpp"      
+#include "../include/errorHandler.hpp"
 #include "../include/syntax.hpp"
+#include "../include/globals/mvimResources.h" 
+
+#include <ncursesw/ncurses.h>
 #include <algorithm>
+#include <filesystem> 
+#include <fstream>    
 #include <sys/file.h>
 #include <fcntl.h>
 #include <unistd.h>
