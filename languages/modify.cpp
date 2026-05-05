@@ -354,20 +354,21 @@ void editor::modify::replace()
 
 void editor::modify::delete_selection(int start_row, int end_row, int start_col, int end_col)
 {
-  status = Status::unsaved;  
+  status = Status::unsaved;
+  copy_paste_buffer.clear();    
 
   if (start_row == end_row)
   {
-    int del_start = std::min(start_col, end_col);
-    int chars_to_del = std::min(abs(end_col - start_col) + 1, (int) buffer[start_row].length());     
+    int copy_start = std::min(start_col, end_col);
+    int num_chars_to_copy = std::min(abs(end_col - start_col) + 1, (int) buffer[start_row].length());     
 
-    std::string deleted_text = buffer.slice_row(start_row, del_start, del_start + chars_to_del);
+    copy_paste_buffer = buffer.slice_row(start_row, copy_start, copy_start + num_chars_to_copy);
 
     if (!is_undoing) {
-        editor::action_history.push({ActionType::DELETE_SELECTION, start_row, del_start, 0, deleted_text, false});
+        editor::action_history.push({ActionType::DELETE_SELECTION, start_row, copy_start, 0, copy_paste_buffer, false});
     }
 
-    editor::movement::move2X(del_start);      
+    editor::movement::move2X(copy_start);      
     return;
   }
 
@@ -376,26 +377,30 @@ void editor::modify::delete_selection(int start_row, int end_row, int start_col,
     std::swap(start_row, end_row);
     std::swap(start_col, end_col);
   }
-  
-  std::string deleted_text = buffer.slice_row(start_row, start_col, buffer[start_row].length());
+
+  copy_paste_buffer = buffer.slice_row(start_row, start_col, buffer[start_row].length());
 
   for (int i = 0; i < end_row - start_row - 1; ++i)
   {
-    deleted_text += '\n' + buffer[start_row + 1];
+    copy_paste_buffer += '\n' + buffer[start_row + 1];
     buffer.del_row(start_row + 1);      
   }
-  
-  int char_to_del = std::min(end_col + 1, (int)buffer[start_row + 1].length());
-  deleted_text += '\n' + buffer.slice_row(start_row + 1, 0, char_to_del);
+
+  copy_paste_buffer += '\n' + buffer.slice_row(start_row + 1, 0, end_col);
 
   buffer.merge_rows(start_row, start_row + 1);
 
   if (!is_undoing) {
-      editor::action_history.push({ActionType::DELETE_SELECTION, start_row, start_col, 0, deleted_text, false});
+      editor::action_history.push({ActionType::DELETE_SELECTION, start_row, start_col, 0, copy_paste_buffer, false});
   }
 
-  editor::movement::move2Y(start_row, true);
+  pointed_row = start_row;
+
+  if (pointed_row > max_row / 2) starting_row = pointed_row - max_row / 2;
+  else starting_row = 0;
+
   editor::movement::move2X(start_col);
+  cursor.setY(start_row - starting_row);
 }
 
 void editor::modify::delete_word_backyard()

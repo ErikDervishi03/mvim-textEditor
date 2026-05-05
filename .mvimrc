@@ -39,7 +39,6 @@ Ctrl-Down  = move_down
 # --- Clipboard ---
 # Standard VS Code Copy/Cut
 Ctrl-c = copy_selection
-Ctrl-x = delete_selection  
 
 # --- Navigation ---
 Ctrl-Right = next_word

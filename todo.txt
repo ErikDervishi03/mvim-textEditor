@@ -1,0 +1,8 @@
+togliere i popup e mettere le domande su la linea in basso 
+tipo : you want to exit without saving(s/n):
+
+sistemare i commenti . se ci sono piu' commenti innestati tipo 
+
+/* /* */ */ non li elabora bene 
+
+i commenti non funzionano piu' nella versione multiwindow

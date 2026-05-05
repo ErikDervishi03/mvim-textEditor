@@ -122,7 +122,7 @@ public:
     // Config Shortcuts 
     visualMap[ctrl('a')] = editor::visual::select_all;      
     visualMap[ctrl('c')] = editor::visual::copy_highlighted;    
-    visualMap[ctrl('x')] = editor::visual::delete_copy_highlighted;  
+    visualMap[ctrl('x')] = editor::visual::delete_highlighted;  
     
     // Standard Vim Visual keys
     visualMap['d'] = visualMap[KEY_BACKSPACE] = editor::visual::delete_highlighted;
