@@ -147,7 +147,8 @@ namespace Mouse {
 
         // --- 3. SINGLE CLICK: Start Normal Selection ---
         else if ((bstate & BUTTON1_CLICKED) || (bstate & BUTTON1_PRESSED)) {
-            mode = Mode::normal;
+            if(mode != Mode::insert && mode != Mode::normal) mode = Mode::normal;
+
             is_dragging = false;
 
             editor::movement::move2Y(target_row);
