@@ -59,5 +59,7 @@ namespace editor {
     void select_all();
 
     void copy_line();
+
+    void copy_selection(int start_row, int start_col, int end_row, int end_col);
   };
 }

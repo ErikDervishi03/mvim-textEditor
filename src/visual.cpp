@@ -243,15 +243,8 @@ void editor::visual::delete_highlighted()
   editor::system::change2normal();
 }
 
-
-void editor::visual::copy_highlighted()
-{
+void editor::visual::copy_selection(int start_row, int start_col, int end_row, int end_col) {
   copy_paste_buffer = "";
-
-  int start_row = visual_start_row;
-  int end_row = pointed_row;
-  int start_col = visual_start_col; 
-  int end_col = pointed_col;        
 
   if (start_row == end_row)
   {
@@ -275,12 +268,19 @@ void editor::visual::copy_highlighted()
       copy_paste_buffer += '\n' + buffer[curr_row];
     }
 
-    copy_paste_buffer += '\n' + buffer[end_row].substr(0, end_col);
+    int char_to_copy = std::min(end_col + 1, (int)buffer[start_row].length());
+    copy_paste_buffer += '\n' + buffer[end_row].substr(0, char_to_copy);
   }
 
   ClipboardManager::setSystemClipboard(copy_paste_buffer);
 
   editor::system::change2normal();
+}
+
+
+void editor::visual::copy_highlighted()
+{ 
+  copy_selection(visual_start_row, visual_start_col, pointed_row, pointed_col);
 }
 
 void editor::visual::insert_brackets(char opening_bracket, char closing_bracket) {
