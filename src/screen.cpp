@@ -82,7 +82,6 @@ void Screen::print_buffer()
     std::string curr_row = buffer[i + starting_row];
 
     if(curr_row.length() > starting_col){ 
-      // [cite] Use helper to get correct byte length for visual width
       size_t bytes_to_print = get_byte_len_for_width(curr_row, starting_col, max_col);
       std::string row2print = curr_row.substr(starting_col, bytes_to_print);
       
@@ -145,6 +144,72 @@ void Screen::draw_status_bar()
   refresh(); 
 }
 
+bool Screen::prompt_confirm(const std::string& message) {
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+
+    move(max_y - 1, 0);
+    clrtoeol();
+
+    attron(A_BOLD);
+    printw("%s", message.c_str());
+    attroff(A_BOLD);
+    
+    int old_cursor_state = curs_set(1); 
+    refresh();
+
+    bool result = false;
+    int ch;
+
+    while (true) {
+        ch = getch();
+        if (ch == 'y' || ch == 'Y') {
+            result = true;
+            break;
+        } else if (ch == 'n' || ch == 'N' || ch == 27) { 
+            result = false;
+            break;
+        }
+    }
+
+    flushinp();
+
+    curs_set(old_cursor_state); 
+
+    draw_status_bar(); 
+    refresh();
+
+    return result;
+}
+
+std::string Screen::prompt_text(const std::string& message) {
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+
+    move(max_y - 1, 0);
+    clrtoeol();
+
+    printw("%s", message.c_str());
+    
+    echo();
+    // 1. Turn on the cursor, but SAVE the old state
+    int old_cursor_state = curs_set(1); 
+    refresh();
+
+    char input_buffer[256];
+    getnstr(input_buffer, 255);
+
+    flushinp();
+    noecho();
+    
+    // 2. RESTORE the cursor to whatever it was before the prompt
+    curs_set(old_cursor_state); 
+
+    draw_status_bar(); 
+    refresh();
+
+    return std::string(input_buffer);
+}
 
 void Screen::print_buffer(WINDOW* window)
 {
@@ -157,12 +222,10 @@ void Screen::print_buffer(WINDOW* window)
     std::string curr_row = buffer[i + starting_row];
 
     if(curr_row.length() > starting_col){ 
-      // [cite] Use helper for correct byte length
       size_t bytes_to_print = get_byte_len_for_width(curr_row, starting_col, max_col);
       std::string row2print = curr_row.substr(starting_col, bytes_to_print);
 
       wattron(window, COLOR_PAIR(textColor));
-      // [cite] Use printw with formatted string for safety and consistency
       mvwprintw(window, i, span + 1, "%s", row2print.c_str());
       wattroff(window, COLOR_PAIR(textColor));
     } 

@@ -114,4 +114,8 @@ public:
     void refresh_all_buffers(); 
 
     void set_status_message(const std::string& msg, int color_pair = 1);
+
+    bool prompt_confirm(const std::string& message);
+
+    std::string prompt_text(const std::string& message);
 };

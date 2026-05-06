@@ -44,7 +44,7 @@ public:
     insertMap[ctrl('z')] = editor::modify::undo;            
     insertMap[ctrl('v')] = editor::modify::paste;           
     insertMap[ctrl('a')] = editor::visual::select_all;      
-    insertMap[ctrl('f')] = editor::system::change2find;     
+    insertMap[ctrl('f')] = editor::find::find;     
     insertMap[ctrl('n')] = editor::system::new_buffer;  
     insertMap[ctrl(KEY_BACKSPACE)] = editor::modify::delete_word_backyard;
     insertMap[ctrl(KEY_BACKSPACE_LEGACY)] = editor::modify::delete_word_backyard;
@@ -90,7 +90,7 @@ public:
     normalMap[ctrl('a')] = editor::visual::select_all;      
     normalMap[ctrl('z')] = editor::modify::undo;            
     normalMap[ctrl('v')] = editor::modify::paste;           
-    normalMap[ctrl('f')] = editor::system::change2find;     
+    normalMap[ctrl('f')] = editor::find::find;    
 
     // Buffers
     normalMap[ctrl('n')] = editor::system::new_buffer;              

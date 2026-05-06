@@ -12,13 +12,11 @@ u      = undo
 # --- Navigation ---
 Ctrl-Right = next_word
 Ctrl-Left  = previous_word
-Ctrl-f     = mode_find
 
 # --- Buffers ---
 Ctrl-n = buffer_new
 Ctrl-l   = buffer_next
 Ctrl-h   = buffer_prev
-
 
 [INSERT]
 # --- Allow VS Code habits inside Insert Mode ---
@@ -43,7 +41,6 @@ Ctrl-c = copy_selection
 # --- Navigation ---
 Ctrl-Right = next_word
 Ctrl-Left  = previous_word
-
 
 [FIND]
 # --- Search Navigation ---

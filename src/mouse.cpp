@@ -30,7 +30,7 @@ namespace Mouse {
     void sync_cursor_column() {
         int target_col = 0;
         
-        // FIX: If in margin, snap to 'starting_col' (visible left edge), NOT 0.
+        // If in margin, snap to 'starting_col' (visible left edge), NOT 0.
         if (last_mouse_x < (span + 1)) {
             target_col = starting_col; 
         } else {
@@ -87,8 +87,6 @@ namespace Mouse {
             mode = Mode::visual;
             is_dragging = false;
 
-            editor::movement::move2Y(target_row);
-
             // Start at beginning of line
             visual_start_row = target_row;
             visual_start_col = 0;
@@ -96,10 +94,8 @@ namespace Mouse {
             // End at end of line
             int line_len = buffer[target_row].length();
             
-            // Move cursor to end of line
+            editor::movement::move2Y(target_row);
             editor::movement::move2X(line_len); 
-            pointed_col = line_len; // Ensure pointed_col captures the full length
-            pointed_row = target_row;
         }
 
         // --- 2. DOUBLE CLICK: Select Word ---
@@ -145,7 +141,7 @@ namespace Mouse {
             editor::movement::move2X(cursor_target);
         }
 
-        // --- 3. SINGLE CLICK: Start Normal Selection ---
+        // --- 3. SINGLE CLICK : goto---
         else if ((bstate & BUTTON1_CLICKED) || (bstate & BUTTON1_PRESSED)) {
             if(mode != Mode::insert && mode != Mode::normal) mode = Mode::normal;
 

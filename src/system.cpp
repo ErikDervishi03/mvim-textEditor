@@ -1,9 +1,8 @@
 #include "../include/editor/system.hpp"
 #include "../include/editor/state.hpp"      // Needed to clear action_history on restore
-#include "../include/editor/file.hpp"       // Needed to check save state or trigger saves
 #include "../include/bufferManager.hpp"
-#include "../include/errorHandler.hpp"
 #include "../include/globals/mvimResources.h"
+#include "../include/screen.hpp"
 
 #include <ncurses.h>
 #include <string>
@@ -12,81 +11,14 @@
 // Function to prompt user for confirmation before exiting unsaved changes
 bool editor::system::confirm_exit()
 {
-  curs_set(0);
-  int height, width;
-  getmaxyx(stdscr, height, width);   // Get screen size
-
-  int popupHeight = 7;    // Height of the popup window
-  int popupWidth = 40;    // Width of the popup window
-  int starty = (height - popupHeight) / 2;    // Centered vertically
-  int startx = (width - popupWidth) / 2;      // Centered horizontally
-
-  // Create the popup window
-  WINDOW* popup_win = newwin(popupHeight, popupWidth, starty, startx);
-  box(popup_win, 0, 0);   // Draw a box around the popup
-  keypad(popup_win, TRUE);   // Enable function keys and arrow keys
-
-  // Display the confirmation message
-  mvwprintw(popup_win, 2, 5, "You have unsaved changes.");
-  mvwprintw(popup_win, 3, 5, "You want to exit without saving?");
-
-  // Variables for handling option selection
-  int ch;
-  bool confirm = false;    // True if "Yes" is selected, False if "No"
-  int choice = 1;          // 1 for "No", 0 for "Yes"
-  bool selection_made = false;
-
-  // Function to update the highlighted options
-  auto draw_options = [&](int choice)
-    {
-      if (choice == 0)
-      {
-        // Highlight "Yes"
-        wattron(popup_win, A_REVERSE);
-        mvwprintw(popup_win, 5, 12, "Yes");
-        wattroff(popup_win, A_REVERSE);
-        mvwprintw(popup_win, 5, 22, "No ");      // Normal "No"
-      }
-      else
-      {
-        // Highlight "No"
-        mvwprintw(popup_win, 5, 12, "Yes");
-        wattron(popup_win, A_REVERSE);
-        mvwprintw(popup_win, 5, 22, "No ");
-        wattroff(popup_win, A_REVERSE);
-      }
-      wrefresh(popup_win);    // Refresh to apply changes
-    };
-
-  draw_options(choice);    // Initial display with "No" highlighted
-
-  // Capture user input (use arrow keys or enter key to choose)
-  while (!selection_made)
-  {
-    ch = wgetch(popup_win);
-
-    // Move between options using arrow keys
-    if (ch == KEY_LEFT || ch == KEY_RIGHT)
-    {
-      choice = (choice == 1) ? 0 : 1;       // Toggle between 0 ("Yes") and 1 ("No")
-      draw_options(choice);        // Update the highlighted option
-    }
-    // Confirm the selection with Enter
-    else if (ch == '\n' || ch == KEY_ENTER)
-    {
-      confirm = (choice == 0);        // "Yes" selected if choice == 0
-      selection_made = true;
-    }
-  }
-
-  // Cleanup the popup window
-  delwin(popup_win);
-  curs_set(1);
-
-  BufferManager::instance().getWindowManager().resize_windows();
-
-  return confirm;
+  return Screen::getScreen().prompt_confirm("You have unsaved changes. Exit without saving? (y/n): ");
 }
+
+std::string editor::system::text_form(const std::string& label)
+{
+  return Screen::getScreen().prompt_text(label);
+}
+
 // Function to exit the IDE
 void editor::system::exit_ide() {
     auto& bufferManager = BufferManager::instance();
@@ -182,67 +114,6 @@ static void centerText(WINDOW* win, int starty, int width, const std::string& st
   int length = str.size();
   int x = (width - length) / 2;
   mvwprintw(win, starty, x, "%s", str.c_str());
-}
-
-std::string editor::system::text_form(const std::string& label)
-{
-  int height, width;
-  getmaxyx(stdscr, height, width);
-
-  int formHeight = 5;
-  int formWidth = 40;
-  int starty = (height - formHeight) / 2;
-  int startx = (width - formWidth) / 2;
-
-  WINDOW* form_win = newwin(formHeight, formWidth, starty, startx);
-  box(form_win, 0, 0);
-
-  centerText(form_win, 1, formWidth, label);
-
-  mvwprintw(form_win, 3, 2, "> ");
-  wrefresh(form_win);
-
-  std::string input;
-  int ch;
-  bool exit_form = false;
-
-  while (1)
-  {
-    ch = wgetch(form_win);
-
-    if (ch == 27)        // ESC key
-    {
-      exit_form = true;
-      break;
-    }
-    else if (ch == '\n')
-    {
-      break;
-    }
-    else if (ch == KEY_BACKSPACE || ch == 127)
-    {
-      if (!input.empty())
-      {
-        input.pop_back();          // Remove last character
-        mvwaddch(form_win, 3, 4 + input.size(), ' ');          // Remove character from window
-        wmove(form_win, 3, 4 + input.size());
-        wrefresh(form_win);
-      }
-    }
-    else if (input.size() < 30)          // Limit input length to 30 characters
-    {
-      strcat_c(input, ch);        // Append character
-      mvwaddch(form_win, 3, 4 + input.size() - 1, ch);        // Display character
-      wrefresh(form_win);
-    }
-  }
-
-  delwin(form_win);
-  
-  // Refresh again to clear the popup artifacts and restore lines immediately
-  //BufferManager::instance().getWindowManager().resize_windows();
-
-  return input;
 }
 
 void editor::system::change2command()
